@@ -1,0 +1,50 @@
+{
+  "private": true,
+  "name": "@bottingrocks/incapsula",
+  "version": "0.1.0",
+  "description": "Incapsula",
+  "keywords": [
+    "Incapsula"
+  ],
+  "main": "index.js",
+  "directories": {
+    "test": "./tests"
+  },
+  "files": [],
+  "scripts": {
+    "lint": "eslint incapsula --ext .js",
+    "lint:fix": "npm run lint -- --fix",
+    "lint:fixdry": "npm run lint -- --fix-dry-run",
+    "publish:pack": "npm pack --pack-destination dist",
+    "publish:upload": "node scripts/publish.js",
+    "publish": "npm run publish:pack && npm run publish:upload"
+  },
+  "dependencies": {
+    "@babel/generator": "^7.11.4",
+    "@babel/parser": "^7.11.4",
+    "@babel/template": "^7.10.4",
+    "@babel/traverse": "^7.11.0",
+    "@babel/types": "^7.11.0",
+    "@bottingrocks/incapsula": "npm:null@*",
+    "ajv": "^6.12.6",
+    "atob": "^2.1.2",
+    "btoa": "^1.2.1",
+    "byte-base64": "^1.1.0",
+    "fetch": "^1.1.0",
+    "fetch-cookie": "^1.0.0",
+    "hpagent": "^0.1.1",
+    "https-proxy-agent": "^5.0.0",
+    "lodash": "^4.17.20",
+    "node-fetch": "^2.6.5"
+  },
+  "devDependencies": {
+    "babel-eslint": "^10.1.0",
+    "dashify": "^2.0.0",
+    "eslint": "^6.7.1",
+    "eslint-plugin-sort-requires": "^2.1.0",
+    "node-fetch": "^2.6.5"
+  },
+  "engines": {
+    "node": ">=12.0.0"
+  }
+}
