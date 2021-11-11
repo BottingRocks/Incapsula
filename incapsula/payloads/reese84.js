@@ -146,56 +146,10 @@ module.exports = {
   "canvas_fonts" : [`PMingLiU`],
   "document_children" : {
     "document_script_element_children" : [
-      {
-        "src" : `https://bam-cell.nr-data.net/1/24d93c7748?a=14700416&v=1210.e2a3f80&to=cwwIRUdXWlgEQU0WQ1URFR5GXUVHCFwMEB9eBhE%3D&rst=1860&ck=1&ref=https://api.id.me/en/session/new&qt=1&ap=72&be=347&fe=1757&dc=868&af=err,xhr,stn,ins,spa&perf=%7B%22timing%22:%7B%22of%22:1633729245317,%22n%22:0,%22u%22:198,%22ue%22:199,%22f%22:4,%22dn%22:4,%22dne%22:4,%22c%22:4,%22ce%22:4,%22rq%22:14,%22rp%22:189,%22rpe%22:191,%22dl%22:201,%22di%22:866,%22ds%22:867,%22de%22:872,%22dc%22:1756,%22l%22:1756,%22le%22:1759%7D,%22navigation%22:%7B%7D%7D&fp=578&fcp=578&jsonp=NREUM.setToken`
-      },
-      {
-        "src" : `https://js-agent.newrelic.com/nr-spa-1210.min.js`
-      },
-      {
-        "src" : `https://wait.id.me/javascriptqueue/idme/prodapi/1633729246269?t=https%3A%2F%2Fapi.id.me%2Fen%2Fsession%2Fnew&ver=js2.0.27`
-      },
-      {
-        "src" : `https://static.zdassets.com/ekr/asset_composer.js?key=22fb9205-0748-40d7-8eb1-c964afe88d06`
-      },
-      {
-        "src" : `https://www.google-analytics.com/analytics.js`
-      },
-      {
-        "src" : ``
-      }
+
     ],
     "document_head_element_children" : [
-      {
-        "src" : `https://api.id.me/I-indnes-must-to-thing-mee-see-And-thith-the-gre`
-      },
-      {
-        "src" : ``
-      },
-      {
-        "src" : ``
-      },
-      {
-        "src" : ``
-      },
-      {
-        "src" : ``
-      },
-      {
-        "src" : ``
-      },
-      {
-        "src" : `https://api.id.me/assets/analytics/device-2854bc02623bf14ff2e80dd02913907f92b5c8c4cc14944c4a805106be38c8f5.js`
-      },
-      {
-        "src" : `https://api.id.me/assets/analytics/google-da6f72148bad4c4037e015bf01d84c2245169c1146b55e69b4200b9862f1e424.js`
-      },
-      {
-        "src" : `https://static.queue-it.net/script/queueclient.min.js`
-      },
-      {
-        "src" : `https://static.queue-it.net/script/queueconfigloader.min.js`
-      }
+
     ]
   },
   "window" : {

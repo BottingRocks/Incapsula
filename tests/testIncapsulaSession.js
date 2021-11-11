@@ -4,6 +4,7 @@ const DefaultUtmvcPayload = require("../incapsula/payloads/utmvc.js");
 const DefaultReese84Payload = require("../incapsula/payloads/reese84.js");
 
 (async function(){
+  //const session = new IncapsulaSession();
   const session = new IncapsulaSession({proxyUrl : `http://192.168.122.1:8888`});
   //await session.go({url : `https://www.id.me/session/new`, utmvc : DefaultUtmvcPayload, reese84 : DefaultReese84Payload});
   await session.go({url : `https://www.id.me/session/new`, utmvc : DefaultUtmvcPayload, reese84 : DefaultReese84Payload});
