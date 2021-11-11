@@ -1,0 +1,46 @@
+{
+	"parser" : "babel-eslint",
+    "parserOptions": {
+        "ecmaVersion": 9
+    },
+    "env": {
+        "es6": true,
+		  "amd": true,
+		  "node": true
+    },
+    "rules": {
+        "indent": [
+            2,
+            2,
+            {
+                "SwitchCase": 1,
+                "VariableDeclarator": 1,
+                "outerIIFEBody": 1,
+                "MemberExpression": 1,
+                "FunctionDeclaration": {"parameters": 1, "body": 1},
+                "FunctionExpression": {"parameters": 1, "body": 1},
+                "CallExpression": {"arguments": 1},
+                "ArrayExpression": 1,
+                "ObjectExpression": 1,
+                "ImportDeclaration": 1,
+                "flatTernaryExpressions": false,
+                "ignoreComments": false
+            }
+        ],
+		  "quotes" : ["error", "backtick"],
+        "sort-requires/sort-requires": 2,
+        "semi": ["error", "always"],
+		  "no-undef" : ["error"],
+		  "eqeqeq" : ["error", "always"],
+		  "arrow-parens" : ["error", "always"],
+		  "function-call-argument-newline" : ["error", "never"],
+		  "key-spacing" : ["error", { "beforeColon": true }],
+		  "no-mixed-spaces-and-tabs": ["error"],
+		  "multiline-comment-style": ["error", "separate-lines"],
+		  "lines-around-comment": ["error", { "beforeLineComment": false }]
+    },
+    "plugins": [
+        "sort-requires"
+    ]
+
+}
