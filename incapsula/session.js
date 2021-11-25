@@ -190,7 +190,6 @@ class IncapsulaSession {
     });
 
     const body = await reese84Res.text();
-    console.log(`wtf update from reese`, body);
     const parsed = JSON.parse(body);
 
     this.reese84Token = parsed[`token`];

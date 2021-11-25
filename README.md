@@ -119,7 +119,8 @@ The default `fingerprints` can be found at : [utmvc.js](incapsula/payloads/utmvc
 }
 ``` 
 
-The encoding function to encode the `___utmvc` cookie iterates thru the whole `___utmvc` payload, encoding each value using the `encodeURIComponent` function and then joining all key-values via a comma.
+Each key-value is encoded using the `encodeURIComponent` function and then joining all key-values via a comma, to form one long string
+containing the payload.
 
 
 

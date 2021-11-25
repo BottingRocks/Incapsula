@@ -20,11 +20,11 @@
     "publish": "npm run publish:pack && npm run publish:upload"
   },
   "dependencies": {
-    "@babel/generator": "^7.11.4",
-    "@babel/parser": "^7.11.4",
-    "@babel/template": "^7.10.4",
-    "@babel/traverse": "^7.11.0",
-    "@babel/types": "^7.11.0",
+    "@babel/generator": "^7.16.0",
+    "@babel/parser": "^7.16.3",
+    "@babel/template": "^7.16.0",
+    "@babel/traverse": "^7.16.3",
+    "@babel/types": "^7.16.0",
     "2captcha": "^2.1.9",
     "ajv": "^6.12.6",
     "atob": "^2.1.2",
@@ -37,6 +37,7 @@
     "jsdom": "^18.0.1",
     "lodash": "^4.17.20",
     "node-fetch": "^2.6.5",
+    "recaptcha-harvester": "^0.0.4",
     "window": "^4.2.7"
   },
   "devDependencies": {
