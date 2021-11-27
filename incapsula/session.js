@@ -3,6 +3,7 @@
 const Captcha = require(`2captcha`);
 const fetchCookie = require(`fetch-cookie`);
 const fs = require(`fs`);
+const parseUrl = require('url').parse;
 const HttpsProxyAgent = require(`https-proxy-agent`);
 const nodeFetch = require(`node-fetch`);
 const path = require(`path`);
@@ -14,6 +15,10 @@ const DEFAULT_UTMVC_PAYLOAD = require(`../incapsula/payloads/utmvc.js`);
 
 const SAVE_ASTS = process.env.SAVE_ASTS || false;
 
+const inquirer = require('inquirer');
+
+
+
 class IncapsulaSession {
   //To run this make sure to pass the --insecure-http-parser flag see:https://github.com/nodejs/node/issues/27711
 
@@ -23,9 +28,18 @@ class IncapsulaSession {
     this.userAgent = userAgent === undefined ? `Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:93.0) Gecko/20100101 Firefox/93.0` : userAgent;
 
     this.defaultHeaders = {
-      "user-agent" : this.userAgent,
-      "cache-control" : `no-cache`,
-      "kept-alive" : `Yes`,
+      'User-Agent' : this.userAgent,
+      'Accept' : 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
+      'Accept-Language' : 'en-US,en;q=0.5',
+      'Accept-Encoding' : 'gzip, deflate, br',
+      'Connection' : 'keep-alive',
+      'Upgrade-Insecure-Requests' : '1',
+      'Sec-Fetch-Dest' : 'document',
+      'Sec-Fetch-Mode' : 'navigate',
+      'Sec-Fetch-Site' : 'none',
+      'Sec-Fetch-User' : '?1',
+      'Pragma' : 'no-cache',
+      'Cache-Control' : 'no-cache',
     };
 
     this.cookieJar = cookieJar || new fetchCookie.toughCookie.CookieJar();
@@ -47,17 +61,65 @@ class IncapsulaSession {
     let mainPage = await this.fetch(url, { headers : this.defaultHeaders, agent : this.agent});
     let body = await mainPage.text();
 
+    let iframePage, iframeBody;
+
     SAVE_ASTS && this.saveFile(`main.html`, body);
 
-    const modeType = this.getModeType({body});
+    const modeType = this.getModeType(body);
     const options = { utmvc, reese84 };
 
-    if(modeType === `captcha`){
-      await this.doCaptchaMode({url : mainPage.url, body, options});
-    }else{
-      await this.doNonCaptchaMode({url : mainPage.url, body, options});
+    switch(modeType){
+      case "iframe+reese84":
+        iframePage = await this.fetch(this.parseIframeUrl(url, body), { headers : this.defaultHeaders, agent : this.agent});
+        iframeBody = await iframePage.text();
+        await this.doReese84Mode({url : iframePage.url, body: iframeBody, options});
+        break;
+      case "iframe+reese84+utmvc+captcha":
+        iframePage = await this.fetch(this.parseIframeUrl(url, body), { headers : this.defaultHeaders, agent : this.agent});
+        iframeBody = await iframePage.text();
+        await this.doCaptchaMode({url : iframePage.url, body: iframeBody, options});
+        break;
+      case "reese84+utmvc":
+        await this.doNonCaptchaMode({url : mainPage.url, body, options});
+        break;
     }
 
+  }
+
+  parseIframeUrl(url, html){
+
+    const incapUrl = html.match(/\<iframe id\="main-iframe" src\="(.*?)(?=")/);
+
+    if(!incapUrl){
+      throw Error(`Could not parse iframe url:${html}`)
+    }
+    const parsedUrl = new URL(url);
+
+    return `${parsedUrl.origin}${incapUrl[1]}`;
+  }
+
+  getModeType(html){
+
+    const findIframe = `<iframe id="main-iframe"`;
+    const hasIframe = html.indexOf(findIframe) !== -1;
+
+    if(hasIframe){
+
+      const findUrl = html.match(/main-iframe" src="(.*?)(?:")/);
+
+      if(findUrl){
+        const typeNumber = findUrl[1].split("&")[0].split("=")[1];
+
+        switch(typeNumber){
+          case "42":
+            return "iframe+reese84";
+          case "31":
+            return "iframe+reese84+utmvc+captcha";
+        }
+      }
+    }
+
+    return "reese84+utmvc";
   }
 
   async setUtmvcCookie({payloadUrl , data}){
@@ -82,17 +144,23 @@ class IncapsulaSession {
 
   }
 
-  async doNonCaptchaMode({url, options}){
+  async doReese84Mode({url, body, options}){
+
+    const { reese84 } = options;
+    const reese84Url = this.findReese84Url({ url, body });
+
+    if(reese84Url){
+      await this.setReese84({reese84Url});
+      await this.postReese84CreateRequest({ payloadUrl : reese84Url, data : reese84, setCookie : true});
+      await this.postReese84UpdateRequest({oldToken : this.reese84Token});
+    }
+
+  }
+  async doNonCaptchaMode({url, body, options}){
 
     const { utmvc, reese84 } = options;
 
-    const refreshPage = await this.fetch(url, {
-      headers : this.defaultHeaders,
-      agent : this.agent,
-    });
-
-    const refreshPageBody = await refreshPage.text();
-    const { utmvcUrl, reese84Url } = this.findReese84AndUtmvcUrls({url, body : refreshPageBody});
+    const { utmvcUrl, reese84Url } = this.findReese84AndUtmvcUrls({url, body});
 
     if(utmvcUrl !== undefined){
       await this.setUtmvcCookie({payloadUrl : utmvcUrl , data : utmvc});
@@ -106,16 +174,13 @@ class IncapsulaSession {
 
   }
 
-  async doCaptchaMode({url, options}){
+  async doCaptchaMode({url, body, options}){
 
     const { utmvc, reese84 } = options;
 
-    const refreshPage = await this.fetch(url, { headers : this.defaultHeaders, agent : this.agent});
-    const refreshPageBody = await refreshPage.text();
+    SAVE_ASTS && this.saveFile(`captcha.html`, body);
 
-    SAVE_ASTS && this.saveFile(`captcha.html`, refreshPageBody);
-
-    const { utmvcUrl, reese84Url } = this.findReese84AndUtmvcUrls({url, body : refreshPageBody});
+    const { utmvcUrl, reese84Url } = this.findReese84AndUtmvcUrls({url, body});
 
     if(utmvcUrl !== undefined){
       await this.setUtmvcCookie({payloadUrl : utmvcUrl , data : utmvc});
@@ -225,9 +290,22 @@ class IncapsulaSession {
       const proxy = `${this.agent.proxy.auth === null ? `` : this.agent.proxy.auth}${this.agent.proxy.host}:${this.agent.proxy.port}`;
       captchaOptions[`proxytype`] = `HTTP`;
       captchaOptions[`proxy`] = proxy;
+      captchaOptions[`cookies`] = this.getCookies(url).split(";")
     }
 
-    const gCaptchaResponse = await this.captchaSolver.recaptcha(recaptchaKey, recaptchaCallbackUrl, {...captchaOptions});
+    //const gCaptchaResponse = await this.captchaSolver.recaptcha(recaptchaKey, recaptchaCallbackUrl, {...captchaOptions});
+    //const gCaptchaResponse = await this.captchaSolver.recaptcha(recaptchaKey, recaptchaCallbackUrl, {...captchaOptions});
+
+    const gCaptchaResponse = {data :'03AGdBq25hoCmO-v17XY7nhKE1Vgmp-AnHY9OpCbmDeqiQhCXUnIUxtCQSjydm6-DXMP_PDNF1ZJAhM5qeqFoPFc9uzSkBbiDkNy7NrIKp7dw2tAJ1EF3WddIPZHP8BAsG8Xoe4mHqNpf3TehuyxPxaqDrdasOc_gTKJIvSo0sZYBsMN7EKnS7yRFxEyylbEyWeC1pVvk0OP7dA8nVTOQvF2TM0Wtv5IW-qItGpamITzQ2zaJLvF_jtDtOWPE4oiqbFJAIL6ofCPLG8uE01G_60l7krivvA8fxyG-sK7xcET1QiTaHzpBEbPThwQ7j_i4ufkqnihK8EyjjwsO4uwokjzE5MPPULxrd7bCg0UxFKcmJEvxVbXHfj5m2JPkF2D20vLihPMm4O4YzR1_kFN11e7ZW4N7jOVbUfDdI-ex0MKZNXIUArZJ1Y0FL2FJ_A8vj3sqxjKlxhtxvaA_FvXfue4JW0v2NsHojlpUQCC9r--WqeD4Mg4isIndkgCIQ7nyCClgIZ1YribqHciXtkoonA6Hynu5YRfJFVEn4l5IGJRjbCXdNpNczKSXpu9Xu3sdp-Scprs_r1XJzJTEwwvOczFRk47NbcXm4lR-i3k-omlG8t7Mh_SzHchKlBKdskfTgB_dwz5kgbR-cMgNsTbY_Tf5SAE0ptUW9buGSML5X0i-L5j1t2zdyfSg8Ui_6xkwX3DgQGNJ8qXjzQj9S5OO6EyrIGKMCmuV5UPPm9r28xksrIX0ExK6tciFkhp6qYk04GbMr3KR_UW6efskXwWPJcrvF3bTVpdvXEmc76by_g8lOJnfejjUZ4hdplKVfJzOse8EqCETDlg5gT4gmsYmNh8DAaoTStuzSANo3F4kSoZ_iJdqn7o91d8H414HgfogLPQkFtFmv4s-_XVgoyTAv79_roaE5IY5lZIPaYhMZs73pi8ooPGTIOLOyAxwAAbmqtTiGiaazBY85HCziKht7blZju6xJpS_fItr0uKyKj_a_G9rT3SWtYD3RunDWe9_PdWBcqgv9WHNWVAADM14tuKgD-E3t-YAF3BXh-nm987J-2lfAmmmT9OZKJFfrVr1S1DRDqrCnZizNSuQdfdGCaISLoSRLsF4BAzhCSw_CYbHOqqPhElBkGgbt59KAOAc4pEe32EOGTpRGtKC-3cbvO6577Tj_yLtXf8rCWuHfSXNWt_onppIU1_VOJN0BF1vaGas2kJTlyJX_'};
+
+    const answers = await inquirer.prompt([
+      {
+        type: 'input',
+        name: 'gcaptcharesponse',
+        message: "What's your gcaptcharesponse",
+      }
+    ]);
+
 
     const submitRes = await this.fetch(recaptchaCallbackUrl, {
       headers : {
@@ -239,10 +317,11 @@ class IncapsulaSession {
       },
       method : `POST`,
       agent : this.agent,
-      body : `g-recaptcha-response=${gCaptchaResponse.data}`
+      body : `g-recaptcha-response=${answers.gcaptcharesponse}`
     });
 
-    await submitRes.text();
+    const captchaBodyResponse = await submitRes.text();
+    SAVE_ASTS && this.saveFile(`captcharesponse.html`, captchaBodyResponse);
 
 
   }
@@ -262,7 +341,7 @@ class IncapsulaSession {
 
   findReese84Url({ url, body }) {
 
-    const incapUrl = body.match(/script src\="(.*?)" async\>\<\/script\>/);
+    const incapUrl = body.match(/src\="(.*?)" async(.*?)\>\<\/script\>/);
 
     if (incapUrl) {
       const parsedUrl = new URL(url);
@@ -284,12 +363,6 @@ class IncapsulaSession {
 
     return false;
 
-  }
-
-  getModeType({body}){
-
-    const findIframe = `<iframe id="main-iframe"`;
-    return body.indexOf(findIframe) !== -1 ? `captcha` : `noncaptcha`;
   }
 
   findReese84AndUtmvcUrls({url, body}){

@@ -11,6 +11,7 @@
       - [Fingerprints](#fingerprints)
     - [The __reese84__ cookie](#the-reese84-cookie)
       - [Encoding Loops](#encoding-loops)
+- [HOW TO RUN](#how-to-run)
 
 ## About
 
@@ -241,3 +242,5 @@ Unlike the first cookie, the `___utmvc`cookie, the `reese84` cookie is not set b
 
 
 
+# HOW TO RUN
+NODE_TLS_REJECT_UNAUTHORIZED='0' SAVE_ASTS=$(pwd)/ node --trace-warnings --insecure-http-parser tests/testIncapsulaSessionCaptcha.js
