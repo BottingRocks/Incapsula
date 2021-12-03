@@ -1,5 +1,6 @@
 
 const ajv = require(`ajv`);
+const generate = require(`@babel/generator`).default;
 
 const { extractXorEncoders, extractSignalsKeys, extractStAndSr } = require(`./extract.js`);
 const { fromString, fromFile } = require(`../ast.js`);
@@ -9,6 +10,8 @@ const ensureBlockStatements = require(`./transformations/ensure-block-statements
 const expandSequenceExpressions = require(`./transformations/expand-sequence-expressions.js`);
 const renameXorShift128 = require(`./transformations/rename-xor-shift-128.js`);
 const replaceSubstrStrings = require(`./transformations/replace-substr-strings.js`);
+const replacePostbackUrl = require(`./transformations/replace-postback-url.js`);
+const removeQueryParamD = require(`./transformations/remove-query-param-d.js`);
 
 const PayloadSchema = require(`./schema.js`);
 
@@ -69,7 +72,19 @@ class Reese84 {
 
   }
 
-  encode(data, options = {}) {
+  createCollectorScript(payloadUrl){
+
+    const ast = fromString(generate(this.ast).code);
+    ast.postbackUrl = payloadUrl;
+
+    replacePostbackUrl(ast);
+    removeQueryParamD(ast);
+
+    return generate(ast).code;
+
+  }
+
+  createPayload(data, options = {}) {
 
     const error = options.error || null;
     const oldToken = options.old_token || null;
@@ -77,7 +92,7 @@ class Reese84 {
     const cr = options.cr || (Math.random() * 1073741824 | 0);
     const version = options.version || `stable`;
 
-    const encodedPayload = this.encodePayload(data);
+    const encodedPayload = this.encodePayload(data, cr);
 
     return {
       "solution" : {
@@ -109,7 +124,7 @@ class Reese84 {
       //Replace any byte encoded strings
       mutatedData = mutatedData.replace(byteRegex, byteIndex);
       //Apply the series of encoder loops, and returns the result as a Base64 string
-      mutatedData = encoder(mutatedData, xor);
+      mutatedData = encoder(mutatedData, Number(xor));
 
       return mutatedData;
 

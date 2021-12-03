@@ -237,6 +237,7 @@ function createEncoderFromPath({path, type}){
     return {
       "encoder" : function(data, xor) {
 
+        console.log(`xor is`, xor)
         const newData = [];
 
         const slicedLength = xor.slice(startSlice, endSlice).length;
@@ -561,13 +562,16 @@ function getXorEncoderFromPath(path){
 
 }
 
-function buildEncoderAndDecoder({varName, encoders}){
+function buildEncoderAndDecoder( encoders){
 
   return {
     "encoder" : function(data, xor){
+      console.log(`main xor is`, xor);
 
       const _encs = [...encoders];
-      const xored = _encs.shift()[`encoder`](xor);
+      const firstEncoder = _encs.shift()[`encoder`];
+      console.log(`firstEncoder function is`, _encs);
+      const xored = firstEncoder(xor);
       const encodeFuncs = [..._encs];
 
       let mutable = String(data);
@@ -646,7 +650,9 @@ function extractXorEncoders(ast){
           const encoders = getXorEncoderFromPath(statementPath);
 
           encoders.forEach((encoder) => {
-            currentEncoders.push(buildEncoderAndDecoder({varName : encoders[0].var, encoders : encoder[`encoders`]}));
+            //console.log(`encoders:`, encoders);
+            //console.log(`encoder["encoders"]`, encoder['encoders']);
+            currentEncoders.push(buildEncoderAndDecoder(encoder[`encoders`]));
           });
         }
 

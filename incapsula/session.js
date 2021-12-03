@@ -59,7 +59,7 @@ class IncapsulaSession {
 
     const modeType = this.getModeType(body);
     const options = { utmvc, reese84 };
-    console.log(`mode type:${modeType}`);
+    //console.log(`mode type:${modeType}`);
     switch(modeType){
       case `iframe+reese84`:
       case `iframe+reese84+utmvc+captcha`:
@@ -122,14 +122,12 @@ class IncapsulaSession {
     const { utmvc, reese84 } = options;
 
     const { utmvcUrl, reese84Url } = this.findReese84AndUtmvcUrls(url, body);
-    console.log(`urls`, utmvcUrl, reese84Url);
 
     if(utmvcUrl !== undefined){
       await this.setUtmvcCookie({payloadUrl : utmvcUrl , data : utmvc});
     }
 
     if(reese84Url !== undefined){
-      console.log(`reese84`, reese84Url);
       await this.setReese84(reese84Url);
       await this.postReese84CreateRequest({ payloadUrl : reese84Url, data : reese84, setCookie : true});
       await this.postReese84UpdateRequest(this.reese84Token);
@@ -154,7 +152,7 @@ class IncapsulaSession {
 
   async postReese84CreateRequest({ payloadUrl, data, setCookie = false}) {
 
-    const payload = this.reese84.encode(data);
+    const payload = this.reese84.createPayload(data);
 
     const reese84Res = await this.fetch(payloadUrl, {
       headers : this.defaultHeaders,
@@ -197,7 +195,6 @@ class IncapsulaSession {
   }
 
   async findAndSolveCaptcha( url) {
-    console.log(`solving captcha`);
     const res = await this.fetch(url, { headers : this.defaultHeaders, agent : this.agent });
     const body = await res.text();
 
