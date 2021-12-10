@@ -1221,17 +1221,7 @@ const FINDERS = {
           return findInVar({path, valueToFind : /"Netscape" \&\& (.*?)\["test"\]\((.*?)\["userAgent"\]\)/, mode : `regex`, siblingKey : 1});
         }
       },
-      "is_native_load_times" : {
-        finder : function(path){
-          return findInAssignment({path, valueToFind : /(.*?)\["chrome"\]\["loadTimes"\]\)/, mode : `regex`, siblingKey : 2});
-        }
-      },
-      "webdriver" : {
-        finder : function(path){
-          return findInVar({path, valueToFind : /(.*?)\["webdriver"\] \? true : false/, mode : `regex`, siblingKey : 1});
-        }
-      },
-      "is_chrome_browser" : {
+      "is_chrome" : {
         finder : function(path){
           let found = false;
           let value = undefined;
@@ -1246,7 +1236,7 @@ const FINDERS = {
               }
 
               found = true;
-              const leftProp = varPath.getSibling(varPath.key + 2).get(`consequent.body.0.expression.left.property`);
+              const leftProp = varPath.getSibling(varPath.key+2).get(`consequent.body.0.expression.left.property`);
               value = getPropertyValue(leftProp);
 
             }
@@ -1254,6 +1244,68 @@ const FINDERS = {
           });
 
           return { found, value };
+        }
+      },
+      "chrome" : {
+        finder : function(path){
+          let found = false;
+          let value = undefined;
+
+          path.traverse({
+            VariableDeclaration(varPath){
+
+              const code = generate(varPath.node).code;
+
+              if(!code.endsWith(`["webdriver"] ? true : false;`)){
+                return;
+              }
+
+              found = true;
+              const leftProp = varPath.getSibling(varPath.key-1).get(`consequent.body.0.block.body`).slice(-1)[0].get(`expression.left.property`);
+              value = getPropertyValue(leftProp);
+
+            }
+
+          });
+
+          return { found, value };
+        },
+        properties : {
+          "load_times" : {
+            finder : function(path){
+              return findInAssignment({path, valueToFind : /(.*?)\["loadTimes"\]/, mode : `regex`, siblingKey : 0});
+            },
+          },
+          "app" : {
+            finder : function(path){
+              let found = false;
+              let value = undefined;
+
+              path.traverse({
+                VariableDeclaration(varPath){
+
+                  const code = generate(varPath.node).code;
+
+                  if(!code.endsWith(`["app"];`)){
+                    return;
+                  }
+
+                  found = true;
+                  const leftProp = varPath.getSibling(varPath.key+1).get(`consequent.body`).slice(-1)[0].get(`expression.left.property`);
+                  value = getPropertyValue(leftProp);
+
+                }
+
+              });
+
+              return { found, value };
+            },
+          }
+        }
+      },
+      "webdriver" : {
+        finder : function(path){
+          return findInVar({path, valueToFind : /(.*?)\["webdriver"\] \? true : false/, mode : `regex`, siblingKey : 1});
         }
       },
       "connection_rtt" : {
@@ -1330,7 +1382,47 @@ const FINDERS = {
         finder : function(path){
           return findInAssignment({path, valueToFind : /window\["callPhantom"\] \!== undefined/, mode : `regex`, siblingKey : 3});
         }
-      }
+      },
+      "persistent" : {
+        finder : function(path){
+          return findInAssignment({path, valueToFind : `window["PERSISTENT"]`, mode : `endsWith`, siblingKey : 0});
+        },
+      },
+      "temporary" : {
+        finder : function(path){
+          return findInAssignment({path, valueToFind : `window["TEMPORARY"]`, mode : `endsWith`, siblingKey : 0});
+        },
+      },
+      "performance_observer" : {
+        finder : function(path){
+          let found = false;
+          let value = undefined;
+
+          path.traverse({
+            IfStatement(ifPath){
+
+              const code = generate(ifPath.node.test).code;
+
+              if(!code.endsWith(`["PerformanceObserver"] !== undefined`)){
+                return;
+              }
+              found = true;
+              const leftProp = ifPath.get(`consequent.body`).slice(-1)[0].get(`expression.left.property`);
+              value = getPropertyValue(leftProp);
+
+            }
+          });
+
+          return { found, value };
+        },
+        properties : {
+          "supported_entry_types" : {
+            finder : function(path) {
+              return findInAssignment({path, valueToFind : `window["PerformanceObserver"]["supportedEntryTypes"]`, mode : `endsWith`, siblingKey : 0});
+            }
+          }
+        }
+      },
     }
   },
   "document" : {

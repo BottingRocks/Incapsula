@@ -1,6 +1,6 @@
+const fs = require(`fs`);
 const Reese84 = require(`./reese84.js`);
 const { fromFile } = require(`../ast.js`);
-const fs = require(`fs`);
 
 const reese84File = process.argv.slice(-2)[0];
 const payloadFile = process.argv.slice(-1)[0];
@@ -15,7 +15,7 @@ const rawPayloadData = fs.readFileSync(payloadFile, {encoding : `UTF-8`}).toStri
 const rawPayloads = JSON.parse(rawPayloadData);
 
 rawPayloads.forEach((rawPayload) => {
-  console.log(reese84.decodePayload(rawPayload.solution.interrogation.p, rawPayload.solution.interrogation.cr));
+  console.log(JSON.stringify(reese84.decodePayload(rawPayload.solution.interrogation.p, rawPayload.solution.interrogation.cr)));
   console.log(`~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~`);
 });
 

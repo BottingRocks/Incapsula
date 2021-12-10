@@ -1,13 +1,13 @@
+const generate = require(`@babel/generator`).default;
 const t = require(`@babel/types`);
 const traverse = require(`@babel/traverse`).default;
-const generate = require(`@babel/generator`).default;
 
 function replacePostbackUrl(ast){
 
   traverse(ast, {
     ReturnStatement(path){
 
-      const argument = path.get("argument");
+      const argument = path.get(`argument`);
       const code = generate(argument.node).code;
 
       if(!code.includes(`stripQuery`)){

@@ -8,10 +8,10 @@ const { fromString, fromFile } = require(`../ast.js`);
 const clearConcealedStringsPayload = require(`./transformations/clear-concealed-strings-payload.js`);
 const ensureBlockStatements = require(`./transformations/ensure-block-statements.js`);
 const expandSequenceExpressions = require(`./transformations/expand-sequence-expressions.js`);
-const renameXorShift128 = require(`./transformations/rename-xor-shift-128.js`);
-const replaceSubstrStrings = require(`./transformations/replace-substr-strings.js`);
-const replacePostbackUrl = require(`./transformations/replace-postback-url.js`);
 const removeQueryParamD = require(`./transformations/remove-query-param-d.js`);
+const renameXorShift128 = require(`./transformations/rename-xor-shift-128.js`);
+const replacePostbackUrl = require(`./transformations/replace-postback-url.js`);
+const replaceSubstrStrings = require(`./transformations/replace-substr-strings.js`);
 
 const PayloadSchema = require(`./schema.js`);
 
@@ -273,9 +273,12 @@ class Reese84 {
       }),
       [this.signalKeys.browser.browser.value] : encode(this.encoders[6][3].encoder, {
         [this.signalKeys.browser.is_internet_explorer.value] : data.browser.is_internet_explorer,
-        [this.signalKeys.browser.is_native_load_times.value] : data.browser.is_native_load_times,
+        [this.signalKeys.browser.is_chrome.value] : data.browser.is_chrome,
+        [this.signalKeys.browser.chrome.chrome.value] : {
+          [this.signalKeys.browser.chrome.load_times.value] : data.browser.chrome.load_times,
+          [this.signalKeys.browser.chrome.app.value] : data.browser.chrome.app
+        },
         [this.signalKeys.browser.webdriver.value] : data.browser.webdriver,
-        [this.signalKeys.browser.is_chrome_browser.value] : data.browser.is_chrome_browser,
         [this.signalKeys.browser.connection_rtt.value] : data.browser.connection_rtt
       }),
       [this.signalKeys.window.window.value] : encode(this.encoders[6][4].encoder, {
@@ -287,7 +290,12 @@ class Reese84 {
         [this.signalKeys.window.is_native_console_debug.value] : data.window.is_native_console_debug,
         [this.signalKeys.window._phantom.value] : data.window._phantom,
         [this.signalKeys.window.call_phantom.value] : data.window.call_phantom,
-        [this.signalKeys.window.empty.value] : data.window.empty
+        [this.signalKeys.window.empty.value] : data.window.empty,
+        [this.signalKeys.window.persistent.value] : data.window.persistent,
+        [this.signalKeys.window.temporary.value] : data.window.temporary,
+        [this.signalKeys.window.performance_observer.performance_observer.value] : {
+          [this.signalKeys.window.performance_observer.supported_entry_types.value] : data.window.performance_observer.supported_entry_types
+        }
       }),
       [this.signalKeys.webgl_rendering_call.webgl_rendering_call.value] : encode(this.encoders[6][5].encoder, {
         [this.signalKeys.webgl_rendering_call.webgl_rendering_context_prototype_get_parameter_call_a.value] : data.webgl_rendering_call.webgl_rendering_context_prototype_get_parameter_call_a,
@@ -305,7 +313,7 @@ class Reese84 {
     return encodedPayload;
   }
 
-  decodePayload(data, xor){
+  decodePayload(data, xor, dropUniqueKey=true){
 
     const decode = (decoder, data) => {
       let mutatedData = null;
@@ -530,9 +538,17 @@ class Reese84 {
       const rawPayload = decode(this.encoders[6][3].decoder, rawDecodedPayload[this.signalKeys.browser.browser.value]);
 
       decodedPayload[`browser`][`is_internet_explorer`] = rawPayload[this.signalKeys.browser.is_internet_explorer.value];
-      decodedPayload[`browser`][`is_native_load_times`] = rawPayload[this.signalKeys.browser.is_native_load_times.value];
+      decodedPayload[`browser`][`is_chrome`] = rawPayload[this.signalKeys.browser.is_chrome.value];
+
+      const chrome = this.signalKeys.browser.chrome.chrome.value;
+
+      if(chrome in rawPayload){
+        decodedPayload[`browser`][`chrome`] = {};
+        decodedPayload[`browser`][`chrome`][`load_times`] = rawPayload[chrome][this.signalKeys.browser.chrome.load_times.value];
+        decodedPayload[`browser`][`chrome`][`app`] = rawPayload[chrome][this.signalKeys.browser.chrome.app.value];
+      }
+
       decodedPayload[`browser`][`webdriver`] = rawPayload[this.signalKeys.browser.webdriver.value];
-      decodedPayload[`browser`][`is_chrome_browser`] = rawPayload[this.signalKeys.browser.is_chrome_browser.value];
       decodedPayload[`browser`][`connection_rtt`] = rawPayload[this.signalKeys.browser.connection_rtt.value];
     }
 
@@ -550,6 +566,14 @@ class Reese84 {
       decodedPayload[`window`][`_phantom`] = rawPayload[this.signalKeys.window._phantom.value];
       decodedPayload[`window`][`call_phantom`] = rawPayload[this.signalKeys.window.call_phantom.value];
       decodedPayload[`window`][`empty`] = rawPayload[this.signalKeys.window.empty.value];
+      decodedPayload[`window`][`persistent`] = rawPayload[this.signalKeys.window.persistent.value];
+      decodedPayload[`window`][`temporary`] = rawPayload[this.signalKeys.window.temporary.value];
+
+      const performanceObserver = this.signalKeys.window.performance_observer.performance_observer.value;
+      if(performanceObserver in rawPayload){
+        decodedPayload[`window`][`performance_observer`] = {};
+        decodedPayload[`window`][`performance_observer`][`supported_entry_types`] = rawPayload[performanceObserver][this.signalKeys.window.performance_observer.supported_entry_types.value];
+      }
     }
 
     if(this.signalKeys.webgl_rendering_call.webgl_rendering_call.value in rawDecodedPayload){
@@ -573,7 +597,9 @@ class Reese84 {
       decodedPayload[`visual_view_port`][`visual_view_port_scale`] = rawPayload[this.signalKeys.visual_view_port.visual_view_port_scale.value];
     }
 
-    decodedPayload[this.key] = this.key_value;
+    if(!dropUniqueKey){
+      decodedPayload[this.key] = this.key_value;
+    }
 
     return decodedPayload;
   }

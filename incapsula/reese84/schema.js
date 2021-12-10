@@ -165,15 +165,22 @@ const PayloadSchema = {
     "browser" : {
       type : `object`,
       properties : {
-        "is_internet_explorer" : { type : `string` },
-        "is_native_load_times" : {
+        "is_internet_explorer" : { type : `boolean` },
+        "is_chrome" : { type : `boolean` },
+        "chrome" : {
           type : `object`,
           properties : {
-            load_times_native : { type : `boolean`}
+            "load_times" : { type : `boolean`},
+            "app" : {
+              type : `array`,
+              items : {
+                type : `array`,
+                items : {type : `string`}
+              }
+            }
           }
         },
         "webdriver" : { type : `boolean` },
-        "is_chrome_browser" : { type : `boolean` },
         "connection_rtt" : { type : `int16` },
       }
     },
@@ -203,6 +210,17 @@ const PayloadSchema = {
         "_phantom" : { type : `boolean` },
         "call_phantom" : { type : `boolean` },
         "empty" : { type : `string` },
+        "persistent" : { type : `number` },
+        "temporary" : { type : `number` },
+        "performance_observer" : {
+          type : `object`,
+          properties : {
+            "supported_entry_types" : {
+              type : `array`,
+              items : { type : `string`}
+            }
+          }
+        },
       }
     },
     "webgl_rendering_call" : {
@@ -236,5 +254,4 @@ const PayloadSchema = {
   },
   additionalProperties : false,
 };
-
 module.exports = PayloadSchema;

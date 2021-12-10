@@ -237,7 +237,6 @@ function createEncoderFromPath({path, type}){
     return {
       "encoder" : function(data, xor) {
 
-        console.log(`xor is`, xor)
         const newData = [];
 
         const slicedLength = xor.slice(startSlice, endSlice).length;
@@ -566,11 +565,9 @@ function buildEncoderAndDecoder( encoders){
 
   return {
     "encoder" : function(data, xor){
-      console.log(`main xor is`, xor);
 
       const _encs = [...encoders];
       const firstEncoder = _encs.shift()[`encoder`];
-      console.log(`firstEncoder function is`, _encs);
       const xored = firstEncoder(xor);
       const encodeFuncs = [..._encs];
 
@@ -650,8 +647,6 @@ function extractXorEncoders(ast){
           const encoders = getXorEncoderFromPath(statementPath);
 
           encoders.forEach((encoder) => {
-            //console.log(`encoders:`, encoders);
-            //console.log(`encoder["encoders"]`, encoder['encoders']);
             currentEncoders.push(buildEncoderAndDecoder(encoder[`encoders`]));
           });
         }
@@ -668,30 +663,79 @@ function extractXorEncoders(ast){
 
 function extractSignalsKeys(ast){
 
-  const createKeysToFind = () => {
+  const createKeysToFind = ({root, keysToFind, finders} = {}) => {
 
-    const keysToFind = {};
+    root = root || PayloadSchema.properties;
+    keysToFind = keysToFind || {};
+    finders = finders || FINDERS;
 
-    for(let i = 0, payloadKeys = Object.keys(PayloadSchema.properties); i < payloadKeys.length; i++){
+    for(let i = 0, payloadKeys = Object.keys(root); i < payloadKeys.length; i++){
 
-      const currentKey = PayloadSchema.properties[payloadKeys[i]];
+      const currentKey = root[payloadKeys[i]];
 
-      const currentKeyType = currentKey.type;
-      if(currentKeyType === `object`){
+      if(currentKey.type === `object`){
+
         keysToFind[payloadKeys[i]] = {};
 
         for(let e = 0, _payloadKeys = Object.keys(currentKey.properties); e < _payloadKeys.length; e++){
-          keysToFind[payloadKeys[i]][_payloadKeys[e]] = { found : false, value : undefined, func : FINDERS[payloadKeys[i]].properties[_payloadKeys[e]].finder };
+
+          if(currentKey.properties[_payloadKeys[e]].type === `object`){
+            keysToFind[payloadKeys[i]][_payloadKeys[e]] = {};
+
+            createKeysToFind({
+              root : currentKey.properties[_payloadKeys[e]].properties,
+              keysToFind : keysToFind[payloadKeys[i]][_payloadKeys[e]],
+              finders : finders[payloadKeys[i]].properties[_payloadKeys[e]].properties
+            });
+
+            keysToFind[payloadKeys[i]][_payloadKeys[e]][_payloadKeys[e]] = { found : false, value : undefined, func : finders[payloadKeys[i]].properties[_payloadKeys[e]].finder};
+
+          }else{
+            keysToFind[payloadKeys[i]][_payloadKeys[e]] = { found : false, value : undefined, func : finders[payloadKeys[i]].properties[_payloadKeys[e]].finder };
+          }
         }
 
-        keysToFind[payloadKeys[i]][payloadKeys[i]] = { found : false, value : undefined, func : FINDERS[payloadKeys[i]].finder };
+        keysToFind[payloadKeys[i]][payloadKeys[i]] = { found : false, value : undefined, func : finders[payloadKeys[i]].finder };
 
       }else{
-        keysToFind[payloadKeys[i]] = { found : false, value : undefined, func : FINDERS[payloadKeys[i]].finder };
+        keysToFind[payloadKeys[i]] = { found : false, value : undefined, func : finders[payloadKeys[i]].finder };
       }
     }
 
     return keysToFind;
+  };
+
+  const setDefaultKeysValues = ({signalKeys, currentPath}) => {
+
+    for(let i = 0, payloadKeys = Object.keys(signalKeys); i < payloadKeys.length; i++){
+
+      const currentKey = signalKeys[payloadKeys[i]];
+
+      if(currentKey.func !== undefined){
+
+        if(!currentKey.found){
+          const { found, value } = currentKey.func(currentPath);
+
+          currentKey[`found`] = found;
+          currentKey[`value`] = value;
+        }
+
+      }else{
+
+        for(let e = 0, _payloadKeys = Object.keys(currentKey); e < _payloadKeys.length; e++){
+
+          const _currentKey = currentKey[_payloadKeys[e]];
+          if(!_currentKey.found){
+            const { found, value } = _currentKey.func(currentPath);
+            _currentKey[`found`] = found;
+            _currentKey[`value`] = value;
+          }
+
+        }
+
+      }
+    }
+
   };
 
   const signalKeys = createKeysToFind();
@@ -717,7 +761,20 @@ function extractSignalsKeys(ast){
 
           const _currentKey = currentKey[_payloadKeys[e]];
 
-          if(!_currentKey.found){
+          if(_payloadKeys[e] in _currentKey){
+
+            for( let f = 0, __payloadKeys = Object.keys(_currentKey); f < __payloadKeys.length; f++){
+              const __currentKey = _currentKey[__payloadKeys[f]];
+
+              if(!__currentKey.found){
+                const { found, value } = __currentKey.func(currentPath);
+                __currentKey[`found`] = found;
+                __currentKey[`value`] = value;
+              }
+
+            }
+
+          }else if(!_currentKey.found){
             const { found, value } = _currentKey.func(currentPath);
             _currentKey[`found`] = found;
             _currentKey[`value`] = value;
@@ -727,6 +784,7 @@ function extractSignalsKeys(ast){
 
       }
     }
+
   });
 
   return signalKeys;
@@ -755,7 +813,6 @@ function extractStAndSr(ast){
   });
 
   return {st, sr};
-
 
 }
 
