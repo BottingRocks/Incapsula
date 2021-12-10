@@ -53,31 +53,38 @@ class IncapsulaSession {
     utmvc = utmvc || DEFAULT_UTMVC_PAYLOAD;
     reese84 = reese84 || DEFAULT_REESE84_PAYLOAD;
 
-    let mainPage = await this.fetch(url, { headers : this.defaultHeaders, agent : this.agent});
-    let body = await mainPage.text();
-    SAVE_ASTS && this.saveFile(`main.html`, body);
+    try{
 
-    const modeType = this.getModeType(body);
-    const options = { utmvc, reese84 };
-    //console.log(`mode type:${modeType}`);
-    switch(modeType){
-      case `iframe+reese84`:
-      case `iframe+reese84+utmvc+captcha`:
-        const iframeUrl = `${new URL(url).origin}${this.parseIframeUrl(body)}`;
-        const iframePage = await this.fetch(iframeUrl, { headers : this.defaultHeaders, agent : this.agent});
-        const iframeBody = await iframePage.text();
+      let mainPage = await this.fetch(url, { headers : this.defaultHeaders, agent : this.agent});
+      let body = await mainPage.text();
+      SAVE_ASTS && this.saveFile(`main.html`, body);
 
-        if(modeType === `iframe+reese84`){
-          await this.doReese84Mode({url : iframePage.url, body : iframeBody, options});
-        }else if(modeType === `iframe+reese84+utmvc+captcha`){
+      const modeType = this.getModeType(body);
+      const options = { utmvc, reese84 };
+      //console.log(`mode type:${modeType}`);
+      switch(modeType){
+        case `iframe+reese84`:
+        case `iframe+reese84+utmvc+captcha`:
+          const iframeUrl = `${new URL(url).origin}${this.parseIframeUrl(body)}`;
+          const iframePage = await this.fetch(iframeUrl, { headers : this.defaultHeaders, agent : this.agent});
+          const iframeBody = await iframePage.text();
+
+          if(modeType === `iframe+reese84`){
+            await this.doReese84Mode({url : iframePage.url, body : iframeBody, options});
+          }else if(modeType === `iframe+reese84+utmvc+captcha`){
+            await this.doNonCaptchaMode({url : mainPage.url, body, options});
+            await this.findAndSolveCaptcha(iframePage.url);
+          }
+          break;
+
+        case `reese84+utmvc`:
           await this.doNonCaptchaMode({url : mainPage.url, body, options});
-          await this.findAndSolveCaptcha(iframePage.url);
-        }
-        break;
+          break;
+      }
 
-      case `reese84+utmvc`:
-        await this.doNonCaptchaMode({url : mainPage.url, body, options});
-        break;
+      return { success : true, error : null};
+    }catch(e){
+      return { success : false, error : e};
     }
 
   }
@@ -150,7 +157,7 @@ class IncapsulaSession {
     }
   }
 
-  async postReese84CreateRequest({ payloadUrl, data, setCookie = false}) {
+  async postReese84CreateRequest({ payloadUrl, data}) {
 
     const payload = this.reese84.createPayload(data);
 
@@ -163,7 +170,6 @@ class IncapsulaSession {
 
     const body = await reese84Res.text();
     const parsed = JSON.parse(body);
-
 
     this.reese84Token = parsed[`token`];
     this.reese84Url = payloadUrl;
