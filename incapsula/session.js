@@ -82,9 +82,9 @@ class IncapsulaSession {
           break;
       }
 
-      return { success : true, error : null};
+      return { success : true, error : null, cookies : this.getCookies(url)};
     }catch(e){
-      return { success : false, error : e};
+      return { success : false, error : e, cookies : ``};
     }
 
   }

@@ -14,9 +14,8 @@ const rawPayloadData = fs.readFileSync(payloadFile, {encoding : `UTF-8`}).toStri
 
 const rawPayloads = JSON.parse(rawPayloadData);
 
-rawPayloads.forEach((rawPayload) => {
+rawPayloads.forEach((rawPayload, index) => {
   console.log(JSON.stringify(reese84.decodePayload(rawPayload.solution.interrogation.p, rawPayload.solution.interrogation.cr)));
-  console.log(`~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~`);
 });
 
 

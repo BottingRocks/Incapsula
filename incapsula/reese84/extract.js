@@ -596,7 +596,7 @@ function buildEncoderAndDecoder( encoders){
         mutable = enc[`decoder`](mutable, xored);
 
       }
-
+      //console.log(`mutable`, xor);
       return JSON.parse(mutable.join(``));
 
     }

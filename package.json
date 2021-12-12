@@ -39,6 +39,7 @@
     "lodash": "^4.17.20",
     "node-fetch": "^2.6.5",
     "recaptcha-harvester": "^0.0.4",
+    "reds": "^1.0.0",
     "window": "^4.2.7"
   },
   "devDependencies": {
