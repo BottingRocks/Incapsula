@@ -130,7 +130,6 @@ class Reese84 {
 
     };
 
-    console.log(data);
     const encodedPayload = encode(this.encoders[7][0].encoder, {
       [this.signalKeys.user_agent.value] : data.user_agent,
       [this.signalKeys.navigator_language.value] : data.navigator_language,
