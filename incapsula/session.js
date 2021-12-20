@@ -13,9 +13,7 @@ const Utmvc = require(`./utmvc/utmvc.js`);
 const DEFAULT_REESE84_PAYLOAD = require(`../incapsula/payloads/reese84.js`);
 const DEFAULT_UTMVC_PAYLOAD = require(`../incapsula/payloads/utmvc.js`);
 
-
 const SAVE_ASTS = process.env.SAVE_ASTS || false;
-
 
 class IncapsulaSession {
   //To run this make sure to pass the --insecure-http-parser flag see:https://github.com/nodejs/node/issues/27711
