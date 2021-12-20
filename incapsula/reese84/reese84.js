@@ -334,7 +334,7 @@ class Reese84 {
 
     const rawDecodedPayload = decode(this.encoders[7][0].decoder, data);
     const decodedPayload = {};
-    console.log(this.encoders)
+    console.log(this.encoders);
 
     decodedPayload[`user_agent`] = rawDecodedPayload[this.signalKeys.user_agent.value];
     decodedPayload[`navigator_language`] = rawDecodedPayload[this.signalKeys.navigator_language.value];
@@ -412,7 +412,7 @@ class Reese84 {
       decodedPayload[`webgl`][`canvas_hash`] = decode(this.encoders[5][1].decoder, rawPayload[this.signalKeys.webgl.canvas_hash.value]);
 
       if(rawPayload[this.signalKeys.webgl.canvas_hash_error.value]){
-        decodedPayload[`webgl`][`canvas_hash_error`] = rawPayload[this.signalKeys.webgl.canvas_hash_error.value]
+        decodedPayload[`webgl`][`canvas_hash_error`] = rawPayload[this.signalKeys.webgl.canvas_hash_error.value];
       }
 
       decodedPayload[`webgl`][`aliased_line_width_range`] = rawPayload[this.signalKeys.webgl.aliased_line_width_range.value];

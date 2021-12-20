@@ -172,6 +172,12 @@ class IncapsulaSession {
 
     this.setCookies(`___utmvc=${utmvcEncodedCookie}`, url);
 
+    const mainPageRefresh = await this.fetch(url, {
+      headers : this.getHeaders(`main`),
+      agent : this.agent
+    });
+
+
   }
 
   async postReese84CreateRequest({ payloadUrl, data}) {
