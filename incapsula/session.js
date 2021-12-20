@@ -1,9 +1,9 @@
 
 
 const Captcha = require(`2captcha`);
+const cheerio = require(`cheerio`);
 const fetchCookie = require(`fetch-cookie`);
 const fs = require(`fs`);
-const cheerio = require(`cheerio`);
 const HttpsProxyAgent = require(`https-proxy-agent`);
 const nodeFetch = require(`node-fetch`);
 const path = require(`path`);
@@ -53,7 +53,7 @@ class IncapsulaSession {
 
     try{
 
-      const mainPage = await this.fetch(url, { headers : this.getHeaders('main'), agent : this.agent});
+      const mainPage = await this.fetch(url, { headers : this.getHeaders(`main`), agent : this.agent});
       const body = await mainPage.text();
 
       SAVE_ASTS && this.saveFile(`main.html`, body);
@@ -65,7 +65,7 @@ class IncapsulaSession {
       let hasDoneReese84 = false, hasDoneUtmvc = false;
 
       if(incapsulaModes.iframe){
-
+        const iframeUrl = incapsulaModes.iframe.url;
         const iframePage = await this.fetch(iframeUrl, {
           headers : this.defaultHeaders,
           agent : this.agent
@@ -74,9 +74,9 @@ class IncapsulaSession {
         const iframeModes = this.parseIncapsulaScripts(incapsulaModes.iframe.url, iframePageBody);
 
         switch(incapsulaModes.iframe.type){
-          case 'Reese84 Only':
+          case `Reese84 Only`:
 
-            iframeModes.reese84 && await doReese84Mode({
+            iframeModes.reese84 && await this.doReese84Mode({
               url : iframeModes.reese84,
               payloadData : reese84
             });
@@ -84,15 +84,15 @@ class IncapsulaSession {
             iframeModes.reese84 = false;
             break;
 
-          case 'Captcha':
+          case `Captcha`:
             await this.doCaptchaMode({url, gCaptchaToken});
             break;
-          case 'Banned':
-            throw Error(`Need to implement this iframe mode`)
+          case `Banned`:
+            throw Error(`Need to implement this iframe mode`);
             //To do: Implement captcha and banned state
         }
 
-        iframeModes.utmvc && this.setUtmvc(iframeModes.utmvc, utmvc)
+        iframeModes.utmvc && this.setUtmvc(iframeModes.utmvc, utmvc);
 
         hasDoneUtmvc = false;
 
@@ -116,7 +116,7 @@ class IncapsulaSession {
       });
 
       const mainPageRefresh = await this.fetch(url, {
-        headers : this.getHeaders('main'),
+        headers : this.getHeaders(`main`),
         agent : this.agent
       });
 
@@ -127,7 +127,7 @@ class IncapsulaSession {
       if([403, 400, 401].includes(mainPageRefresh.status)){
         return { success : false, error : mainPageRefreshBody, cookies : this.getCookies(url)};
       }else{
-        return { success : true, error : '', cookies : this.getCookies(url)};
+        return { success : true, error : ``, cookies : this.getCookies(url)};
       }
     }catch(e){
       return { success : false, error : e, cookies : this.getCookies(url)};
@@ -138,7 +138,7 @@ class IncapsulaSession {
   async doReese84Mode({url, payloadData}){
 
     await this.setReese84(url);
-    await this.postReese84CreateRequest({ payloadUrl : url, data: payloadData});
+    await this.postReese84CreateRequest({ payloadUrl : url, data : payloadData});
     await this.postReese84UpdateRequest(this.reese84Token);
 
   }
@@ -213,7 +213,7 @@ class IncapsulaSession {
     });
 
     const reese84PageBody = await reese84Page.text();
-    const parsed = reese84PageBody === '' ? {} : JSON.parse(reese84PageBody);
+    const parsed = reese84PageBody === `` ? {} : JSON.parse(reese84PageBody);
 
     if(Object.keys(parsed).length){
 
@@ -228,7 +228,7 @@ class IncapsulaSession {
   }
   async doFaviconMode(url){
     await this.fetch(`${new URL(url).origin}/favicon.ico`, {
-      headers : {...this.defaultHeaders, "Accept": "image/avif,image/webp,*/*"},
+      headers : {...this.defaultHeaders, "Accept" : `image/avif,image/webp,*/*`},
       agent : this.agent
     });
 
@@ -238,14 +238,14 @@ class IncapsulaSession {
 
     const defaultHeaders = {...this.defaultHeaders};
 
-    if(pageType === 'post'){
-      defaultHeaders['Content-Type'] = 'text/plain; charset=utf-8';
+    if(pageType === `post`){
+      defaultHeaders[`Content-Type`] = `text/plain; charset=utf-8`;
     }
 
-    if(pageType === 'main'){
-      defaultHeaders['Accept'] = 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9';
+    if(pageType === `main`){
+      defaultHeaders[`Accept`] = `text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9`;
     }else{
-      defaultHeaders['Accept'] =  '*/*';
+      defaultHeaders[`Accept`] =  `*/*`;
     }
 
     return defaultHeaders;
@@ -284,7 +284,7 @@ class IncapsulaSession {
         const parsedUrl = new URL(url);
         result[`iframe`] = {
           'type' : typeNumber,
-          'url' :  `${parsedUrl.origin}${this.parseIframeUrl(html)}`
+          'url' : `${parsedUrl.origin}${this.parseIframeUrl(html)}`
         };
       }
     }
@@ -321,7 +321,7 @@ class IncapsulaSession {
       const script = $(`script`)[index];
       const source = script.attribs.src;
 
-      if(((script.attribs.defer === '') || (script.attribs.async === ''))
+      if(((script.attribs.defer === ``) || (script.attribs.async === ``))
       && !source.startsWith(`http`) && !source.startsWith(`/_Incapsula_Resource?`)){
         const parsedUrl = new URL(url);
         reese84Url = `${parsedUrl.origin}${source}?d=${parsedUrl.host}`;
