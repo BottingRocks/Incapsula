@@ -131,15 +131,6 @@ class Reese84 {
 
     };
 
-    const decode = (decoder, data) => {
-      let mutatedData = null;
-      //Apply the series of encoder loops, and returns the result as a Base64 string
-      mutatedData = decoder(data, Number(xor));
-
-      return mutatedData;
-
-    };
-
     const encodedPayload = encode(this.encoders[7][0].encoder, {
       [this.signalKeys.user_agent.value] : data.user_agent,
       [this.signalKeys.navigator_language.value] : data.navigator_language,

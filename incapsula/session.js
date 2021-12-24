@@ -5,6 +5,7 @@ const cheerio = require(`cheerio`);
 const fetchCookie = require(`fetch-cookie`);
 const fs = require(`fs`);
 const HttpsProxyAgent = require(`https-proxy-agent`);
+const inquirer = require(`inquirer`);
 const nodeFetch = require(`node-fetch`);
 const path = require(`path`);
 const Reese84 = require(`./reese84/reese84.js`);
@@ -15,6 +16,7 @@ const DEFAULT_UTMVC_PAYLOAD = require(`../incapsula/payloads/utmvc.js`);
 
 const SAVE_ASTS = process.env.SAVE_ASTS || false;
 
+class IncapsulaError extends Error {}
 class IncapsulaSession {
   //To run this make sure to pass the --insecure-http-parser flag see:https://github.com/nodejs/node/issues/27711
 
@@ -56,8 +58,6 @@ class IncapsulaSession {
 
       SAVE_ASTS && this.saveFile(`main.html`, body);
 
-      await this.doFaviconMode(url);
-
       const incapsulaModes = this.parseIncapsulaScripts(url, body);
 
       let hasDoneReese84 = false, hasDoneUtmvc = false;
@@ -72,52 +72,45 @@ class IncapsulaSession {
         const iframeModes = this.parseIncapsulaScripts(incapsulaModes.iframe.url, iframePageBody);
 
         switch(incapsulaModes.iframe.type){
-          case `Reese84 Only`:
-
-            iframeModes.reese84 && await this.doReese84Mode({
-              url : iframeModes.reese84,
-              payloadData : reese84
-            });
-
-            iframeModes.reese84 = false;
+          case 42:
+            //Reese84 only
+            if(iframeModes.reese84){
+              await this.doReese84Mode({url : iframeModes.reese84, payloadData : reese84});
+              hasDoneReese84 = true;
+            }
             break;
 
-          case `Captcha`:
-            await this.doCaptchaMode({url, gCaptchaToken});
+          case 31:
+            //Captcha
+            if(iframeModes.utmvc){
+              await this.setUtmvc(iframeModes.utmvc, utmvc);
+              hasDoneUtmvc = true;
+            }
+
+            if(iframeModes.reese84){
+              await this.doReese84Mode({url : iframeModes.reese84, payloadData : reese84});
+              hasDoneReese84 = true;
+            }
+
+            await this.doCaptchaMode({url : incapsulaModes.iframe.url, gCaptchaToken});
+
             break;
-          case `Banned`:
-            throw Error(`Need to implement this iframe mode`);
+          case 23:
+            //Banned
+            throw new IncapsulaError(`Need to implement this iframe mode`);
             //To do: Implement captcha and banned state
         }
 
-        iframeModes.utmvc && this.setUtmvc(iframeModes.utmvc, utmvc);
-
-        hasDoneUtmvc = false;
-
-        iframeModes.reese84 && await this.doReese84Mode({
-          url : iframeModes.reese84,
-          payloadData : reese84
-        });
-
-        hasDoneReese84 = false;
-
       }
-      incapsulaModes.utmvc && !hasDoneUtmvc && await this.setUtmvc({
-        url : incapsulaModes.utmvc,
-        payloadData : utmvc
-      });
+      if(incapsulaModes.utmvc && !hasDoneUtmvc){
+        await this.setUtmvc({url : incapsulaModes.utmvc, payloadData : utmvc});
+      }
 
+      if(incapsulaModes.reese84 && !hasDoneReese84){
+        await this.doReese84Mode({url : incapsulaModes.reese84, payloadData : reese84 });
+      }
 
-      incapsulaModes.reese84 && !hasDoneReese84 && await this.doReese84Mode({
-        url : incapsulaModes.reese84,
-        payloadData : reese84
-      });
-
-      const mainPageRefresh = await this.fetch(url, {
-        headers : this.getHeaders(`main`),
-        agent : this.agent
-      });
-
+      const mainPageRefresh = await this.fetch(url, { headers : this.getHeaders(`main`), agent : this.agent});
       const mainPageRefreshBody = await mainPageRefresh.text();
 
       SAVE_ASTS && this.saveFile(`main-refresh.html`, mainPageRefreshBody);
@@ -137,12 +130,12 @@ class IncapsulaSession {
 
     await this.setReese84(url);
     await this.postReese84CreateRequest({ payloadUrl : url, data : payloadData});
-    await this.postReese84UpdateRequest(this.reese84Token);
+    //await this.postReese84UpdateRequest(this.reese84Token);
 
   }
 
   async setReese84(reese84Url){
-    const reese84Page = await this.fetch(reese84Url,{
+    const reese84Page = await this.fetch(reese84Url.split(`?d=`)[0],{
       headers : this.getHeaders(`js`),
       agent : this.agent
     });
@@ -156,6 +149,7 @@ class IncapsulaSession {
   }
 
   async setUtmvc({url, payloadData}){
+
     const utmvcPage = await this.fetch(url,{
       headers : this.getHeaders(`js`),
       agent : this.agent
@@ -168,15 +162,17 @@ class IncapsulaSession {
     this.utmvc = Utmvc.fromString(utmvcPageBody);
 
     const payload = this.utmvc.createPayload(payloadData);
+    const payloadUrl = this.utmvc.createPayloadUrl({payloadUrl : url});
     const utmvcEncodedCookie = this.utmvc.encodeUtmvcData(payload, this.getCookies(url));
 
     this.setCookies(`___utmvc=${utmvcEncodedCookie}`, url);
+    //Do a refresh to attempt to get an `a` response.
 
-    const mainPageRefresh = await this.fetch(url, {
+    const payloadPage = await this.fetch(payloadUrl, {
       headers : this.getHeaders(`main`),
       agent : this.agent
     });
-
+    const payloadPageBody = await payloadPage.text();
 
   }
 
@@ -227,9 +223,41 @@ class IncapsulaSession {
 
   }
 
-  async doCaptchaMode({url, gCaptchaToken}){
-    //TODO : Implement captcha mode
+  async doCaptchaMode({url}){
+    const captchaPage = await this.fetch(url, {
+      headers : this.getHeaders(`main`),
+      agent : this.gent,
+    });
+
+    const captchaPageBody = await captchaPage.text();
+    console.log(`captchaPageBody`, captchaPageBody, `url`, url);
+    const submitCaptchaUrl = this.findCaptchaUrl(url, captchaPageBody);
+
+    console.log(`submitCaptchaUrl`, submitCaptchaUrl);
+
+    await this.doFaviconMode(new URL(url).origin);
+
+    const getGCaptchaToken  = await inquirer.prompt({
+      type : `input`,
+      name : `gCaptchaToken`,
+      message : `What is the gCaptchaToken?`
+    });
+
+    const gCaptchaToken = getGCaptchaToken.gCaptchaToken;
+
+    const submitCaptchaPage = await this.fetch(submitCaptchaUrl, {
+      headers : this.getHeaders(`post`),
+      agent : this.agent,
+      method : `POST`,
+      body : `g-recaptcha-response=${gCaptchaToken}`
+    });
+    const submitCaptchaPageBody = await submitCaptchaPage.text();
+
+    if(submitCaptchaPage.status !== 200){
+      throw new IncapsulaError(`Incapsula did not return a 200 error. It returned:${submitCaptchaPage.status}. Body:${submitCaptchaPageBody}`);
+    }
   }
+
   async doFaviconMode(url){
     await this.fetch(`${new URL(url).origin}/favicon.ico`, {
       headers : {...this.defaultHeaders, "Accept" : `image/avif,image/webp,*/*`},
@@ -262,7 +290,7 @@ class IncapsulaSession {
     const incapUrl = html.match(/\<iframe id\="main-iframe" src\="(.*?)(?=")/);
 
     if(!incapUrl){
-      throw Error(`Could not parse iframe url:${html}`);
+      throw new IncapsulaError(`Could not parse iframe url:${html}`);
     }
 
     return incapUrl[1];
@@ -287,7 +315,7 @@ class IncapsulaSession {
         const typeNumber = iframeQuery.split(`&`)[0].split(`=`)[1];
         const parsedUrl = new URL(url);
         result[`iframe`] = {
-          'type' : typeNumber,
+          'type' : Number(typeNumber),
           'url' : `${parsedUrl.origin}${this.parseIframeUrl(html)}`
         };
       }
@@ -338,7 +366,6 @@ class IncapsulaSession {
   }
 
   findCaptchaUrl(url, body ) {
-
     const incapUrl = body.match(/\xhr.open\("POST", "(.*?)(?=")/);
 
     if (incapUrl) {

@@ -1,4 +1,5 @@
 const Reese84 = require(`../incapsula/reese84/reese84.js`);
+const fs = require(`fs`);
 const DEFAULT_REESE84_PAYLOAD = require(`../incapsula/payloads/reese84.js`);
 const { fromFile } = require(`../incapsula/ast.js`);
 

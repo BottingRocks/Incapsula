@@ -205,9 +205,17 @@ const FINDERS = {
             return;
           }
 
-          found = true;
+          let currentPath = expPath;
+          for(;;){
+            if(generate(currentPath.node).code.indexOf(`xorShift128`) !== -1){
+              break;
+            }
 
-          const leftProp = expPath.getSibling(expPath.key - 8).get(`expression.left.property`);
+            currentPath = currentPath.getPrevSibling();
+          }
+
+          found = true;
+          const leftProp = currentPath.getPrevSibling().get(`expression.left.property`);
           value = getPropertyValue(leftProp);
 
         }
