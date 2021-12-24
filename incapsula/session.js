@@ -31,8 +31,6 @@ class IncapsulaSession {
       'accept-language' : `en-US,en;q=0.5`,
       'accept-encoding' : `gzip, deflate, br`,
       'connection' : `keep-alive`,
-      'pragma' : `no-cache`,
-      'cache-control' : `no-cache`,
     };
 
     this.cookieJar = cookieJar || new fetchCookie.toughCookie.CookieJar();
@@ -62,6 +60,17 @@ class IncapsulaSession {
 
       let hasDoneReese84 = false, hasDoneUtmvc = false;
 
+      if(incapsulaModes.utmvc){
+        await this.setUtmvc({url : incapsulaModes.utmvc, payloadData : utmvc});
+        hasDoneUtmvc = true;
+      }
+
+      if(incapsulaModes.reese84){
+        await this.doReese84Mode({url : incapsulaModes.reese84, payloadData : reese84 });
+        hasDoneReese84 = true;
+      }
+
+
       if(incapsulaModes.iframe){
         const iframeUrl = incapsulaModes.iframe.url;
         const iframePage = await this.fetch(iframeUrl, {
@@ -71,25 +80,25 @@ class IncapsulaSession {
         const iframePageBody = await iframePage.text();
         const iframeModes = this.parseIncapsulaScripts(incapsulaModes.iframe.url, iframePageBody);
 
+        await this.doFaviconMode(url);
+
         switch(incapsulaModes.iframe.type){
           case 42:
-            //Reese84 only
-            if(iframeModes.reese84){
+
+            if(iframeModes.reese84 && !hasDoneReese84){
               await this.doReese84Mode({url : iframeModes.reese84, payloadData : reese84});
-              hasDoneReese84 = true;
             }
+
             break;
 
           case 31:
             //Captcha
-            if(iframeModes.utmvc){
+            if(iframeModes.utmvc && !hasDoneUtmvc){
               await this.setUtmvc(iframeModes.utmvc, utmvc);
-              hasDoneUtmvc = true;
             }
 
-            if(iframeModes.reese84){
+            if(iframeModes.reese84 && !hasDoneUtmvc){
               await this.doReese84Mode({url : iframeModes.reese84, payloadData : reese84});
-              hasDoneReese84 = true;
             }
 
             await this.doCaptchaMode({url : incapsulaModes.iframe.url, gCaptchaToken});
@@ -101,13 +110,6 @@ class IncapsulaSession {
             //To do: Implement captcha and banned state
         }
 
-      }
-      if(incapsulaModes.utmvc && !hasDoneUtmvc){
-        await this.setUtmvc({url : incapsulaModes.utmvc, payloadData : utmvc});
-      }
-
-      if(incapsulaModes.reese84 && !hasDoneReese84){
-        await this.doReese84Mode({url : incapsulaModes.reese84, payloadData : reese84 });
       }
 
       const mainPageRefresh = await this.fetch(url, { headers : this.getHeaders(`main`), agent : this.agent});
@@ -230,12 +232,7 @@ class IncapsulaSession {
     });
 
     const captchaPageBody = await captchaPage.text();
-    console.log(`captchaPageBody`, captchaPageBody, `url`, url);
     const submitCaptchaUrl = this.findCaptchaUrl(url, captchaPageBody);
-
-    console.log(`submitCaptchaUrl`, submitCaptchaUrl);
-
-    await this.doFaviconMode(new URL(url).origin);
 
     const getGCaptchaToken  = await inquirer.prompt({
       type : `input`,
@@ -260,7 +257,7 @@ class IncapsulaSession {
 
   async doFaviconMode(url){
     await this.fetch(`${new URL(url).origin}/favicon.ico`, {
-      headers : {...this.defaultHeaders, "Accept" : `image/avif,image/webp,*/*`},
+      headers : {...this.defaultHeaders, "accept" : `image/avif,image/webp,*/*`},
       agent : this.agent
     });
 
@@ -271,13 +268,13 @@ class IncapsulaSession {
     const defaultHeaders = {...this.defaultHeaders};
 
     if(pageType === `post`){
-      defaultHeaders[`Content-Type`] = `text/plain; charset=utf-8`;
+      defaultHeaders[`content-type`] = `text/plain; charset=utf-8`;
     }
 
     if(pageType === `main`){
-      defaultHeaders[`Accept`] = `text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9`;
+      defaultHeaders[`accept`] = `text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9`;
     }else{
-      defaultHeaders[`Accept`] =  `*/*`;
+      defaultHeaders[`accept`] =  `*/*`;
     }
 
     return defaultHeaders;
