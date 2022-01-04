@@ -32,6 +32,7 @@ function clearConcealedStringsPayload(ast){
       ){
         return;
       }
+
       const evaluatedNode = t.stringLiteral(vm.runInNewContext(generate(path.node).code, sandbox));
       path.replaceWith(evaluatedNode);
     }

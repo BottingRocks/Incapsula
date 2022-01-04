@@ -227,8 +227,31 @@ const FINDERS = {
       "languages_is_not_undefined" : {
         finder : function (path){
           return findInAssignment({path, valueToFind : `"languages") !== undefined`, mode : `endsWith`, siblingKey : 0});
-        }
-      }
+        },
+      },
+      "languages" : {
+        finder : function(path){
+          let found = false;
+          let value = undefined;
+
+          path.traverse({
+            IfStatement(ifPath){
+
+              const code = generate(ifPath.node.test).code;
+
+              if(!code.endsWith(`window["navigator"]["languages"] !== undefined`)){
+                return;
+              }
+              found = true;
+              const leftProp = ifPath.get(`consequent.body`).slice(-1)[0].get(`expression.left.property`);
+              value = getPropertyValue(leftProp);
+
+            }
+          });
+
+          return { found, value };
+        },
+      },
     }
   },
   "window_size" : {

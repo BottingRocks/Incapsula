@@ -17,7 +17,6 @@ function reverseEval(source){
 function decodeEval(ast){
 
   let newCode = null;
-
   traverse(ast, {
 
     Program(path){

@@ -47,8 +47,8 @@ class Utmvc {
   static deobfuscate(ast) {
 
     ast = decodeEval(ast);
-    ////*
     [
+      //decodeEval,
       replacePropertyHexLiterals,
       clearConcealedStringsUtmvc,
       replaceInliningFunctions,
@@ -57,7 +57,6 @@ class Utmvc {
       renameBrowserProperties,
       findUtmcvProperties
     ].map((t) => t(ast));
-    ///*/
 
 
   }
@@ -102,7 +101,6 @@ class Utmvc {
   }
 
   createPayloadUrl({payloadUrl}){
-
     const { origin } = new URL(payloadUrl);
     return `${origin}${this.ast.program.sandbox[`urls`][`timestamp`]}${Math.random()}`;
   }

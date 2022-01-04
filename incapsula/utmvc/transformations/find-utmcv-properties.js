@@ -1,6 +1,7 @@
 const btoa = require(`btoa`);
 const generate = require(`@babel/generator`).default;
 const t = require(`@babel/types`);
+const template = require(`@babel/template`).default;
 const traverse = require(`@babel/traverse`).default;
 const vm = require(`vm`);
 
@@ -156,10 +157,62 @@ function setUtmvcUrls(ast){
 
 }
 
+function setUtmvcToStringUniqueValue(ast){
+
+  let toStringUniqueValue = null;
+
+  traverse(ast, {
+    StringLiteral(path){
+
+      const value = path.node.value;
+
+      if(toStringUniqueValue !== null){
+        return;
+      }
+
+      if(!value.endsWith(`'.toString()`)){
+        return;
+      }
+
+      toStringUniqueValue = value.split(`'.toString()`)[0].slice(1);
+    }
+  });
+
+  if(toStringUniqueValue === null){
+    throw Error(`Could not find toStringUniqueValue`)
+  }
+
+
+  traverse(ast, {
+    FunctionDeclaration(path){
+
+      const name = path.node.id.name;
+
+      if(name !== `utmvcEncoder`){
+        return;
+      }
+
+      const firstParamName = path.get("params")[0].node.name;
+
+      const pushToStringUniqueValue = template.ast(`${firstParamName} += "'${toStringUniqueValue}'.toString()" + "%3D" + "${toStringUniqueValue}";`)
+      path.get('body').unshiftContainer('body', pushToStringUniqueValue);
+
+      //v3dd4f0686443507a0a5eaa007e3fc06982918c30ae6abf3d0f379c35913e0b8b'.toString()
+
+    }
+  });
+
+  return toStringUniqueValue;
+
+}
+
 function findUtmcvProperties(ast){
 
-  setUtmvcEncoderInSandbox(ast);
-  setUtmvcUrls(ast);
+  [
+    setUtmvcEncoderInSandbox,
+    setUtmvcToStringUniqueValue,
+    setUtmvcUrls,
+  ].map((t) => t(ast));
 
 }
 

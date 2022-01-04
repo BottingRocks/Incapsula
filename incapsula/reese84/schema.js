@@ -6,7 +6,8 @@ const PayloadSchema = {
     "navigator_languages" : {
       type : `object`,
       properties : {
-        "languages_is_not_undefined" : { type : `boolean`}
+        "languages_is_not_undefined" : { type : `boolean`},
+        "languages" : { type : `array`,items : { type : `string`}}
       }
     },
     "window_size" : {
