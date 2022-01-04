@@ -5,7 +5,6 @@ const DefaultUtmvcPayload = require("../incapsula/payloads/utmvc.js");
 const DefaultReese84Payload = require("../incapsula/payloads/reese84-firefox-linux.js");
 
 (async function(){
-  console.log(DefaultReese84Payload)
   //const session = new IncapsulaSession();
   const userAgent = `Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:95.0) Gecko/20100101 Firefox/95.0`;
   const session = new IncapsulaSession({proxyUrl : `http://192.168.122.1:8888`, userAgent});

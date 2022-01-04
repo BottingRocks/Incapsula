@@ -87,7 +87,7 @@ class Reese84 {
 
     const error = options.error || null;
     const oldToken = options.old_token || null;
-    const interrogation = options.interrogation || (Math.random() * (299 - 280) + 280);
+    const interrogation = options.interrogation || (Math.random() * (399 - 180) + 180);
     const cr = options.cr || (Math.random() * 1073741824 | 0);
     const version = options.version || `stable`;
 
@@ -125,7 +125,6 @@ class Reese84 {
       //Replace any byte encoded strings
       mutatedData = mutatedData.replace(byteRegex, byteIndex);
       //Apply the series of encoder loops, and returns the result as a Base64 string
-      console.log(`byteregex mutatedData`, mutatedData)
       mutatedData = encoder(mutatedData, xor);
 
       return mutatedData;

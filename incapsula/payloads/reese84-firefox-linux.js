@@ -1,36 +1,4 @@
-const random = (min, max) => Math.floor(Math.random() * (max - min) + min);
-const random_window_screen_avail_height = random(100, 1080);
-const random_window_screen_avail_left = random(0,30);
-const random_window_screen_avail_top = random(0, 30);
-const random_window_screen_avail_width = random(1000, 1920);
-const random_window_screen_pixel_depth = 24;
-const random_window_inner_width = random(1000, 1920)
-const random_window_inner_height = random(100, 1080);
-const random_window_outer_width = random(1000, 1920);
-const random_window_outer_height = random(100, 1080)
-const random_window_device_pixel_ratio = 1;
-const random_window_screenX = random(0, 30);
-const random_window_screenY = random(0, 30);
-/*
 
-  "window_size": {
-    "window_screen_width": 1920,
-    "window_screen_height": 1080,
-    "window_screen_avail_height": random_window_screen_avail_height,
-    "window_screen_avail_left": random_window_screen_avail_left,
-    "window_screen_avail_top": random_window_screen_avail_top,
-    "window_screen_avail_width": random_window_screen_avail_width,
-    "window_screen_pixel_depth": 24,
-    "window_inner_width": random_window_inner_width,
-    "window_inner_height": random_window_inner_height,
-    "window_outer_width": random_window_outer_width,
-    "window_outer_height": random_window_outer_height,
-    "window_device_pixel_ratio": 1,
-    "window_screen_orientation_type": "landscape-primary",
-    "window_screenX": random_window_screenX,
-    "window_screenY": random_window_screenY
-  }
-  */
 
 module.exports = {
   "user_agent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:95.0) Gecko/20100101 Firefox/95.0",
