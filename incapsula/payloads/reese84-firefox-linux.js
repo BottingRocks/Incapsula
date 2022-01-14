@@ -1,11 +1,9 @@
-
-
 module.exports = {
   "user_agent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:95.0) Gecko/20100101 Firefox/95.0",
   "navigator_language": "en-US",
   "navigator_languages": {
     "languages_is_not_undefined": false,
-    "languages" : ["en-US", "en"],
+    "languages": ["en-US", "en"],
   },
   "window_size": {
     "window_screen_width": 1920,
@@ -16,7 +14,7 @@ module.exports = {
     "window_screen_avail_width": 1920,
     "window_screen_pixel_depth": 24,
     "window_inner_width": 1920,
-    "window_inner_height": 968,
+    "window_inner_height": 928,
     "window_outer_width": 1920,
     "window_outer_height": 1053,
     "window_device_pixel_ratio": 1,
@@ -27,7 +25,7 @@ module.exports = {
   "date_get_time_zone_off_set": -8,
   "has_indexed_db": true,
   "has_body_add_behaviour": false,
-  "open_database": true,
+  "open_database": false,
   "cpu_class": "unknown",
   "platform": "Linux x86_64",
   "do_not_track": "unspecified",
@@ -41,10 +39,10 @@ module.exports = {
     "is_point_in_path": true,
     "to_data_url_image": false,
     "screen_is_global_composite_operation": true,
-    "hash": "d0484475ca3fce85bdcff3af3de3d5ec39218f5d"
+    "hash": "d965be4d6f29c9909382079515b403e1b7b7993e"
   },
   "webgl": {
-    "canvas_hash": "8d37e15cc9363584537e76e4d202a7e8e811da59",
+    "canvas_hash": "591b6cb24cc15bedd7bc331bf5f7cbfc8b3c28c6",
     "get_supported_extensions": "ANGLE_instanced_arrays;EXT_blend_minmax;EXT_color_buffer_half_float;EXT_float_blend;EXT_frag_depth;EXT_shader_texture_lod;EXT_sRGB;EXT_texture_compression_bptc;EXT_texture_compression_rgtc;EXT_texture_filter_anisotropic;OES_element_index_uint;OES_fbo_render_mipmap;OES_standard_derivatives;OES_texture_float;OES_texture_float_linear;OES_texture_half_float;OES_texture_half_float_linear;OES_vertex_array_object;WEBGL_color_buffer_float;WEBGL_compressed_texture_etc;WEBGL_compressed_texture_s3tc;WEBGL_compressed_texture_s3tc_srgb;WEBGL_debug_renderer_info;WEBGL_debug_shaders;WEBGL_depth_texture;WEBGL_draw_buffers;WEBGL_lose_context",
     "aliased_line_width_range": [
       1,
@@ -131,65 +129,6 @@ module.exports = {
     "has_touch_event": false,
     "on_touch_start_is_undefined": false
   },
-  "navigator_vendor": "",
-  "navigator_product": "Gecko",
-  "navigator_product_sub": "20100101",
-  "document": {
-    "document_location_protocol": "https:"
-  },
-  "canvas_fonts": [
-    "Batang",
-    "BitstreamVeraSansMono",
-    "MSMincho",
-    "MSUIGothic",
-    "MeiryoUI",
-    "PMingLiU"
-  ],
-  "document_children": {
-    "document_script_element_children": [
-      {
-        "src": "https://www.googletagmanager.com/gtm.js?id=GTM-NJ928NX&gtm_auth=lqNACcRAFumttoyg28lLuA&gtm_preview=env-2&gtm_cookies_win=x"
-      },
-      {
-        "src": "https://dd.pokemoncenter.com/tags.js"
-      },
-      {
-        "src": ""
-      }
-    ],
-    "document_head_element_children": [
-      {
-        "src": ""
-      },
-      {
-        "src": "https://www.pokemoncenter.com/kie-Yes-him-To-the-To-mocking-and-do-mise-I-prom"
-      },
-      {
-        "src": ""
-      },
-      {
-        "src": "https://www.pokemoncenter.com/_next/static/chunks/polyfills-a40ef1678bae11e696dba45124eadd70.js"
-      },
-      {
-        "src": "https://www.pokemoncenter.com/_next/static/chunks/7267.5e237644999fa66ed004.js"
-      },
-      {
-        "src": "https://www.pokemoncenter.com/_next/static/chunks/4720-e29c753df4908f64240f.js"
-      },
-      {
-        "src": "https://www.pokemoncenter.com/_next/static/chunks/2566.b5aa44d0d653034bf9a4.js"
-      },
-      {
-        "src": "https://www.pokemoncenter.com/_next/static/chunks/5912.01b2855afde83c71e36a.js"
-      },
-      {
-        "src": "https://www.pokemoncenter.com/_next/static/chunks/4162.415cfc5214f27934a666.js"
-      },
-      {
-        "src": "https://www.pokemoncenter.com/_next/static/chunks/2669.4a483191337335988d58.js"
-      }
-    ]
-  },
   "video": {
     "can_play_type_video_ogg": "probably",
     "can_play_type_video_mp4": "probably",
@@ -201,6 +140,9 @@ module.exports = {
     "can_play_type_audio_wav": "probably",
     "can_play_type_audio_xm4a": "maybe"
   },
+  "navigator_vendor": "",
+  "navigator_product": "Gecko",
+  "navigator_product_sub": "20100101",
   "browser": {
     "is_internet_explorer": false,
     "is_chrome": false,
@@ -228,14 +170,59 @@ module.exports = {
       ]
     }
   },
+  "document": {
+    "document_location_protocol": "https:"
+  },
+  "canvas_fonts": [
+    "Batang",
+    "BitstreamVeraSansMono",
+    "MSMincho",
+    "MSUIGothic",
+    "MeiryoUI",
+    "PMingLiU"
+  ],
+  "document_children": {
+    "document_script_element_children": [{
+      "src": "https://bam.nr-data.net/1/NRJS-0b4c0b6d1589af1f1ec?a=451260940&sa=1&v=1130.54e767a&t=Unnamed%20Transaction&rst=2863&ref=https://www.pokemoncenter.com/&be=453&fe=2832&dc=884&af=err,xhr,stn,ins,spa&perf=%7B%22timing%22:%7B%22of%22:1642130983434,%22n%22:0,%22f%22:0,%22dn%22:19,%22dne%22:19,%22c%22:19,%22s%22:19,%22ce%22:19,%22rq%22:21,%22rp%22:50,%22rpe%22:200,%22dl%22:213,%22di%22:491,%22ds%22:883,%22de%22:888,%22dc%22:2830,%22l%22:2830,%22le%22:2832%7D,%22navigation%22:%7B%7D%7D&fcp=648&jsonp=NREUM.setToken"
+    }, {
+      "src": "https://js-agent.newrelic.com/nr-spa-1130.min.js"
+    }, {
+      "src": "https://www.googletagmanager.com/gtm.js?id=GTM-NJ928NX&gtm_auth=lqNACcRAFumttoyg28lLuA&gtm_preview=env-2&gtm_cookies_win=x"
+    }, {
+      "src": "https://dd.pokemoncenter.com/tags.js"
+    }, {
+      "src": ""
+    }],
+    "document_head_element_children": [{
+      "src": ""
+    }, {
+      "src": "https://www.pokemoncenter.com/kie-Yes-him-To-the-To-mocking-and-do-mise-I-prom"
+    }, {
+      "src": ""
+    }, {
+      "src": "https://www.pokemoncenter.com/_next/static/chunks/polyfills-a40ef1678bae11e696dba45124eadd70.js"
+    }, {
+      "src": "https://www.pokemoncenter.com/_next/static/chunks/7267.5e237644999fa66ed004.js"
+    }, {
+      "src": "https://www.pokemoncenter.com/_next/static/chunks/4720-e29c753df4908f64240f.js"
+    }, {
+      "src": "https://www.pokemoncenter.com/_next/static/chunks/2566.b5aa44d0d653034bf9a4.js"
+    }, {
+      "src": "https://www.pokemoncenter.com/_next/static/chunks/5912.e10b3ebee1f711dc713b.js"
+    }, {
+      "src": "https://www.pokemoncenter.com/_next/static/chunks/4162.415cfc5214f27934a666.js"
+    }, {
+      "src": "https://www.pokemoncenter.com/_next/static/chunks/2669.4a483191337335988d58.js"
+    }]
+  },
   "webgl_rendering_call": {
     "webgl_rendering_context_prototype_get_parameter_call_a": false,
     "webgl_rendering_context_prototype_get_parameter_call_b": false
   },
   "window_object_get_own_property_names": "SVGComponentTransferFunctionElement;;;MediaStreamTrackAudioSourceNode;;;MediaStreamAudioDestinationNode;;;AuthenticatorAssertionResponse;;;SVGAnimatedPreserveAspectRatio;;;AuthenticatorAttestationResponse;;;2f1acc6c3a606b082e5eef5e54414ffb",
   "visual_view_port": {
-    "visual_view_port_width": 1920,
-    "visual_view_port_height": 968,
+    "visual_view_port_width": 1908,
+    "visual_view_port_height": 928,
     "visual_view_port_scale": 1
   }
 };

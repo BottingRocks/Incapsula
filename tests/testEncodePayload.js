@@ -1,6 +1,6 @@
 const Reese84 = require(`../incapsula/reese84/reese84.js`);
 const fs = require(`fs`);
-const DEFAULT_REESE84_PAYLOAD = require(`../incapsula/payloads/reese84.js`);
+const DEFAULT_REESE84_PAYLOAD = require(`../incapsula/payloads/reese84-firefox-linux.js`);
 const { fromFile } = require(`../incapsula/ast.js`);
 
 
@@ -14,9 +14,9 @@ const options = {
   error : null,
   oldToken : null,
   interrogation : 1,
-  cr : 99999,
+  cr : 9333742224,
   version : `stable`,
 
 };
 const encodedPayload = reese84.createPayload(DEFAULT_REESE84_PAYLOAD, options);
-console.log(`[${JSON.stringify(encodedPayload)}]`)
+console.log(`[${encodedPayload}]`);
