@@ -37,12 +37,15 @@
     "hpagent": "^0.1.1",
     "https-proxy-agent": "^5.0.0",
     "inquirer": "^7.3.3",
+    "javascript-stringify": "^2.1.0",
     "jsdom": "^18.0.1",
+    "json-schema-traverse": "^0.4.1",
     "lodash": "^4.17.20",
     "node-fetch": "^2.6.5",
     "recaptcha-harvester": "^0.0.4",
     "reds": "^1.0.0",
     "ref-napi": "^3.0.3",
+    "ua-parser-js": "^1.0.2",
     "window": "^4.2.7"
   },
   "devDependencies": {

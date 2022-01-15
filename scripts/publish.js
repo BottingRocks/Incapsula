@@ -62,7 +62,6 @@ async function createRelease({ filename, filetype, filesize, version, digest }) 
 
   const { data, errors } = await res.json()
   if (errors) {
-    console.log(`errors`, errors)
     throw new Error(`failed to create release for ${filename}`, errors)
   }
 
