@@ -102,7 +102,7 @@ class IncapsulaSession {
             if(iframeModes.reese84 && !hasDoneUtmvc){
               await this.doReese84Mode({url : iframeModes.reese84, payloadData : reese84, referer : iframeUrl});
             }
-            console.log(`doing captchas`)
+            console.log(`doing captchas`);
             await this.doCaptchaMode({url : incapsulaModes.iframe.url});
 
             break;
@@ -309,73 +309,73 @@ class IncapsulaSession {
     const cookies = this.getCookies(url);
 
     switch(pageType){
-      case 'main':
+      case `main`:
         return {
-          'Host': new URL(url).host,
-          'User-Agent': this.userAgent,
-          'Accept': `text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8`,
-          'Accept-Language': `en-US,en;q=0.5`,
-          'Accept-Encoding': `gzip, deflate, br`,
-          'Connection': `keep-alive`,
-          'Upgrade-Insecure-Requests': `1`,
-          'Sec-Fetch-Dest': `document`,
-          'Sec-Fetch-Mode': `navigate`,
-          'Sec-Fetch-Site': `none`,
-          'Sec-Fetch-User': `?1`
+          'Host' : new URL(url).host,
+          'User-Agent' : this.userAgent,
+          'Accept' : `text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8`,
+          'Accept-Language' : `en-US,en;q=0.5`,
+          'Accept-Encoding' : `gzip, deflate, br`,
+          'Connection' : `keep-alive`,
+          'Upgrade-Insecure-Requests' : `1`,
+          'Sec-Fetch-Dest' : `document`,
+          'Sec-Fetch-Mode' : `navigate`,
+          'Sec-Fetch-Site' : `none`,
+          'Sec-Fetch-User' : `?1`
         };
-      case 'refresh':
+      case `refresh`:
         return {
-          'Host': new URL(url).host,
-          'User-Agent': this.userAgent,
-          'Accept': `text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8`,
-          'Accept-Language': `en-US,en;q=0.5`,
-          'Accept-Encoding': `gzip, deflate, br`,
-          'Connection': `keep-alive`,
-          'Cookie' : '',
-          'Upgrade-Insecure-Requests': `1`,
-          'Sec-Fetch-Dest': `document`,
-          'Sec-Fetch-Mode': `navigate`,
-          'Sec-Fetch-Site': `cross-site`,
-          'Pragma': `no-cache`,
-          'Cache-Control': `no-cache`,
+          'Host' : new URL(url).host,
+          'User-Agent' : this.userAgent,
+          'Accept' : `text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8`,
+          'Accept-Language' : `en-US,en;q=0.5`,
+          'Accept-Encoding' : `gzip, deflate, br`,
+          'Connection' : `keep-alive`,
+          'Cookie' : ``,
+          'Upgrade-Insecure-Requests' : `1`,
+          'Sec-Fetch-Dest' : `document`,
+          'Sec-Fetch-Mode' : `navigate`,
+          'Sec-Fetch-Site' : `cross-site`,
+          'Pragma' : `no-cache`,
+          'Cache-Control' : `no-cache`,
         };
-      case 'utmvc-image':
+      case `utmvc-image`:
         return {
-          'Host': new URL(url).host,
-          'User-Agent': this.userAgent,
+          'Host' : new URL(url).host,
+          'User-Agent' : this.userAgent,
           'Accept' : `image/avif,image/webp,*/*`,
-          'Accept-Language': `en-US,en;q=0.5`,
-          'Accept-Encoding': `gzip, deflate, br`,
+          'Accept-Language' : `en-US,en;q=0.5`,
+          'Accept-Encoding' : `gzip, deflate, br`,
           'Referer' : referer,
-          'Connection': `keep-alive`,
-          'Cookie' : '',
+          'Connection' : `keep-alive`,
+          'Cookie' : ``,
           'Sec-Fetch-Dest' : `image`,
           'Sec-Fetch-Mode' : `no-cors`,
           'Sec-Fetch-Site' : `same-origin`,
         };
-      case 'utmvc':
-      case 'reese84':
+      case `utmvc`:
+      case `reese84`:
         return {
-          'Host': new URL(url).host,
-          'User-Agent': this.userAgent,
+          'Host' : new URL(url).host,
+          'User-Agent' : this.userAgent,
           'Accept' : `*/*`,
-          'Accept-Language': `en-US,en;q=0.5`,
-          'Accept-Encoding': `gzip, deflate, br`,
+          'Accept-Language' : `en-US,en;q=0.5`,
+          'Accept-Encoding' : `gzip, deflate, br`,
           'Referer' : referer,
-          'Connection': `keep-alive`,
-          'Cookie' : '',
+          'Connection' : `keep-alive`,
+          'Cookie' : ``,
           'Sec-Fetch-Dest' : `script`,
           'Sec-Fetch-Mode' : `no-cors`,
           'Sec-Fetch-Site' : `same-origin`,
         };
-      case 'reese84Create':
-      case 'reese84Update':
+      case `reese84Create`:
+      case `reese84Update`:
         return {
-          'Host': new URL(url).host,
+          'Host' : new URL(url).host,
           'Connection' : `keep-alive`,
           'Accept' : `application/json; charset=utf-8`,
           'Content-Type' : `text/plain; charset=utf-8`,
-          'User-Agent': this.userAgent,
+          'User-Agent' : this.userAgent,
           'Origin' : new URL(url).origin,
           'Sec-Fetch-Site' : `same-origin`,
           'Sec-Fetch-Mode' : `cors`,
@@ -383,39 +383,39 @@ class IncapsulaSession {
           'Referer' : referer,
           'Accept-Encoding' : `gzip, deflate, br`,
           'Accept-Language' : `en-US,en;q=0.5`,
-          'Cookie' : '',
+          'Cookie' : ``,
         };
 
-      case 'favicon':
+      case `favicon`:
         return {
-          'Host': new URL(url).host,
-          'User-Agent': this.userAgent,
+          'Host' : new URL(url).host,
+          'User-Agent' : this.userAgent,
           'Accept' : `image/avif,image/webp,*/*`,
-          'Accept-Language': `en-US,en;q=0.5`,
-          'Accept-Encoding': `gzip, deflate, br`,
+          'Accept-Language' : `en-US,en;q=0.5`,
+          'Accept-Encoding' : `gzip, deflate, br`,
           'Referer' : referer,
-          'Connection': `keep-alive`,
-          'Cookie' : '',
+          'Connection' : `keep-alive`,
+          'Cookie' : ``,
           'Sec-Fetch-Dest' : `image`,
           'Sec-Fetch-Mode' : `no-cors`,
           'Sec-Fetch-Site' : `same-origin`,
         };
-      case 'iframe':
+      case `iframe`:
         return {
-          'Host': new URL(url).host,
-          'User-Agent': this.userAgent,
+          'Host' : new URL(url).host,
+          'User-Agent' : this.userAgent,
           'Accept' : `text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8`,
-          'Accept-Language': `en-US,en;q=0.5`,
-          'Accept-Encoding': `gzip, deflate, br`,
+          'Accept-Language' : `en-US,en;q=0.5`,
+          'Accept-Encoding' : `gzip, deflate, br`,
           'Referer' : referer,
-          'Connection': `keep-alive`,
-          'Cookie' : '',
-          'Upgrade-Insecure-Requests': `1`,
-          'Sec-Fetch-Dest': `iframe`,
-          'Sec-Fetch-Mode': `navigate`,
-          'Sec-Fetch-Site': `same-origin`,
-        }
-      case 'captcha':
+          'Connection' : `keep-alive`,
+          'Cookie' : ``,
+          'Upgrade-Insecure-Requests' : `1`,
+          'Sec-Fetch-Dest' : `iframe`,
+          'Sec-Fetch-Mode' : `navigate`,
+          'Sec-Fetch-Site' : `same-origin`,
+        };
+      case `captcha`:
         return {
 
         };

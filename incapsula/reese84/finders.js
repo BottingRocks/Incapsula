@@ -19,7 +19,7 @@ function findFirstBtoaBackwards(p) {
     const code = generate(_p.node).code;
 
     if(code.match(/var (.*?) = window\.btoa\((.*?).join\(""\)\);/)){
-    return _p;
+      return _p;
     }
 
     _p = _p.getPrevSibling();
@@ -36,7 +36,7 @@ function findFirstBtoaForwards(p) {
     const code = generate(_p.node).code;
 
     if(code.match(/var (.*?) = window\.btoa\((.*?).join\(""\)\);/)){
-    return _p;
+      return _p;
     }
 
     _p = _p.getNextSibling();
@@ -498,12 +498,12 @@ const FINDERS = {
     let found = false;
     let value = undefined;
 
-    canvas_hash.path.traverse({
+    path.traverse({
       ExpressionStatement(expPath){
         const code = generate(expPath.node).code;
 
         if(!code.endsWith(`["stopInternal"]("canvas_d");`)){
-          canvas_hash.return;
+          return;
         }
 
         found = true;
@@ -607,7 +607,7 @@ const FINDERS = {
     return { found, value };
   },
   "webgl.canvas_hash_error" : function(path) {
-
+    let found = false;
     let value = undefined;
 
     path.traverse({
@@ -1186,23 +1186,23 @@ const FINDERS = {
     return { found, value };
   },
   "document_children.document_head_element_children" : function(path) {
-      let found = false;
-      let value = undefined;
+    let found = false;
+    let value = undefined;
 
-      path.traverse({
-        ForInStatement(forPath){
+    path.traverse({
+      ForInStatement(forPath){
 
-          const code = generate(forPath.get(`right`).node).code;
+        const code = generate(forPath.get(`right`).node).code;
 
-          if(!(code.endsWith(`window["document"]["head"]["children"]`))){
-            return;
-          }
-
-          found = true;
-          const leftProp = forPath.getSibling(forPath.key + 2).get(`expression.left.property`);
-          value = getPropertyValue(leftProp);
+        if(!(code.endsWith(`window["document"]["head"]["children"]`))){
+          return;
         }
-      });
+
+        found = true;
+        const leftProp = forPath.getSibling(forPath.key + 2).get(`expression.left.property`);
+        value = getPropertyValue(leftProp);
+      }
+    });
 
     return { found, value };
   },
@@ -1237,7 +1237,7 @@ const FINDERS = {
       while(_p.node !== undefined){
 
         if(_p.type === `TryStatement`){
-      return _p;
+          return _p;
         }
         _p = _p.getPrevSibling();
       }
@@ -1270,7 +1270,7 @@ const FINDERS = {
       while(_p.node !== undefined){
 
         if(_p.type === `TryStatement`){
-      return _p;
+          return _p;
         }
         _p = _p.getPrevSibling();
       }

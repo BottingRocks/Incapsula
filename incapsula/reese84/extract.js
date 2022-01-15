@@ -1,7 +1,7 @@
 const generate = require(`@babel/generator`).default;
+const jtraverse = require(`json-schema-traverse`);
 const t = require(`@babel/types`);
 const traverse = require(`@babel/traverse`).default;
-const jtraverse = require('json-schema-traverse');
 
 const atob = require(`atob`);
 const btoa = require(`btoa`);
@@ -39,7 +39,7 @@ function createEncoderFromPath({
     const staticXor = path.getSibling(path.key - 3).get(`declarations.0.init.arguments.0.value`).node;
 
     return {
-      "encoder": function (xor) {
+      "encoder" : function (xor) {
 
         const xored = xorShift128(staticXor, xor);
 
@@ -53,7 +53,7 @@ function createEncoderFromPath({
 
         return bytes;
       },
-      "decoder": function (xor) {
+      "decoder" : function (xor) {
 
         const xored = xorShift128(staticXor, xor);
 
@@ -75,7 +75,7 @@ function createEncoderFromPath({
   const handleWhileCharCodeAt = (path) => {
 
     return {
-      "encoder": function (data, xor) {
+      "encoder" : function (data, xor) {
 
         const newData = [];
 
@@ -88,7 +88,7 @@ function createEncoderFromPath({
 
         return newData;
       },
-      "decoder": function (data, xor) {
+      "decoder" : function (data, xor) {
 
         const newData = [];
 
@@ -110,7 +110,7 @@ function createEncoderFromPath({
     const xorIndex = path.get(`body.body.0.expression.arguments.0.property.left.right.property.value`).node;
 
     return {
-      "encoder": function (data, xor) {
+      "encoder" : function (data, xor) {
 
         const newData = [];
 
@@ -121,7 +121,7 @@ function createEncoderFromPath({
         return newData;
 
       },
-      "decoder": function (data, xor) {
+      "decoder" : function (data, xor) {
 
         const tail = [...data];
         const head = [];
@@ -141,11 +141,11 @@ function createEncoderFromPath({
   const handleWhilePushToArrayReverse = (path) => {
 
     return {
-      "encoder": function (data, xor) {
+      "encoder" : function (data, xor) {
 
         return [...data.reverse()];
       },
-      "decoder": function (data, xor) {
+      "decoder" : function (data, xor) {
         return [...data.reverse()];
       },
       type
@@ -159,7 +159,7 @@ function createEncoderFromPath({
     const endSlice = path.get(`body.body.1.expression.arguments.0.object.arguments.1.value`).node;
 
     return {
-      "encoder": function (data, xor) {
+      "encoder" : function (data, xor) {
 
         const newData = [];
 
@@ -175,7 +175,7 @@ function createEncoderFromPath({
 
         return newData;
       },
-      "decoder": function (data, xor) {
+      "decoder" : function (data, xor) {
         return [...data.filter((d, i) => !(i % 2))];
       },
       type
@@ -184,7 +184,7 @@ function createEncoderFromPath({
   //Good
   const handleWhileSwapValues = (path) => {
     return {
-      "encoder": function (data, xor) {
+      "encoder" : function (data, xor) {
 
         const newData = [...data];
 
@@ -199,7 +199,7 @@ function createEncoderFromPath({
         return newData;
 
       },
-      "decoder": function (data, xor) {
+      "decoder" : function (data, xor) {
 
         const newData = [...data];
 
@@ -221,10 +221,10 @@ function createEncoderFromPath({
 
   const handleWhileFromCharCode = (path) => {
     return {
-      "encoder": function (data, xor) {
+      "encoder" : function (data, xor) {
         return [...data.map((d) => String.fromCharCode(d))];
       },
-      "decoder": function (data, xor) {
+      "decoder" : function (data, xor) {
         return [...data.map((d) => d.charCodeAt(0))];
       },
       type
@@ -238,7 +238,7 @@ function createEncoderFromPath({
     const endSlice = path.get(`body.body.1.declarations.0.init.object.arguments.1.value`).node;
 
     return {
-      "encoder": function (data, xor) {
+      "encoder" : function (data, xor) {
 
         const newData = [];
 
@@ -252,7 +252,7 @@ function createEncoderFromPath({
         return newData;
 
       },
-      "decoder": function (data, xor) {
+      "decoder" : function (data, xor) {
 
         const newData = [];
 
@@ -271,11 +271,11 @@ function createEncoderFromPath({
   //Good
   const handleForFromCharCode = (path) => {
     return {
-      "encoder": function (data, xor) {
+      "encoder" : function (data, xor) {
 
         return [...data.map((d) => String.fromCharCode(d))];
       },
-      "decoder": function (data, xor) {
+      "decoder" : function (data, xor) {
         return [...data].map((d, i) => d.charCodeAt(0));
       },
       type
@@ -286,10 +286,10 @@ function createEncoderFromPath({
   const handleforOrTopByBottom = (path) => {
 
     return {
-      "encoder": function (data, xor) {
+      "encoder" : function (data, xor) {
         return [...data.map((d) => d << 4 & 240 | d >> 4)];
       },
-      "decoder": function (data, xor) {
+      "decoder" : function (data, xor) {
         return [...data.map((d) => d << 4 & 240 | d >> 4)];
 
       },
@@ -300,10 +300,10 @@ function createEncoderFromPath({
   //Good
   const handleForPushToArray = (path) => {
     return {
-      "encoder": function (data, xor) {
+      "encoder" : function (data, xor) {
         return [...data];
       },
-      "decoder": function (data, xor) {
+      "decoder" : function (data, xor) {
         return [...data];
       },
       type
@@ -544,8 +544,8 @@ function getXorEncoderFromPath(path) {
       if (encoderType) {
         loopEncoders.push(
           createEncoderFromPath({
-            path: currentPath,
-            type: encoderType
+            path : currentPath,
+            type : encoderType
           }),
         );
       }
@@ -557,10 +557,10 @@ function getXorEncoderFromPath(path) {
   const nextPath = [undefined, null].includes(currentPath) ? false : currentPath;
 
   encoders.push({
-    "var": encoderVar,
-    "encoders": loopEncoders,
-    "nextPath": nextPath,
-    "path": t.blockStatement(paths.map((p) => p.node))
+    "var" : encoderVar,
+    "encoders" : loopEncoders,
+    "nextPath" : nextPath,
+    "path" : t.blockStatement(paths.map((p) => p.node))
   });
 
   return encoders;
@@ -569,7 +569,7 @@ function getXorEncoderFromPath(path) {
 
 function buildEncoderAndDecoder(encoders) {
   return {
-    "encoder": function (data, xor) {
+    "encoder" : function (data, xor) {
       const _encs = [...encoders];
       const firstEncoder = _encs.shift()[`encoder`];
       const xored = firstEncoder(xor);
@@ -587,7 +587,7 @@ function buildEncoderAndDecoder(encoders) {
       return btoa(mutable.join(``));
 
     },
-    "decoder": function (data, xor) {
+    "decoder" : function (data, xor) {
 
       const _encs = [...encoders];
       const xored = _encs.shift()[`decoder`](xor);
@@ -694,167 +694,167 @@ function extractSignalsKeys(ast) {
   };
 
   return {
-    'user_agent' : getValue('user_agent'),
-    'navigator_language' : getValue('navigator_language'),
-    'navigator_languages' : getValue('navigator_languages'),
-    'navigator_languages.languages_is_not_undefined' : getValue('navigator_languages.languages_is_not_undefined'),
-    'navigator_languages.languages' : getValue('navigator_languages.languages'),
-    'window_size' : getValue('window_size'),
-    'window_size.window_screen_width' : getValue('window_size.window_screen_width'),
-    'window_size.window_screen_height' : getValue('window_size.window_screen_height'),
-    'window_size.window_screen_avail_height' : getValue('window_size.window_screen_avail_height'),
-    'window_size.window_screen_avail_left' : getValue('window_size.window_screen_avail_left'),
-    'window_size.window_screen_avail_top' : getValue('window_size.window_screen_avail_top'),
-    'window_size.window_screen_avail_width' : getValue('window_size.window_screen_avail_width'),
-    'window_size.window_screen_pixel_depth' : getValue('window_size.window_screen_pixel_depth'),
-    'window_size.window_inner_width' : getValue('window_size.window_inner_width'),
-    'window_size.window_inner_height' : getValue('window_size.window_inner_height'),
-    'window_size.window_outer_width' : getValue('window_size.window_outer_width'),
-    'window_size.window_outer_height' : getValue('window_size.window_outer_height'),
-    'window_size.window_device_pixel_ratio' : getValue('window_size.window_device_pixel_ratio'),
-    'window_size.window_screen_orientation_type' : getValue('window_size.window_screen_orientation_type'),
-    'window_size.window_screenX' : getValue('window_size.window_screenX'),
-    'window_size.window_screenY' : getValue('window_size.window_screenY'),
-    'date_get_time_zone_off_set' : getValue('date_get_time_zone_off_set'),
-    'has_indexed_db' : getValue('has_indexed_db'),
-    'has_body_add_behaviour' : getValue('has_body_add_behaviour'),
-    'open_database' : getValue('open_database'),
-    'cpu_class' : getValue('cpu_class'),
-    'platform' : getValue('platform'),
-    'do_not_track' : getValue('do_not_track'),
-    'plugins_or_active_x_object' : getValue('plugins_or_active_x_object'),
-    'plugins_named_item_item_refresh' : getValue('plugins_named_item_item_refresh'),
-    'plugins_named_item_item_refresh.named_item' : getValue('plugins_named_item_item_refresh.named_item'),
-    'plugins_named_item_item_refresh.item' : getValue('plugins_named_item_item_refresh.item'),
-    'plugins_named_item_item_refresh.refresh' : getValue('plugins_named_item_item_refresh.refresh'),
-    'canvas_hash' : getValue('canvas_hash'),
-    'canvas_hash.is_point_in_path' : getValue('canvas_hash.is_point_in_path'),
-    'canvas_hash.to_data_url_image' : getValue('canvas_hash.to_data_url_image'),
-    'canvas_hash.screen_is_global_composite_operation' : getValue('canvas_hash.screen_is_global_composite_operation'),
-    'canvas_hash.hash' : getValue('canvas_hash.hash'),
-    'webgl' : getValue('webgl'),
-    'webgl.canvas_hash' : getValue('webgl.canvas_hash'),
-    'webgl.get_supported_extensions' : getValue('webgl.get_supported_extensions'),
-    'webgl.aliased_line_width_range' : getValue('webgl.aliased_line_width_range'),
-    'webgl.aliased_point_size_range' : getValue('webgl.aliased_point_size_range'),
-    'webgl.alpha_bits' : getValue('webgl.alpha_bits'),
-    'webgl.antialias' : getValue('webgl.antialias'),
-    'webgl.blue_bits' : getValue('webgl.blue_bits'),
-    'webgl.depth_bits' : getValue('webgl.depth_bits'),
-    'webgl.green_bits' : getValue('webgl.green_bits'),
-    'webgl.all_bits' : getValue('webgl.all_bits'),
-    'webgl.max_combined_texture_image_units' : getValue('webgl.max_combined_texture_image_units'),
-    'webgl.max_cube_map_texture_size' : getValue('webgl.max_cube_map_texture_size'),
-    'webgl.max_fragment_uniform_vectors' : getValue('webgl.max_fragment_uniform_vectors'),
-    'webgl.max_renderbuffer_size' : getValue('webgl.max_renderbuffer_size'),
-    'webgl.max_texture_image_units' : getValue('webgl.max_texture_image_units'),
-    'webgl.max_texture_size' : getValue('webgl.max_texture_size'),
-    'webgl.max_varying_vectors' : getValue('webgl.max_varying_vectors'),
-    'webgl.max_vertex_attribs' : getValue('webgl.max_vertex_attribs'),
-    'webgl.max_vertex_texture_image_units' : getValue('webgl.max_vertex_texture_image_units'),
-    'webgl.max_vertex_uniform_vectors' : getValue('webgl.max_vertex_uniform_vectors'),
-    'webgl.max_viewport_dims' : getValue('webgl.max_viewport_dims'),
-    'webgl.red_bits' : getValue('webgl.red_bits'),
-    'webgl.renderer' : getValue('webgl.renderer'),
-    'webgl.shading_language_version' : getValue('webgl.shading_language_version'),
-    'webgl.stencil_bits' : getValue('webgl.stencil_bits'),
-    'webgl.vendor' : getValue('webgl.vendor'),
-    'webgl.version' : getValue('webgl.version'),
-    'webgl.shader_precision_vertex_high_float' : getValue('webgl.shader_precision_vertex_high_float'),
-    'webgl.shader_precision_vertex_high_float_min' : getValue('webgl.shader_precision_vertex_high_float_min'),
-    'webgl.shader_precision_vertex_high_float_max' : getValue('webgl.shader_precision_vertex_high_float_max'),
-    'webgl.shader_precision_vertex_medium_float' : getValue('webgl.shader_precision_vertex_medium_float'),
-    'webgl.shader_precision_vertex_medium_float_min' : getValue('webgl.shader_precision_vertex_medium_float_min'),
-    'webgl.shader_precision_vertex_medium_float_max' : getValue('webgl.shader_precision_vertex_medium_float_max'),
-    'webgl.shader_precision_vertex_low_float' : getValue('webgl.shader_precision_vertex_low_float'),
-    'webgl.shader_precision_vertex_low_float_min' : getValue('webgl.shader_precision_vertex_low_float_min'),
-    'webgl.shader_precision_vertex_low_float_max' : getValue('webgl.shader_precision_vertex_low_float_max'),
-    'webgl.shader_precision_fragment_high_float' : getValue('webgl.shader_precision_fragment_high_float'),
-    'webgl.shader_precision_fragment_high_float_min' : getValue('webgl.shader_precision_fragment_high_float_min'),
-    'webgl.shader_precision_fragment_high_float_max' : getValue('webgl.shader_precision_fragment_high_float_max'),
-    'webgl.shader_precision_fragment_medium_float' : getValue('webgl.shader_precision_fragment_medium_float'),
-    'webgl.shader_precision_fragment_medium_float_min' : getValue('webgl.shader_precision_fragment_medium_float_min'),
-    'webgl.shader_precision_fragment_medium_float_max' : getValue('webgl.shader_precision_fragment_medium_float_max'),
-    'webgl.shader_precision_fragment_low_float' : getValue('webgl.shader_precision_fragment_low_float'),
-    'webgl.shader_precision_fragment_low_float_min' : getValue('webgl.shader_precision_fragment_low_float_min'),
-    'webgl.shader_precision_fragment_low_float_max' : getValue('webgl.shader_precision_fragment_low_float_max'),
-    'webgl.shader_precision_vertex_high_int' : getValue('webgl.shader_precision_vertex_high_int'),
-    'webgl.shader_precision_vertex_high_int_min' : getValue('webgl.shader_precision_vertex_high_int_min'),
-    'webgl.shader_precision_vertex_high_int_max' : getValue('webgl.shader_precision_vertex_high_int_max'),
-    'webgl.shader_precision_vertex_medium_int' : getValue('webgl.shader_precision_vertex_medium_int'),
-    'webgl.shader_precision_vertex_medium_int_min' : getValue('webgl.shader_precision_vertex_medium_int_min'),
-    'webgl.shader_precision_vertex_medium_int_max' : getValue('webgl.shader_precision_vertex_medium_int_max'),
-    'webgl.shader_precision_vertex_low_int' : getValue('webgl.shader_precision_vertex_low_int'),
-    'webgl.shader_precision_vertex_low_int_min' : getValue('webgl.shader_precision_vertex_low_int_min'),
-    'webgl.shader_precision_vertex_low_int_max' : getValue('webgl.shader_precision_vertex_low_int_max'),
-    'webgl.shader_precision_fragment_high_int' : getValue('webgl.shader_precision_fragment_high_int'),
-    'webgl.shader_precision_fragment_high_int_min' : getValue('webgl.shader_precision_fragment_high_int_min'),
-    'webgl.shader_precision_fragment_high_int_max' : getValue('webgl.shader_precision_fragment_high_int_max'),
-    'webgl.shader_precision_fragment_medium_int' : getValue('webgl.shader_precision_fragment_medium_int'),
-    'webgl.shader_precision_fragment_medium_int_min' : getValue('webgl.shader_precision_fragment_medium_int_min'),
-    'webgl.shader_precision_fragment_medium_int_max' : getValue('webgl.shader_precision_fragment_medium_int_max'),
-    'webgl.shader_precision_fragment_low_int' : getValue('webgl.shader_precision_fragment_low_int'),
-    'webgl.shader_precision_fragment_low_int_min' : getValue('webgl.shader_precision_fragment_low_int_min'),
-    'webgl.shader_precision_fragment_low_int_max' : getValue('webgl.shader_precision_fragment_low_int_max'),
-    'webgl.unmasked_vendor_webgl' : getValue('webgl.unmasked_vendor_webgl'),
-    'webgl.unmasked_renderer_webgl' : getValue('webgl.unmasked_renderer_webgl'),
-    'webgl_meta' : getValue('webgl_meta'),
-    'webgl_meta.webgl_rendering_context_get_parameter' : getValue('webgl_meta.webgl_rendering_context_get_parameter'),
-    'webgl_meta.is_native_webgl_rendering_context_get_parameter' : getValue('webgl_meta.is_native_webgl_rendering_context_get_parameter'),
-    'touch_event' : getValue('touch_event'),
-    'touch_event.max_touch_points' : getValue('touch_event.max_touch_points'),
-    'touch_event.has_touch_event' : getValue('touch_event.has_touch_event'),
-    'touch_event.on_touch_start_is_undefined' : getValue('touch_event.on_touch_start_is_undefined'),
-    'video' : getValue('video'),
-    'video.can_play_type_video_ogg' : getValue('video.can_play_type_video_ogg'),
-    'video.can_play_type_video_mp4' : getValue('video.can_play_type_video_mp4'),
-    'video.can_play_type_video_webm' : getValue('video.can_play_type_video_webm'),
-    'audio' : getValue('audio'),
-    'audio.can_play_type_audio_ogg' : getValue('audio.can_play_type_audio_ogg'),
-    'audio.can_play_type_audio_mpeg' : getValue('audio.can_play_type_audio_mpeg'),
-    'audio.can_play_type_audio_wav' : getValue('audio.can_play_type_audio_wav'),
-    'audio.can_play_type_audio_xm4a' : getValue('audio.can_play_type_audio_xm4a'),
-    'navigator_vendor' : getValue('navigator_vendor'),
-    'navigator_product' : getValue('navigator_product'),
-    'navigator_product_sub' : getValue('navigator_product_sub'),
-    'browser' : getValue('browser'),
-    'browser.is_internet_explorer' : getValue('browser.is_internet_explorer'),
-    'browser.chrome' : getValue('browser.chrome'),
-    'browser.chrome.load_times' : getValue('browser.chrome.load_times'),
-    'browser.chrome.app' : getValue('browser.chrome.app'),
-    'browser.webdriver' : getValue('browser.webdriver'),
-    'browser.is_chrome' : getValue('browser.is_chrome'),
-    'browser.connection_rtt' : getValue('browser.connection_rtt'),
-    'window' : getValue('window'),
-    'window.history_length' : getValue('window.history_length'),
-    'window.navigator_hardware_concurrency' : getValue('window.navigator_hardware_concurrency'),
-    'window.is_window_self_not_window_top' : getValue('window.is_window_self_not_window_top'),
-    'window.is_native_navigator_get_battery' : getValue('window.is_native_navigator_get_battery'),
-    'window.console_debug_name' : getValue('window.console_debug_name'),
-    'window.is_native_console_debug' : getValue('window.is_native_console_debug'),
-    'window._phantom' : getValue('window._phantom'),
-    'window.call_phantom' : getValue('window.call_phantom'),
-    'window.empty' : getValue('window.empty'),
-    'window.persistent' : getValue('window.persistent'),
-    'window.temporary' : getValue('window.temporary'),
-    'window.performance_observer' : getValue('window.performance_observer'),
-    'window.performance_observer.supported_entry_types' : getValue('window.performance_observer.supported_entry_types'),
-    'document' : getValue('document'),
-    'document.document_location_protocol' : getValue('document.document_location_protocol'),
-    'canvas_fonts' : getValue('canvas_fonts'),
-    'document_children' : getValue('document_children'),
-    'document_children.document_script_element_children' : getValue('document_children.document_script_element_children'),
-    'document_children.document_head_element_children' : getValue('document_children.document_head_element_children'),
-    'webgl_rendering_call' : getValue('webgl_rendering_call'),
-    'webgl_rendering_call.webgl_rendering_context_prototype_get_parameter_call_a' : getValue('webgl_rendering_call.webgl_rendering_context_prototype_get_parameter_call_a'),
-    'webgl_rendering_call.webgl_rendering_context_prototype_get_parameter_call_b' : getValue('webgl_rendering_call.webgl_rendering_context_prototype_get_parameter_call_b'),
-    'window_object_get_own_property_names' : getValue('window_object_get_own_property_names'),
-    'visual_view_port' : getValue('visual_view_port'),
-    'visual_view_port.visual_view_port_width' : getValue('visual_view_port.visual_view_port_width'),
-    'visual_view_port.visual_view_port_height' : getValue('visual_view_port.visual_view_port_height'),
-    'visual_view_port.visual_view_port_scale' : getValue('visual_view_port.visual_view_port_scale'),
-    'key' : getValue('key'),
-    'key_value' : getValue('key_value'),
+    'user_agent' : getValue(`user_agent`),
+    'navigator_language' : getValue(`navigator_language`),
+    'navigator_languages' : getValue(`navigator_languages`),
+    'navigator_languages.languages_is_not_undefined' : getValue(`navigator_languages.languages_is_not_undefined`),
+    'navigator_languages.languages' : getValue(`navigator_languages.languages`),
+    'window_size' : getValue(`window_size`),
+    'window_size.window_screen_width' : getValue(`window_size.window_screen_width`),
+    'window_size.window_screen_height' : getValue(`window_size.window_screen_height`),
+    'window_size.window_screen_avail_height' : getValue(`window_size.window_screen_avail_height`),
+    'window_size.window_screen_avail_left' : getValue(`window_size.window_screen_avail_left`),
+    'window_size.window_screen_avail_top' : getValue(`window_size.window_screen_avail_top`),
+    'window_size.window_screen_avail_width' : getValue(`window_size.window_screen_avail_width`),
+    'window_size.window_screen_pixel_depth' : getValue(`window_size.window_screen_pixel_depth`),
+    'window_size.window_inner_width' : getValue(`window_size.window_inner_width`),
+    'window_size.window_inner_height' : getValue(`window_size.window_inner_height`),
+    'window_size.window_outer_width' : getValue(`window_size.window_outer_width`),
+    'window_size.window_outer_height' : getValue(`window_size.window_outer_height`),
+    'window_size.window_device_pixel_ratio' : getValue(`window_size.window_device_pixel_ratio`),
+    'window_size.window_screen_orientation_type' : getValue(`window_size.window_screen_orientation_type`),
+    'window_size.window_screenX' : getValue(`window_size.window_screenX`),
+    'window_size.window_screenY' : getValue(`window_size.window_screenY`),
+    'date_get_time_zone_off_set' : getValue(`date_get_time_zone_off_set`),
+    'has_indexed_db' : getValue(`has_indexed_db`),
+    'has_body_add_behaviour' : getValue(`has_body_add_behaviour`),
+    'open_database' : getValue(`open_database`),
+    'cpu_class' : getValue(`cpu_class`),
+    'platform' : getValue(`platform`),
+    'do_not_track' : getValue(`do_not_track`),
+    'plugins_or_active_x_object' : getValue(`plugins_or_active_x_object`),
+    'plugins_named_item_item_refresh' : getValue(`plugins_named_item_item_refresh`),
+    'plugins_named_item_item_refresh.named_item' : getValue(`plugins_named_item_item_refresh.named_item`),
+    'plugins_named_item_item_refresh.item' : getValue(`plugins_named_item_item_refresh.item`),
+    'plugins_named_item_item_refresh.refresh' : getValue(`plugins_named_item_item_refresh.refresh`),
+    'canvas_hash' : getValue(`canvas_hash`),
+    'canvas_hash.is_point_in_path' : getValue(`canvas_hash.is_point_in_path`),
+    'canvas_hash.to_data_url_image' : getValue(`canvas_hash.to_data_url_image`),
+    'canvas_hash.screen_is_global_composite_operation' : getValue(`canvas_hash.screen_is_global_composite_operation`),
+    'canvas_hash.hash' : getValue(`canvas_hash.hash`),
+    'webgl' : getValue(`webgl`),
+    'webgl.canvas_hash' : getValue(`webgl.canvas_hash`),
+    'webgl.get_supported_extensions' : getValue(`webgl.get_supported_extensions`),
+    'webgl.aliased_line_width_range' : getValue(`webgl.aliased_line_width_range`),
+    'webgl.aliased_point_size_range' : getValue(`webgl.aliased_point_size_range`),
+    'webgl.alpha_bits' : getValue(`webgl.alpha_bits`),
+    'webgl.antialias' : getValue(`webgl.antialias`),
+    'webgl.blue_bits' : getValue(`webgl.blue_bits`),
+    'webgl.depth_bits' : getValue(`webgl.depth_bits`),
+    'webgl.green_bits' : getValue(`webgl.green_bits`),
+    'webgl.all_bits' : getValue(`webgl.all_bits`),
+    'webgl.max_combined_texture_image_units' : getValue(`webgl.max_combined_texture_image_units`),
+    'webgl.max_cube_map_texture_size' : getValue(`webgl.max_cube_map_texture_size`),
+    'webgl.max_fragment_uniform_vectors' : getValue(`webgl.max_fragment_uniform_vectors`),
+    'webgl.max_renderbuffer_size' : getValue(`webgl.max_renderbuffer_size`),
+    'webgl.max_texture_image_units' : getValue(`webgl.max_texture_image_units`),
+    'webgl.max_texture_size' : getValue(`webgl.max_texture_size`),
+    'webgl.max_varying_vectors' : getValue(`webgl.max_varying_vectors`),
+    'webgl.max_vertex_attribs' : getValue(`webgl.max_vertex_attribs`),
+    'webgl.max_vertex_texture_image_units' : getValue(`webgl.max_vertex_texture_image_units`),
+    'webgl.max_vertex_uniform_vectors' : getValue(`webgl.max_vertex_uniform_vectors`),
+    'webgl.max_viewport_dims' : getValue(`webgl.max_viewport_dims`),
+    'webgl.red_bits' : getValue(`webgl.red_bits`),
+    'webgl.renderer' : getValue(`webgl.renderer`),
+    'webgl.shading_language_version' : getValue(`webgl.shading_language_version`),
+    'webgl.stencil_bits' : getValue(`webgl.stencil_bits`),
+    'webgl.vendor' : getValue(`webgl.vendor`),
+    'webgl.version' : getValue(`webgl.version`),
+    'webgl.shader_precision_vertex_high_float' : getValue(`webgl.shader_precision_vertex_high_float`),
+    'webgl.shader_precision_vertex_high_float_min' : getValue(`webgl.shader_precision_vertex_high_float_min`),
+    'webgl.shader_precision_vertex_high_float_max' : getValue(`webgl.shader_precision_vertex_high_float_max`),
+    'webgl.shader_precision_vertex_medium_float' : getValue(`webgl.shader_precision_vertex_medium_float`),
+    'webgl.shader_precision_vertex_medium_float_min' : getValue(`webgl.shader_precision_vertex_medium_float_min`),
+    'webgl.shader_precision_vertex_medium_float_max' : getValue(`webgl.shader_precision_vertex_medium_float_max`),
+    'webgl.shader_precision_vertex_low_float' : getValue(`webgl.shader_precision_vertex_low_float`),
+    'webgl.shader_precision_vertex_low_float_min' : getValue(`webgl.shader_precision_vertex_low_float_min`),
+    'webgl.shader_precision_vertex_low_float_max' : getValue(`webgl.shader_precision_vertex_low_float_max`),
+    'webgl.shader_precision_fragment_high_float' : getValue(`webgl.shader_precision_fragment_high_float`),
+    'webgl.shader_precision_fragment_high_float_min' : getValue(`webgl.shader_precision_fragment_high_float_min`),
+    'webgl.shader_precision_fragment_high_float_max' : getValue(`webgl.shader_precision_fragment_high_float_max`),
+    'webgl.shader_precision_fragment_medium_float' : getValue(`webgl.shader_precision_fragment_medium_float`),
+    'webgl.shader_precision_fragment_medium_float_min' : getValue(`webgl.shader_precision_fragment_medium_float_min`),
+    'webgl.shader_precision_fragment_medium_float_max' : getValue(`webgl.shader_precision_fragment_medium_float_max`),
+    'webgl.shader_precision_fragment_low_float' : getValue(`webgl.shader_precision_fragment_low_float`),
+    'webgl.shader_precision_fragment_low_float_min' : getValue(`webgl.shader_precision_fragment_low_float_min`),
+    'webgl.shader_precision_fragment_low_float_max' : getValue(`webgl.shader_precision_fragment_low_float_max`),
+    'webgl.shader_precision_vertex_high_int' : getValue(`webgl.shader_precision_vertex_high_int`),
+    'webgl.shader_precision_vertex_high_int_min' : getValue(`webgl.shader_precision_vertex_high_int_min`),
+    'webgl.shader_precision_vertex_high_int_max' : getValue(`webgl.shader_precision_vertex_high_int_max`),
+    'webgl.shader_precision_vertex_medium_int' : getValue(`webgl.shader_precision_vertex_medium_int`),
+    'webgl.shader_precision_vertex_medium_int_min' : getValue(`webgl.shader_precision_vertex_medium_int_min`),
+    'webgl.shader_precision_vertex_medium_int_max' : getValue(`webgl.shader_precision_vertex_medium_int_max`),
+    'webgl.shader_precision_vertex_low_int' : getValue(`webgl.shader_precision_vertex_low_int`),
+    'webgl.shader_precision_vertex_low_int_min' : getValue(`webgl.shader_precision_vertex_low_int_min`),
+    'webgl.shader_precision_vertex_low_int_max' : getValue(`webgl.shader_precision_vertex_low_int_max`),
+    'webgl.shader_precision_fragment_high_int' : getValue(`webgl.shader_precision_fragment_high_int`),
+    'webgl.shader_precision_fragment_high_int_min' : getValue(`webgl.shader_precision_fragment_high_int_min`),
+    'webgl.shader_precision_fragment_high_int_max' : getValue(`webgl.shader_precision_fragment_high_int_max`),
+    'webgl.shader_precision_fragment_medium_int' : getValue(`webgl.shader_precision_fragment_medium_int`),
+    'webgl.shader_precision_fragment_medium_int_min' : getValue(`webgl.shader_precision_fragment_medium_int_min`),
+    'webgl.shader_precision_fragment_medium_int_max' : getValue(`webgl.shader_precision_fragment_medium_int_max`),
+    'webgl.shader_precision_fragment_low_int' : getValue(`webgl.shader_precision_fragment_low_int`),
+    'webgl.shader_precision_fragment_low_int_min' : getValue(`webgl.shader_precision_fragment_low_int_min`),
+    'webgl.shader_precision_fragment_low_int_max' : getValue(`webgl.shader_precision_fragment_low_int_max`),
+    'webgl.unmasked_vendor_webgl' : getValue(`webgl.unmasked_vendor_webgl`),
+    'webgl.unmasked_renderer_webgl' : getValue(`webgl.unmasked_renderer_webgl`),
+    'webgl_meta' : getValue(`webgl_meta`),
+    'webgl_meta.webgl_rendering_context_get_parameter' : getValue(`webgl_meta.webgl_rendering_context_get_parameter`),
+    'webgl_meta.is_native_webgl_rendering_context_get_parameter' : getValue(`webgl_meta.is_native_webgl_rendering_context_get_parameter`),
+    'touch_event' : getValue(`touch_event`),
+    'touch_event.max_touch_points' : getValue(`touch_event.max_touch_points`),
+    'touch_event.has_touch_event' : getValue(`touch_event.has_touch_event`),
+    'touch_event.on_touch_start_is_undefined' : getValue(`touch_event.on_touch_start_is_undefined`),
+    'video' : getValue(`video`),
+    'video.can_play_type_video_ogg' : getValue(`video.can_play_type_video_ogg`),
+    'video.can_play_type_video_mp4' : getValue(`video.can_play_type_video_mp4`),
+    'video.can_play_type_video_webm' : getValue(`video.can_play_type_video_webm`),
+    'audio' : getValue(`audio`),
+    'audio.can_play_type_audio_ogg' : getValue(`audio.can_play_type_audio_ogg`),
+    'audio.can_play_type_audio_mpeg' : getValue(`audio.can_play_type_audio_mpeg`),
+    'audio.can_play_type_audio_wav' : getValue(`audio.can_play_type_audio_wav`),
+    'audio.can_play_type_audio_xm4a' : getValue(`audio.can_play_type_audio_xm4a`),
+    'navigator_vendor' : getValue(`navigator_vendor`),
+    'navigator_product' : getValue(`navigator_product`),
+    'navigator_product_sub' : getValue(`navigator_product_sub`),
+    'browser' : getValue(`browser`),
+    'browser.is_internet_explorer' : getValue(`browser.is_internet_explorer`),
+    'browser.chrome' : getValue(`browser.chrome`),
+    'browser.chrome.load_times' : getValue(`browser.chrome.load_times`),
+    'browser.chrome.app' : getValue(`browser.chrome.app`),
+    'browser.webdriver' : getValue(`browser.webdriver`),
+    'browser.is_chrome' : getValue(`browser.is_chrome`),
+    'browser.connection_rtt' : getValue(`browser.connection_rtt`),
+    'window' : getValue(`window`),
+    'window.history_length' : getValue(`window.history_length`),
+    'window.navigator_hardware_concurrency' : getValue(`window.navigator_hardware_concurrency`),
+    'window.is_window_self_not_window_top' : getValue(`window.is_window_self_not_window_top`),
+    'window.is_native_navigator_get_battery' : getValue(`window.is_native_navigator_get_battery`),
+    'window.console_debug_name' : getValue(`window.console_debug_name`),
+    'window.is_native_console_debug' : getValue(`window.is_native_console_debug`),
+    'window._phantom' : getValue(`window._phantom`),
+    'window.call_phantom' : getValue(`window.call_phantom`),
+    'window.empty' : getValue(`window.empty`),
+    'window.persistent' : getValue(`window.persistent`),
+    'window.temporary' : getValue(`window.temporary`),
+    'window.performance_observer' : getValue(`window.performance_observer`),
+    'window.performance_observer.supported_entry_types' : getValue(`window.performance_observer.supported_entry_types`),
+    'document' : getValue(`document`),
+    'document.document_location_protocol' : getValue(`document.document_location_protocol`),
+    'canvas_fonts' : getValue(`canvas_fonts`),
+    'document_children' : getValue(`document_children`),
+    'document_children.document_script_element_children' : getValue(`document_children.document_script_element_children`),
+    'document_children.document_head_element_children' : getValue(`document_children.document_head_element_children`),
+    'webgl_rendering_call' : getValue(`webgl_rendering_call`),
+    'webgl_rendering_call.webgl_rendering_context_prototype_get_parameter_call_a' : getValue(`webgl_rendering_call.webgl_rendering_context_prototype_get_parameter_call_a`),
+    'webgl_rendering_call.webgl_rendering_context_prototype_get_parameter_call_b' : getValue(`webgl_rendering_call.webgl_rendering_context_prototype_get_parameter_call_b`),
+    'window_object_get_own_property_names' : getValue(`window_object_get_own_property_names`),
+    'visual_view_port' : getValue(`visual_view_port`),
+    'visual_view_port.visual_view_port_width' : getValue(`visual_view_port.visual_view_port_width`),
+    'visual_view_port.visual_view_port_height' : getValue(`visual_view_port.visual_view_port_height`),
+    'visual_view_port.visual_view_port_scale' : getValue(`visual_view_port.visual_view_port_scale`),
+    'key' : getValue(`key`),
+    'key_value' : getValue(`key_value`),
   };
 }
 

@@ -179,7 +179,7 @@ function setUtmvcToStringUniqueValue(ast){
   });
 
   if(toStringUniqueValue === null){
-    throw Error(`Could not find toStringUniqueValue`)
+    throw Error(`Could not find toStringUniqueValue`);
   }
 
 
@@ -192,10 +192,10 @@ function setUtmvcToStringUniqueValue(ast){
         return;
       }
 
-      const firstParamName = path.get("params")[0].node.name;
+      const firstParamName = path.get(`params`)[0].node.name;
 
-      const pushToStringUniqueValue = template.ast(`${firstParamName} += "'${toStringUniqueValue}'.toString()" + "%3D" + "${toStringUniqueValue}";`)
-      path.get('body').unshiftContainer('body', pushToStringUniqueValue);
+      const pushToStringUniqueValue = template.ast(`${firstParamName} += "'${toStringUniqueValue}'.toString()" + "%3D" + "${toStringUniqueValue}";`);
+      path.get(`body`).unshiftContainer(`body`, pushToStringUniqueValue);
 
       //v3dd4f0686443507a0a5eaa007e3fc06982918c30ae6abf3d0f379c35913e0b8b'.toString()
 

@@ -189,7 +189,7 @@ function clearConcealedStringsSession(ast){
         const evaluatedNode = t.stringLiteral(vm.runInNewContext(generate(path.node).code, sandbox));
         path.replaceWith(evaluatedNode);
       }catch(e){
-        //console.log(`error:${generate(path.node).code}`, e)
+        console.log(`error:${generate(path.node).code}`, e);
       }
     }
   });

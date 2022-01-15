@@ -45,6 +45,7 @@
     "recaptcha-harvester": "^0.0.4",
     "reds": "^1.0.0",
     "ref-napi": "^3.0.3",
+    "ua-parser-js": "^1.0.2",
     "window": "^4.2.7"
   },
   "devDependencies": {
