@@ -168,7 +168,6 @@ function createSandbox({stringArrays, shuffleBys, encoders}){
 
 }
 
-
 function clearConcealedStringsSession(ast){
 
   const stringArrays = findStringArrays(ast);
@@ -189,7 +188,22 @@ function clearConcealedStringsSession(ast){
         const evaluatedNode = t.stringLiteral(vm.runInNewContext(generate(path.node).code, sandbox));
         path.replaceWith(evaluatedNode);
       }catch(e){
-        console.log(`error:${generate(path.node).code}`, e);
+
+        const topParent = path.getStatementParent().parentPath;
+        const isInsideSwitch = t.isSwitchCase(topParent.node);
+
+        if(isInsideSwitch){
+          //Get all the nodes inside the SwitchCase with the exception of the last two nodes(ContinueStatement and possibly a call to a string concealing func)
+          const caseCtx = {...sandbox};
+          const caseNodes = topParent.node.consequent.slice(0, topParent.node.consequent.length - 2).map((n) => generate(n).code);
+          vm.runInNewContext(caseNodes.join("\n"), caseCtx);
+
+          const evaluatedNode = t.stringLiteral(vm.runInNewContext(generate(path.node).code, caseCtx));
+          path.replaceWith(evaluatedNode);
+
+        }else{
+          console.log(`error:${generate(path.node).code}`, e);
+        }
       }
     }
   });

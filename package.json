@@ -26,7 +26,6 @@
     "@babel/traverse": "^7.16.3",
     "@babel/types": "^7.16.0",
     "2captcha": "^2.1.9",
-    "ajv": "^6.12.6",
     "atob": "^2.1.2",
     "btoa": "^1.2.1",
     "byte-base64": "^1.1.0",

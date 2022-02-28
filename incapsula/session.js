@@ -102,7 +102,7 @@ class IncapsulaSession {
             if(iframeModes.reese84 && !hasDoneUtmvc){
               await this.doReese84Mode({url : iframeModes.reese84, payloadData : reese84, referer : iframeUrl});
             }
-            console.log(`doing captchas`);
+            console.log(`doing captchas`, incapsulaModes);
             await this.doCaptchaMode({url : incapsulaModes.iframe.url});
 
             break;
@@ -257,8 +257,13 @@ class IncapsulaSession {
   }
 
   async doCaptchaMode({url}){
+
     const captchaPage = await this.fetch(url, {
-      headers : this.getHeaders(`main`),
+      headers : this.getHeaders({
+        pageType : `iframe`,
+        url,
+        referer : `${new URL(url).origin}`,
+      }),
       agent : this.gent,
     });
 
@@ -274,7 +279,11 @@ class IncapsulaSession {
     const gCaptchaToken = getGCaptchaToken.gCaptchaToken;
 
     const submitCaptchaPage = await this.fetch(submitCaptchaUrl, {
-      headers : this.getHeaders(`post`),
+      headers : this.getHeaders({
+        pageType : `captcha`,
+        url,
+        referer : `${new URL(url).origin}`
+      }),
       agent : this.agent,
       method : `POST`,
       body : `g-recaptcha-response=${gCaptchaToken}`
@@ -304,9 +313,7 @@ class IncapsulaSession {
   getHeaders(options = {}){
     const pageType = options.pageType || `main`;
     const url = options.url;
-    const bodyLength = options.bodyLength;
     const referer = options.referer;
-    const cookies = this.getCookies(url);
 
     switch(pageType){
       case `main`:
@@ -355,6 +362,7 @@ class IncapsulaSession {
         };
       case `utmvc`:
       case `reese84`:
+      case `captcha`:
         return {
           'Host' : new URL(url).host,
           'User-Agent' : this.userAgent,
@@ -415,10 +423,7 @@ class IncapsulaSession {
           'Sec-Fetch-Mode' : `navigate`,
           'Sec-Fetch-Site' : `same-origin`,
         };
-      case `captcha`:
-        return {
 
-        };
     }
 
   }

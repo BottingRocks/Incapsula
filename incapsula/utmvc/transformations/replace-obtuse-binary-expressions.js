@@ -17,7 +17,6 @@ function valueToNode(value){
   }else if (typeof value === `boolean`){
     node = t.booleanLiteral(value);
   }else{
-    throw Error(`wtf unknown `, value);
     node = t.identifier(`undefined`);
   }
 
