@@ -48,7 +48,6 @@ class Utmvc {
 
     ast = decodeEval(ast);
     [
-      //decodeEval,
       replacePropertyHexLiterals,
       clearConcealedStringsUtmvc,
       replaceInliningFunctions,
