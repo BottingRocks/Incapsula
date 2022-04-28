@@ -10,27 +10,37 @@ const PayloadSchema = {
         "languages" : { type : `array`,items : { type : `string`}}
       }
     },
+    "timestamps" : {
+      type : `object`,
+      properties : {
+        "date_get_time" : { type : `number` },
+        "file_last_modified" : { type : `number` },
+        "performance_now" : { type : `number` },
+        "decent_timeline" : { type : `number` },
+        "performance_timing" : { type : `number` }
+      }
+    },
     "window_size" : {
       type : `object`,
       properties : {
-        "window_screen_width" : { type : `int16` },
-        "window_screen_height" : { type : `int16` },
-        "window_screen_avail_height" : { type : `int16` },
-        "window_screen_avail_left" : { type : `int16` },
-        "window_screen_avail_top" : { type : `int16` },
-        "window_screen_avail_width" : { type : `int16` },
-        "window_screen_pixel_depth" : { type : `int16` },
-        "window_inner_width" : { type : `int16` },
-        "window_inner_height" : { type : `int16` },
-        "window_outer_width" : { type : `int16` },
-        "window_outer_height" : { type : `int16` },
-        "window_device_pixel_ratio" : { type : `int16` },
-        "window_screen_orientation_type" : { type : `int16` },
-        "window_screenX" : { type : `int16` },
-        "window_screenY" : { type : `int16` }
+        "window_screen_width" : { type : `number` },
+        "window_screen_height" : { type : `number` },
+        "window_screen_avail_height" : { type : `number` },
+        "window_screen_avail_left" : { type : `number` },
+        "window_screen_avail_top" : { type : `number` },
+        "window_screen_avail_width" : { type : `number` },
+        "window_screen_pixel_depth" : { type : `number` },
+        "window_inner_width" : { type : `number` },
+        "window_inner_height" : { type : `number` },
+        "window_outer_width" : { type : `number` },
+        "window_outer_height" : { type : `number` },
+        "window_device_pixel_ratio" : { type : `number` },
+        "window_screen_orientation_type" : { type : `number` },
+        "window_screenX" : { type : `number` },
+        "window_screenY" : { type : `number` }
       }
     },
-    "date_get_time_zone_off_set" : { type : `int16` },
+    "date_get_time_zone_off_set" : { type : `number` },
     "has_indexed_db" : { type : `boolean` },
     "has_body_add_behaviour" : { type : `boolean` },
     "open_database" : { type : `string` },
@@ -182,7 +192,7 @@ const PayloadSchema = {
           }
         },
         "webdriver" : { type : `boolean` },
-        "connection_rtt" : { type : `int16` },
+        "connection_rtt" : { type : `number` },
       }
     },
     "document" : {
@@ -229,6 +239,7 @@ const PayloadSchema = {
       properties : {
         "webgl_rendering_context_prototype_get_parameter_call_a" : { type : `boolean` },
         "webgl_rendering_context_prototype_get_parameter_call_b" : { type : `boolean` },
+        "hash" : { type : `string` }
       }
     },
     "window_object_get_own_property_names" : { type : `string` },

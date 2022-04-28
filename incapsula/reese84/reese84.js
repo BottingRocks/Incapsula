@@ -11,6 +11,7 @@ const {
   fromFile
 } = require(`../ast.js`);
 
+const attachWebglRenderingCallHash = require("./transformations/attach-webgl_rendering_call_hash.js");
 const clearConcealedStringsPayload = require(`./transformations/clear-concealed-strings-payload.js`);
 const ensureBlockStatements = require(`./transformations/ensure-block-statements.js`);
 const expandSequenceExpressions = require(`./transformations/expand-sequence-expressions.js`);
@@ -74,12 +75,13 @@ class Reese84 {
       clearConcealedStringsPayload,
       expandSequenceExpressions,
       replaceSubstrStrings,
+      attachWebglRenderingCallHash
     ].map((t) => t(ast));
 
   }
 
   createCollectorScript(payloadUrl) {
-
+ß
     const ast = fromString(generate(this.ast).code);
     ast.postbackUrl = payloadUrl;
 
@@ -157,13 +159,13 @@ class Reese84 {
         [this.signalKeys[`navigator_languages.languages_is_not_undefined`]] : data.navigator_languages.languages_is_not_undefined,
         [this.signalKeys[`navigator_languages.languages`]] : data.navigator_languages.languages
       },
-      [this.signalKeys[`timestamps`]] : {
-        [this.signalKeys[`timestamps.date_get_time`]] : encode(this.encoders[0][0].encoder, data.timestamps.data_get_time),
+      [this.signalKeys[`timestamps`]] : encode(this.encoders[5][0].encoder, {
+        [this.signalKeys[`timestamps.date_get_time`]] : encode(this.encoders[0][0].encoder, data.timestamps.date_get_time),
         [this.signalKeys[`timestamps.file_last_modified`]] : encode(this.encoders[1][0].encoder, data.timestamps.file_last_modified),
         [this.signalKeys[`timestamps.performance_now`]] : encode(this.encoders[2][0].encoder, data.timestamps.performance_now),
         [this.signalKeys[`timestamps.document_timeline`]] : encode(this.encoders[3][0].encoder,data.timestamps.document_timeline),
-        [this.signalKeys[`timestamps.date_get_time`]] : encode(this.encoders[4][0].encoder, data.timestamps.data_get_time),
-      },
+        [this.signalKeys[`timestamps.performance_timing`]] : encode(this.encoders[4][0].encoder, data.timestamps.performance_timing),
+      }),
       [this.signalKeys[`window_size`]] : encode(this.encoders[5][1].encoder, {
         [this.signalKeys[`window_size.window_screen_width`]] : data.window_size.window_screen_width,
         [this.signalKeys[`window_size.window_screen_height`]] : data.window_size.window_screen_height,
@@ -334,7 +336,7 @@ class Reese84 {
       [this.signalKeys[`webgl_rendering_call`]] : encode(this.encoders[11][5].encoder, {
         [this.signalKeys[`webgl_rendering_call.webgl_rendering_context_prototype_get_parameter_call_a`]] : data.webgl_rendering_call.webgl_rendering_context_prototype_get_parameter_call_a,
         [this.signalKeys[`webgl_rendering_call.webgl_rendering_context_prototype_get_parameter_call_b`]] : data.webgl_rendering_call.webgl_rendering_context_prototype_get_parameter_call_b,
-        [this.signalKeys[`webgl_rendering_call.hash`]] : data.webgl_rendering_call.hash,
+        [this.signalKeys[`webgl_rendering_call.hash`]] : this.ast.webgl_rendering_call_hash(xor),
       }),
       [this.signalKeys[`window_object_get_own_property_names`]] : encode(this.encoders[11][6].encoder, data.window_object_get_own_property_names),
       [this.signalKeys[`visual_view_port`]] : encode(this.encoders[11][7].encoder, {
@@ -376,6 +378,7 @@ class Reese84 {
 
     if(this.signalKeys[`timestamps`] in rawDecodedPayload){
       decodedPayload[`timestamps`] = {};
+
       const rawPayload = decode(this.encoders[5][0].decoder, rawDecodedPayload[this.signalKeys[`timestamps`]]);
 
       decodedPayload[`timestamps`][`date_get_time`] = decode(this.encoders[0][0].decoder, rawPayload[this.signalKeys[`timestamps.date_get_time`]]);

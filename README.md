@@ -246,7 +246,7 @@ Unlike the first cookie, the `___utmvc`cookie, the `reese84` cookie is not set b
 # HOW TO RUN
 
 > TODO: Document the different ways to run
-NODE_TLS_REJECT_UNAUTHORIZED='0' SAVE_ASTS=$(pwd)/ node --trace-warnings --insecure-http-parser tests/testIncapsulaSessionCaptcha.js
+NODE_TLS_REJECT_UNAUTHORIZED='0' SAVE_ASTS=$(pwd)/ node --trace-warnings --insecure-http-parser tests/testIncapsulaSession.js
 
 
 
