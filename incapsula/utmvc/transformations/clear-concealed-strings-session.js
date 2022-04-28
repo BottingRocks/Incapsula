@@ -196,7 +196,7 @@ function clearConcealedStringsSession(ast){
           //Get all the nodes inside the SwitchCase with the exception of the last two nodes(ContinueStatement and possibly a call to a string concealing func)
           const caseCtx = {...sandbox};
           const caseNodes = topParent.node.consequent.slice(0, topParent.node.consequent.length - 2).map((n) => generate(n).code);
-          vm.runInNewContext(caseNodes.join("\n"), caseCtx);
+          vm.runInNewContext(caseNodes.join(`\n`), caseCtx);
 
           const evaluatedNode = t.stringLiteral(vm.runInNewContext(generate(path.node).code, caseCtx));
           path.replaceWith(evaluatedNode);

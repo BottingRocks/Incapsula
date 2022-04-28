@@ -5,6 +5,13 @@ module.exports = {
     "languages_is_not_undefined" : false,
     "languages" : [`en-US`, `en`],
   },
+  "timestamps" : {
+    "date_get_time" : `1651037463069`,
+    "file_last_modified" : `1651037463069`,
+    "performance_now" : `3616.899999976158`,
+    "document_timeline" : `3610.471`,
+    "performance_timing" : `1651037459453`
+  },
   "window_size" : {
     "window_screen_width" : 1920,
     "window_screen_height" : 1080,
@@ -217,7 +224,8 @@ module.exports = {
   },
   "webgl_rendering_call" : {
     "webgl_rendering_context_prototype_get_parameter_call_a" : false,
-    "webgl_rendering_context_prototype_get_parameter_call_b" : false
+    "webgl_rendering_context_prototype_get_parameter_call_b" : false,
+    "hash" : `w/27}2\`\u0011K\u0003%u\u0017kyU|\u001d\`ps"`
   },
   "window_object_get_own_property_names" : `SVGComponentTransferFunctionElement;;;MediaStreamTrackAudioSourceNode;;;MediaStreamAudioDestinationNode;;;AuthenticatorAssertionResponse;;;SVGAnimatedPreserveAspectRatio;;;AuthenticatorAttestationResponse;;;2f1acc6c3a606b082e5eef5e54414ffb`,
   "visual_view_port" : {

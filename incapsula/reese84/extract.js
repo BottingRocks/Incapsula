@@ -542,12 +542,8 @@ function getXorEncoderFromPath(path) {
       const encoderType = extractEncoderType(currentPath);
 
       if (encoderType) {
-        loopEncoders.push(
-          createEncoderFromPath({
-            path : currentPath,
-            type : encoderType
-          }),
-        );
+        const encoderPath = createEncoderFromPath({ path : currentPath, type : encoderType});
+        loopEncoders.push(encoderPath);
       }
     }
 
@@ -629,13 +625,59 @@ function getSignalsPaths(ast) {
   return paths;
 }
 
-function extractXorEncoders(ast) {
+function extractXorEncoders(ast){
 
   const xorEncoders = [];
 
   getSignalsPaths(ast).forEach((currentPath) => {
-    const currentEncoders = [];
+    currentPath.traverse({
+      TryStatement(tryPath){
 
+        const block = tryPath.get(`block`);
+        const firstNode = block.get(`body.0`).node;
+        if(!
+        (t.isIfStatement(firstNode) && generate(firstNode.test).code.endsWith(`() !== undefined`))
+        ){
+          return;
+        }
+        const tryEncoders = [];
+        tryPath.get(`block.body.0.consequent.body.0.expression.right.callee.body`).traverse({
+          CallExpression(callPath) {
+
+            const callee = callPath.get(`callee`);
+
+            if (!(callee.type === `Identifier` && callee.node.name === XOR_SHIFT_128)) {
+              return;
+            }
+            const statementPath = callPath.getStatementParent();
+
+            if (!statementPath.getData(`skip`, false)) {
+
+              const encoders = getXorEncoderFromPath(statementPath);
+              encoders.forEach((encoder) =>
+                tryEncoders.push(buildEncoderAndDecoder(encoder[`encoders`]))
+              );
+            }
+
+          }
+        });
+
+        const timestampProp = tryPath.get(`block.body.0.consequent.body.0.expression.left.property`).node;
+        tryPath.replaceWith(
+          t.expressionStatement(
+            t.assignmentExpression(
+              `=`, t.memberExpression(
+                t.identifier(`TIMESTAMPS`), timestampProp, true
+              ), t.stringLiteral(`FINDME`),
+            )
+          )
+        );
+
+        xorEncoders.push(tryEncoders);
+      }
+    });
+
+    const currentEncoders = [];
     currentPath.traverse({
       CallExpression(callPath) {
 
@@ -650,7 +692,6 @@ function extractXorEncoders(ast) {
         if (!statementPath.getData(`skip`, false)) {
 
           const encoders = getXorEncoderFromPath(statementPath);
-
           encoders.forEach((encoder) => {
             currentEncoders.push(buildEncoderAndDecoder(encoder[`encoders`]));
           });
@@ -699,6 +740,12 @@ function extractSignalsKeys(ast) {
     'navigator_languages' : getValue(`navigator_languages`),
     'navigator_languages.languages_is_not_undefined' : getValue(`navigator_languages.languages_is_not_undefined`),
     'navigator_languages.languages' : getValue(`navigator_languages.languages`),
+    'timestamps' : getValue(`timestamps`),
+    'timestamps.date_get_time' : getValue(`timestamps.date_get_time`),
+    'timestamps.file_last_modified' : getValue(`timestamps.file_last_modified`),
+    'timestamps.performance_now' : getValue(`timestamps.performance_now`),
+    'timestamps.document_timeline' : getValue(`timestamps.document_timeline`),
+    'timestamps.performance_timing' : getValue(`timestamps.performance_timing`),
     'window_size' : getValue(`window_size`),
     'window_size.window_screen_width' : getValue(`window_size.window_screen_width`),
     'window_size.window_screen_height' : getValue(`window_size.window_screen_height`),
@@ -848,6 +895,7 @@ function extractSignalsKeys(ast) {
     'webgl_rendering_call' : getValue(`webgl_rendering_call`),
     'webgl_rendering_call.webgl_rendering_context_prototype_get_parameter_call_a' : getValue(`webgl_rendering_call.webgl_rendering_context_prototype_get_parameter_call_a`),
     'webgl_rendering_call.webgl_rendering_context_prototype_get_parameter_call_b' : getValue(`webgl_rendering_call.webgl_rendering_context_prototype_get_parameter_call_b`),
+    'webgl_rendering_call.hash' : getValue(`webgl_rendering_call.hash`),
     'window_object_get_own_property_names' : getValue(`window_object_get_own_property_names`),
     'visual_view_port' : getValue(`visual_view_port`),
     'visual_view_port.visual_view_port_width' : getValue(`visual_view_port.visual_view_port_width`),

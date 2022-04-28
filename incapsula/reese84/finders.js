@@ -43,6 +43,17 @@ function findFirstBtoaForwards(p) {
   }
 };
 
+const findFirstTryBackwards = (p) => {
+  let _p = p;
+  while(_p.node !== undefined){
+
+    if(_p.type === `TryStatement`){
+      return _p;
+    }
+    _p = _p.getPrevSibling();
+  }
+};
+
 
 function hasValueInCode({code, valueToFind, mode}){
 
@@ -59,7 +70,6 @@ function hasValueInCode({code, valueToFind, mode}){
       hasBeenFound = code.includes(valueToFind);
       break;
     case `regex`:
-      //console.log(`code:${code} valueToFind:${valueToFind}`)
       hasBeenFound = code.match(valueToFind) !== null;
       break;
   }
@@ -181,6 +191,33 @@ function findInExpression({path, valueToFind, mode, siblingKey}){
 
 }
 
+function findTimestampProperty({path, index}){
+
+  let currentIndex = 0;
+  let found = false;
+  let value = undefined;
+
+  path.traverse({
+    ExpressionStatement(expPath){
+      const code = generate(expPath.node).code;
+
+      if(!code.endsWith(`"FINDME";`)){
+        return;
+      }
+
+      if(index === currentIndex){
+        found = true;
+        const leftProp = expPath.get(`expression.left.property`);
+        value = getPropertyValue(leftProp);
+      }
+
+      currentIndex++;
+    }
+  });
+
+  return { found, value };
+
+}
 const FINDERS = {
   "user_agent" : function(path) {
     return findInVar({path, valueToFind : `["userAgent"]`, mode : `endsWith`, siblingKey : 1});
@@ -242,6 +279,43 @@ const FINDERS = {
     });
 
     return { found, value };
+  },
+  "timestamps" : function(path){
+    let found = false;
+    let value = undefined;
+    path.traverse({
+      ExpressionStatement(expPath){
+        const code = generate(expPath.node).code;
+
+        if(!code.endsWith(`window["screen"]["width"];`)){
+          return;
+        }
+
+        found = true;
+
+        const leftProp = findFirstBtoaBackwards(expPath).getNextSibling().get(`expression.left.property`);
+        value = getPropertyValue(leftProp);
+
+      }
+    });
+
+    return { found, value };
+
+  },
+  "timestamps.date_get_time" : function(path){
+    return findTimestampProperty({path, index : 0});
+  },
+  "timestamps.file_last_modified" : function(path){
+    return findTimestampProperty({path, index : 1});
+  },
+  "timestamps.performance_now" : function(path){
+    return findTimestampProperty({path, index : 2});
+  },
+  "timestamps.document_timeline" : function(path){
+    return findTimestampProperty({path, index : 3});
+  },
+  "timestamps.performance_timing" : function(path){
+    return findTimestampProperty({path, index : 4});
   },
   "window_size" : function(path) {
     let found = false;
@@ -1232,16 +1306,27 @@ const FINDERS = {
     let found = false;
     let value = undefined;
 
-    const findFirstTryBackwards = (p) => {
-      let _p = p;
-      while(_p.node !== undefined){
+    path.traverse({
+      VariableDeclaration(varPath){
 
-        if(_p.type === `TryStatement`){
-          return _p;
+        const code = generate(varPath.node).code;
+
+        if(!code.endsWith(`window["Object"]["getOwnPropertyNames"](window);`)){
+          return;
         }
-        _p = _p.getPrevSibling();
+
+        found = true;
+        const leftProp = findFirstTryBackwards(varPath).getPrevSibling().getPrevSibling().get(`block.body.0.expression.left.property`);
+        value = getPropertyValue(leftProp);
+
       }
-    };
+    });
+
+    return { found, value };
+  },
+  "webgl_rendering_call.webgl_rendering_context_prototype_get_parameter_call_b" : function(path) {
+    let found = false;
+    let value = undefined;
 
     path.traverse({
       VariableDeclaration(varPath){
@@ -1261,20 +1346,9 @@ const FINDERS = {
 
     return { found, value };
   },
-  "webgl_rendering_call.webgl_rendering_context_prototype_get_parameter_call_b" : function(path) {
+  "webgl_rendering_call.hash" : function(path) {
     let found = false;
     let value = undefined;
-
-    const findFirstTryBackwards = (p) => {
-      let _p = p;
-      while(_p.node !== undefined){
-
-        if(_p.type === `TryStatement`){
-          return _p;
-        }
-        _p = _p.getPrevSibling();
-      }
-    };
 
     path.traverse({
       VariableDeclaration(varPath){
