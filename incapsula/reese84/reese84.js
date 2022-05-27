@@ -11,7 +11,7 @@ const {
   fromFile
 } = require(`../ast.js`);
 
-const attachWebglRenderingCallHash = require("./transformations/attach-webgl_rendering_call_hash.js");
+const attachWebglRenderingCallHash = require(`./transformations/attach-webgl_rendering_call_hash.js`);
 const clearConcealedStringsPayload = require(`./transformations/clear-concealed-strings-payload.js`);
 const ensureBlockStatements = require(`./transformations/ensure-block-statements.js`);
 const expandSequenceExpressions = require(`./transformations/expand-sequence-expressions.js`);
@@ -31,8 +31,12 @@ class Reese84 {
   constructor(ast) {
     this.ast = ast;
 
+    this.ast.restorePaths = [];
     this.encoders = extractXorEncoders(ast);
     this.signalKeys = extractSignalsKeys(ast);
+    this.ast.restorePaths.forEach(([path, node]) => {
+      path.replaceWith(node);
+    });
 
     const {
       st,
@@ -81,7 +85,7 @@ class Reese84 {
   }
 
   createCollectorScript(payloadUrl) {
-ß
+
     const ast = fromString(generate(this.ast).code);
     ast.postbackUrl = payloadUrl;
 

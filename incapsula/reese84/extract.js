@@ -663,6 +663,8 @@ function extractXorEncoders(ast){
         });
 
         const timestampProp = tryPath.get(`block.body.0.consequent.body.0.expression.left.property`).node;
+        ast.restorePaths.push([tryPath, t.cloneNode(tryPath.node)]);
+
         tryPath.replaceWith(
           t.expressionStatement(
             t.assignmentExpression(
