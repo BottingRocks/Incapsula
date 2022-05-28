@@ -34,9 +34,11 @@ class Reese84 {
     this.ast.restorePaths = [];
     this.encoders = extractXorEncoders(ast);
     this.signalKeys = extractSignalsKeys(ast);
+    /*
     this.ast.restorePaths.forEach(([path, node]) => {
       path.replaceWith(node);
     });
+    */
 
     const {
       st,

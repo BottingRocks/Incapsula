@@ -18,7 +18,7 @@ function findFirstBtoaBackwards(p) {
 
     const code = generate(_p.node).code;
 
-    if(code.match(/var (.*?) = window\.btoa\((.*?).join\(""\)\);/)){
+    if(code.match(/var (.*?) = window\.btoa\((.*?).join\((""|'')\)\);/)){
       return _p;
     }
 
@@ -35,7 +35,7 @@ function findFirstBtoaForwards(p) {
 
     const code = generate(_p.node).code;
 
-    if(code.match(/var (.*?) = window\.btoa\((.*?).join\(""\)\);/)){
+    if(code.match(/var (.*?) = window\.btoa\((.*?).join\((""|'')\)\);/)){
       return _p;
     }
 
@@ -998,6 +998,7 @@ const FINDERS = {
         }
 
         found = true;
+
         const leftProp = findFirstBtoaForwards(expPath).getNextSibling().get(`expression.left.property`);
         value = getPropertyValue(leftProp);
 
@@ -1430,7 +1431,7 @@ const FINDERS = {
 
         const code = generate(varPath.node).code;
 
-        if(!(code.match(/window\.btoa\((.*?)\.join\(""\)/))){
+        if(!(code.match(/window\.btoa\((.*?)\.join\((""|'')\)/))){
           return;
         }
 
@@ -1459,7 +1460,7 @@ const FINDERS = {
 
         const code = generate(varPath.node).code;
 
-        if(!(code.match(/window\.btoa\((.*?)\.join\(""\)/))){
+        if(!(code.match(/window\.btoa\((.*?)\.join\((""|'')\)/))){
           return;
         }
 
