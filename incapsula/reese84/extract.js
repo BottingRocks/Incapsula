@@ -590,6 +590,7 @@ function buildEncoderAndDecoder(encoders) {
       const decodeFuncs = [..._encs].reverse();
 
       let mutable = atob(data);
+
       for (let i = 0, maxIterations = decodeFuncs.length; i < maxIterations; i++) {
 
         const enc = decodeFuncs[i];
