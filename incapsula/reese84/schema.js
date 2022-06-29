@@ -1,6 +1,13 @@
 const PayloadSchema = {
   type : `object`,
   properties : {
+    "events" : {
+      type : `object`,
+      properties : {
+        "mouse" : { type : `array`,items : { type : `string`}},
+        "touch" : { type : `array`,items : { type : `string`}}
+      }
+    },
     "user_agent" : { type : `string` },
     "navigator_language" : { type : `string` },
     "navigator_languages" : {

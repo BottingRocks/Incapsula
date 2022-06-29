@@ -1,3 +1,4 @@
+const t = require(`@babel/types`);
 const generate = require(`@babel/generator`).default;
 
 function getPropertyValue(p){
@@ -219,6 +220,126 @@ function findTimestampProperty({path, index}){
 
 }
 const FINDERS = {
+  "events" : function(path) {
+    let found = false;
+    let value = undefined;
+    let index = 0;
+
+    path.traverse({
+      MemberExpression(memberPath){
+        const { property } = memberPath.node;
+
+        if(t.isStringLiteral(property) && property.value === "abort" && t.isAssignmentExpression(memberPath.parentPath.node)){
+          const topPath = memberPath.getStatementParent();
+
+          for(let currentSibling = topPath;;){
+
+            if(
+              t.isExpressionStatement(currentSibling.node) && t.isCallExpression(currentSibling.node.expression) &&
+              generate(currentSibling.node.expression.callee).code.endsWith(`["push"]`)
+            ){
+              index++;
+              if(index === 2){
+                value = getPropertyValue(currentSibling.getSibling(currentSibling.key + 3).get(`expression.left.property`));
+                found = true;
+                path.stop()
+                break;
+              }
+            }
+
+            currentSibling = currentSibling.getNextSibling();
+
+            if(generate(currentSibling.node).code === ''){
+              break;
+            }
+          }
+
+        }
+      }
+    })
+
+    return { found, value };
+  },
+  "events.mouse" : function(path) {
+    let found = false;
+    let value = undefined;
+    let index = 0;
+
+    path.traverse({
+      MemberExpression(memberPath){
+        const { property } = memberPath.node;
+
+        if(t.isStringLiteral(property) && property.value === "abort" && t.isAssignmentExpression(memberPath.parentPath.node)){
+          const topPath = memberPath.getStatementParent();
+
+          for(let currentSibling = topPath;;){
+
+            if(
+              t.isExpressionStatement(currentSibling.node) && t.isCallExpression(currentSibling.node.expression) &&
+              generate(currentSibling.node.expression.callee).code.endsWith(`["push"]`)
+            ){
+              index++;
+              if(index === 1){
+                value = getPropertyValue(currentSibling.getNextSibling().get(`expression.left.property`));
+                found = true;
+                path.stop()
+                break;
+              }
+            }
+
+            currentSibling = currentSibling.getNextSibling();
+
+            if(generate(currentSibling.node).code === ''){
+              break;
+            }
+          }
+
+        }
+      }
+    })
+
+    return { found, value };
+  },
+  "events.touch" : function(path) {
+    let found = false;
+    let value = undefined;
+    let index = 0;
+
+    path.traverse({
+      MemberExpression(memberPath){
+        const { property } = memberPath.node;
+
+        if(t.isStringLiteral(property) && property.value === "abort" && t.isAssignmentExpression(memberPath.parentPath.node)){
+          const topPath = memberPath.getStatementParent();
+
+          for(let currentSibling = topPath;;){
+
+            if(
+              t.isExpressionStatement(currentSibling.node) && t.isCallExpression(currentSibling.node.expression) &&
+              generate(currentSibling.node.expression.callee).code.endsWith(`["push"]`)
+            ){
+              index++;
+              if(index === 2){
+                value = getPropertyValue(currentSibling.getNextSibling().get(`expression.left.property`));
+                found = true;
+                path.stop()
+                break;
+              }
+            }
+
+            currentSibling = currentSibling.getNextSibling();
+
+            if(generate(currentSibling.node).code === ''){
+              break;
+            }
+          }
+
+        }
+      }
+    })
+
+    return { found, value };
+  },
   "user_agent" : function(path) {
     return findInVar({path, valueToFind : `["userAgent"]`, mode : `endsWith`, siblingKey : 1});
   },

@@ -613,9 +613,9 @@ function getSignalsPaths(ast) {
     Program(path) {
 
       const mainFuncPath = path.get(`body.0.expression.callee.body.body`).slice(-2)[0];
-      let currentPath = mainFuncPath.get(`body.body.0.expression.right.body.body.0.block.body.2.expression.arguments.1.body.body.0.block.body.13`);
+      let currentPath = mainFuncPath.get(`body.body.0.expression.right.body.body.0.block.body.2.expression.arguments.1.body.body.0.block.body.14`);
 
-      for (let i = 1, startingKey = currentPath.key; i < 9; i++) {
+      for (let i = 1, startingKey = currentPath.key; i < 10; i++) {
 
         currentPath = currentPath.getSibling(startingKey + i);
         paths.push(currentPath);
@@ -629,58 +629,62 @@ function getSignalsPaths(ast) {
 function extractXorEncoders(ast){
 
   const xorEncoders = [];
+  const signalsPaths = getSignalsPaths(ast);
 
-  getSignalsPaths(ast).forEach((currentPath) => {
-    currentPath.traverse({
-      TryStatement(tryPath){
-
-        const block = tryPath.get(`block`);
-        const firstNode = block.get(`body.0`).node;
-        if(!
-        (t.isIfStatement(firstNode) && generate(firstNode.test).code.endsWith(`() !== undefined`))
-        ){
-          return;
-        }
-        const tryEncoders = [];
-        tryPath.get(`block.body.0.consequent.body.0.expression.right.callee.body`).traverse({
-          CallExpression(callPath) {
-
-            const callee = callPath.get(`callee`);
-
-            if (!(callee.type === `Identifier` && callee.node.name === XOR_SHIFT_128)) {
-              return;
-            }
-            const statementPath = callPath.getStatementParent();
-
-            if (!statementPath.getData(`skip`, false)) {
-
-              const encoders = getXorEncoderFromPath(statementPath);
-              encoders.forEach((encoder) =>
-                tryEncoders.push(buildEncoderAndDecoder(encoder[`encoders`]))
-              );
-            }
-
-          }
-        });
-
-        const timestampProp = tryPath.get(`block.body.0.consequent.body.0.expression.left.property`).node;
-        ast.restorePaths.push([tryPath, t.cloneNode(tryPath.node)]);
-
-        tryPath.replaceWith(
-          t.expressionStatement(
-            t.assignmentExpression(
-              `=`, t.memberExpression(
-                t.identifier(`TIMESTAMPS`), timestampProp, true
-              ), t.stringLiteral(`FINDME`),
-            )
-          )
-        );
-
-        xorEncoders.push(tryEncoders);
-      }
-    });
+  signalsPaths.forEach((currentPath, index) => {
 
     const currentEncoders = [];
+
+    if(index === 1){
+      currentPath.traverse({
+        TryStatement(tryPath){
+
+           const block = tryPath.get(`block`);
+           const firstNode = block.get(`body.0`).node;
+           if(!
+           (t.isIfStatement(firstNode) && generate(firstNode.test).code.endsWith(`() !== undefined`))
+           ){
+             return;
+           }
+           const tryEncoders = [];
+           tryPath.get(`block.body.0.consequent.body.0.expression.right.callee.body`).traverse({
+             CallExpression(callPath) {
+
+               const callee = callPath.get(`callee`);
+
+               if (!(callee.type === `Identifier` && callee.node.name === XOR_SHIFT_128)) {
+                 return;
+               }
+               const statementPath = callPath.getStatementParent();
+
+               if (!statementPath.getData(`skip`, false)) {
+
+                 const encoders = getXorEncoderFromPath(statementPath);
+                 encoders.forEach((encoder) =>
+                   tryEncoders.push(buildEncoderAndDecoder(encoder[`encoders`]))
+                 );
+               }
+
+             }
+           });
+
+           const timestampProp = tryPath.get(`block.body.0.consequent.body.0.expression.left.property`).node;
+           ast.restorePaths.push([tryPath, t.cloneNode(tryPath.node)]);
+
+           tryPath.replaceWith(
+             t.expressionStatement(
+               t.assignmentExpression(
+                 `=`, t.memberExpression(
+                   t.identifier(`TIMESTAMPS`), timestampProp, true
+                 ), t.stringLiteral(`FINDME`),
+               )
+             )
+           );
+           xorEncoders.push(tryEncoders);
+        }
+      });
+    }
+
     currentPath.traverse({
       CallExpression(callPath) {
 
@@ -702,10 +706,9 @@ function extractXorEncoders(ast){
 
       }
     });
-
     xorEncoders.push(currentEncoders);
-  });
 
+  });
   return xorEncoders;
 
 }
@@ -719,6 +722,7 @@ function extractSignalsKeys(ast) {
     let foundKey = false;
 
     paths.forEach((currentPath) => {
+
       const { found, value } = func(currentPath);
 
       if(foundKey){
@@ -738,6 +742,9 @@ function extractSignalsKeys(ast) {
   };
 
   return {
+    'events' : getValue(`events`),
+    'events.mouse' : getValue(`events.mouse`),
+    'events.touch' : getValue(`events.touch`),
     'user_agent' : getValue(`user_agent`),
     'navigator_language' : getValue(`navigator_language`),
     'navigator_languages' : getValue(`navigator_languages`),
