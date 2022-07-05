@@ -9,7 +9,17 @@ module.exports = {
       "screen_y" : 100,
     }],
     "touch" : [{
-
+      "type" : "mouse",
+      "timestamp" : 1651184228981,
+      "identifier" : "something",
+      "client_x" : 100,
+      "client_y" : 100,
+      "screen_x" : 100,
+      "screen_y" : 100,
+      "radius_x" : 100,
+      "radius_y" : 100,
+      "rotation_angle" : 100,
+      "force" : 100,
     }]
   },
   "user_agent" : `Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.127 Safari/537.36`,

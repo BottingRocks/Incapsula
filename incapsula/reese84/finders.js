@@ -154,16 +154,22 @@ function findInVar({path, valueToFind, mode, siblingKey}){
 
 }
 
-function findInAssignment({path, valueToFind, mode, siblingKey}){
+function findInAssignment({path, valueToFind, mode, siblingKey, instance = 0}){
   let found = false;
   let value = undefined;
+  let currentInstance = 0;
 
   path.traverse({
     AssignmentExpression(assPath){
       const foundKeys = getKeyIfFound({pathQuery : assPath.get(`right`), path : assPath, valueToFind, mode, siblingKey});
       if(foundKeys !== null){
-        found = true;
-        value = foundKeys[`value`];
+
+        if(currentInstance === instance){
+          found = true;
+          value = foundKeys[`value`];
+        }else{
+          currentInstance++;
+        }
 
       }
     }
@@ -300,6 +306,24 @@ const FINDERS = {
 
     return { found, value };
   },
+  "events.mouse.type" : function(path){
+    return findInAssignment({path, valueToFind : `["type"]`, mode : `endsWith`, siblingKey : 0});
+  },
+  "events.mouse.timestamp" : function(path){
+    return findInAssignment({path, valueToFind : `["timeStamp"]`, mode : `endsWith`, siblingKey : 0});
+  },
+  "events.mouse.client_x" : function(path){
+    return findInAssignment({path, valueToFind : `["clientX"]`, mode : `endsWith`, siblingKey : 0});
+  },
+  "events.mouse.client_y" : function(path){
+    return findInAssignment({path, valueToFind : `["clientY"]`, mode : `endsWith`, siblingKey : 0});
+  },
+  "events.mouse.screen_x" : function(path){
+    return findInAssignment({path, valueToFind : `["screenX"]`, mode : `endsWith`, siblingKey : 0});
+  },
+  "events.mouse.screen_y" : function(path){
+    return findInAssignment({path, valueToFind : `["screenY"]`, mode : `endsWith`, siblingKey : 0});
+  },
   "events.touch" : function(path) {
     let found = false;
     let value = undefined;
@@ -339,6 +363,39 @@ const FINDERS = {
     })
 
     return { found, value };
+  },
+  "events.touch.type" : function(path){
+    return findInAssignment({path, valueToFind : `["type"]`, mode : `endsWith`, siblingKey : 0, instance : 1});
+  },
+  "events.touch.timestamp" : function(path){
+    return findInAssignment({path, valueToFind : `["timeStamp"]`, mode : `endsWith`, siblingKey : 0, instance : 1});
+  },
+  "events.touch.identifier" : function(path){
+    return findInAssignment({path, valueToFind : `["identifier"]`, mode : `endsWith`, siblingKey : 0, instance : 0});
+  },
+  "events.touch.client_x" : function(path){
+    return findInAssignment({path, valueToFind : `["clientX"]`, mode : `endsWith`, siblingKey : 0, instance : 1});
+  },
+  "events.touch.client_y" : function(path){
+    return findInAssignment({path, valueToFind : `["clientY"]`, mode : `endsWith`, siblingKey : 0, instance : 1});
+  },
+  "events.touch.screen_x" : function(path){
+    return findInAssignment({path, valueToFind : `["screenX"]`, mode : `endsWith`, siblingKey : 0, instance : 1});
+  },
+  "events.touch.screen_y" : function(path){
+    return findInAssignment({path, valueToFind : `["screenY"]`, mode : `endsWith`, siblingKey : 0, instance : 1});
+  },
+  "events.touch.radius_x" : function(path){
+    return findInAssignment({path, valueToFind : `["radiusX"]`, mode : `endsWith`, siblingKey : 0, instance : 0});
+  },
+  "events.touch.radius_y" : function(path){
+    return findInAssignment({path, valueToFind : `["radiusY"]`, mode : `endsWith`, siblingKey : 0, instance : 0});
+  },
+  "events.touch.rotation_angle" : function(path){
+    return findInAssignment({path, valueToFind : `["rotationAngle"]`, mode : `endsWith`, siblingKey : 0, instance : 0});
+  },
+  "events.touch.force" : function(path){
+    return findInAssignment({path, valueToFind : `["force"]`, mode : `endsWith`, siblingKey : 0, instance : 0});
   },
   "user_agent" : function(path) {
     return findInVar({path, valueToFind : `["userAgent"]`, mode : `endsWith`, siblingKey : 1});

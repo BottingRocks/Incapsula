@@ -157,10 +157,42 @@ class Reese84 {
 
     };
 
-    const encodedPayload = encode(this.encoders[12+1][0].encoder, {
+    const encodeEvent = ({event, type}) => {
+      switch(type){
+        case "mouse":
+          return {
+            [this.signalKeys[`events.mouse.type`]] : event.type,
+            [this.signalKeys[`events.mouse.timestamp`]] : event.type,
+            [this.signalKeys[`events.mouse.client_x`]] : event.client_x,
+            [this.signalKeys[`events.mouse.client_y`]] : event.client_y,
+            [this.signalKeys[`events.mouse.screen_x`]] : event.screen_x,
+            [this.signalKeys[`events.mouse.screen_y`]] : event.screen_y,
+          };
+        case "touch":
+          return {
+            [this.signalKeys[`events.touch.type`]] : event.type,
+            [this.signalKeys[`events.touch.timestamp`]] : event.timestamp,
+            [this.signalKeys[`events.touch.identifier`]] : event.identifier,
+            [this.signalKeys[`events.touch.client_x`]] : event.client_x,
+            [this.signalKeys[`events.touch.client_y`]] : event.client_y,
+            [this.signalKeys[`events.touch.screen_x`]] : event.screen_x,
+            [this.signalKeys[`events.touch.screen_y`]] : event.screen_y,
+            [this.signalKeys[`events.touch.radius_x`]] : event.radius_x,
+            [this.signalKeys[`events.touch.radius_y`]] : event.radius_y,
+            [this.signalKeys[`events.touch.rotation_angle`]] : event.rotation_angle,
+            [this.signalKeys[`events.touch.force`]] : event.force,
+          };
+      }
+    }
+
+    const encodedPayload = encode(this.encoders[13][0].encoder, {
       [this.signalKeys[`events`]] : {
-        [this.signalKeys[`events.mouse`]] : [],
-        [this.signalKeys[`events.touch`]] : []
+        [this.signalKeys[`events.mouse`]] : data.events.mouse.length
+          ? encode(this.encoders[0][0].encoder, data.events.mouse.map(e => encodeEvent({event : e, type :"mouse"})))
+          : [],
+        [this.signalKeys[`events.touch`]] : data.events.touch.length
+          ? encode(this.encoders[0][1].encoder, data.events.touch.map(e => encodeEvent({event : e, type :"touch"})))
+          : []
       },
       [this.signalKeys[`events.touch`]] : [],
       [this.signalKeys[`user_agent`]] : data.user_agent,
@@ -169,14 +201,14 @@ class Reese84 {
         [this.signalKeys[`navigator_languages.languages_is_not_undefined`]] : data.navigator_languages.languages_is_not_undefined,
         [this.signalKeys[`navigator_languages.languages`]] : data.navigator_languages.languages
       },
-      [this.signalKeys[`timestamps`]] : encode(this.encoders[5+1][0].encoder, {
-        [this.signalKeys[`timestamps.date_get_time`]] : encode(this.encoders[0+1][0].encoder, data.timestamps.date_get_time),
-        [this.signalKeys[`timestamps.file_last_modified`]] : encode(this.encoders[1+1][0].encoder, data.timestamps.file_last_modified),
-        [this.signalKeys[`timestamps.performance_now`]] : encode(this.encoders[2+1][0].encoder, data.timestamps.performance_now),
-        [this.signalKeys[`timestamps.document_timeline`]] : encode(this.encoders[3+1][0].encoder,data.timestamps.document_timeline),
-        [this.signalKeys[`timestamps.performance_timing`]] : encode(this.encoders[4+1][0].encoder, data.timestamps.performance_timing),
+      [this.signalKeys[`timestamps`]] : encode(this.encoders[6][0].encoder, {
+        [this.signalKeys[`timestamps.date_get_time`]] : encode(this.encoders[1][0].encoder, data.timestamps.date_get_time),
+        [this.signalKeys[`timestamps.file_last_modified`]] : encode(this.encoders[2][0].encoder, data.timestamps.file_last_modified),
+        [this.signalKeys[`timestamps.performance_now`]] : encode(this.encoders[3][0].encoder, data.timestamps.performance_now),
+        [this.signalKeys[`timestamps.document_timeline`]] : encode(this.encoders[4][0].encoder,data.timestamps.document_timeline),
+        [this.signalKeys[`timestamps.performance_timing`]] : encode(this.encoders[5][0].encoder, data.timestamps.performance_timing),
       }),
-      [this.signalKeys[`window_size`]] : encode(this.encoders[5+1][1].encoder, {
+      [this.signalKeys[`window_size`]] : encode(this.encoders[6][1].encoder, {
         [this.signalKeys[`window_size.window_screen_width`]] : data.window_size.window_screen_width,
         [this.signalKeys[`window_size.window_screen_height`]] : data.window_size.window_screen_height,
         [this.signalKeys[`window_size.window_screen_avail_height`]] : data.window_size.window_screen_avail_height,
@@ -206,14 +238,14 @@ class Reese84 {
         [this.signalKeys[`plugins_named_item_item_refresh.item`]] : data.plugins_named_item_item_refresh.item,
         [this.signalKeys[`plugins_named_item_item_refresh.refresh`]] : data.plugins_named_item_item_refresh.refresh
       },
-      [this.signalKeys[`canvas_hash`]] : encode(this.encoders[6+1][1].encoder, {
+      [this.signalKeys[`canvas_hash`]] : encode(this.encoders[7][1].encoder, {
         [this.signalKeys[`canvas_hash.is_point_in_path`]] : data.canvas_hash.is_point_in_path,
         [this.signalKeys[`canvas_hash.to_data_url_image`]] : data.canvas_hash.to_data_url_image,
         [this.signalKeys[`canvas_hash.screen_is_global_composite_operation`]] : data.canvas_hash.screen_is_global_composite_operation,
-        [this.signalKeys[`canvas_hash.hash`]] : encode(this.encoders[6+1][0].encoder, data.canvas_hash.hash),
+        [this.signalKeys[`canvas_hash.hash`]] : encode(this.encoders[7][0].encoder, data.canvas_hash.hash),
       }),
-      [this.signalKeys[`webgl`]] : encode(this.encoders[10+1][0].encoder, {
-        [this.signalKeys[`webgl.canvas_hash`]] : encode(this.encoders[10+1][1].encoder, data.webgl.canvas_hash),
+      [this.signalKeys[`webgl`]] : encode(this.encoders[11][0].encoder, {
+        [this.signalKeys[`webgl.canvas_hash`]] : encode(this.encoders[11][1].encoder, data.webgl.canvas_hash),
         [this.signalKeys[`webgl.get_supported_extensions`]] : data.webgl.get_supported_extensions,
         //[this.signalKeys['webgl.canvas_hash_error']] : data.webgl.canvas_hash_error,
         [this.signalKeys[`webgl.aliased_line_width_range`]] : data.webgl.aliased_line_width_range,
@@ -289,17 +321,17 @@ class Reese84 {
         [this.signalKeys[`webgl_meta.webgl_rendering_context_get_parameter`]] : data.webgl_meta.webgl_rendering_context_get_parameter,
         [this.signalKeys[`webgl_meta.is_native_webgl_rendering_context_get_parameter`]] : data.webgl_meta.is_native_webgl_rendering_context_get_parameter
       },
-      [this.signalKeys[`touch_event`]] : encode(this.encoders[11+1][0].encoder, {
+      [this.signalKeys[`touch_event`]] : encode(this.encoders[12][0].encoder, {
         [this.signalKeys[`touch_event.max_touch_points`]] : data.touch_event.max_touch_points,
         [this.signalKeys[`touch_event.has_touch_event`]] : data.touch_event.has_touch_event,
         [this.signalKeys[`touch_event.on_touch_start_is_undefined`]] : data.touch_event.on_touch_start_is_undefined
       }),
-      [this.signalKeys[`video`]] : encode(this.encoders[11+1][1].encoder, {
+      [this.signalKeys[`video`]] : encode(this.encoders[12][1].encoder, {
         [this.signalKeys[`video.can_play_type_video_ogg`]] : data.video.can_play_type_video_ogg,
         [this.signalKeys[`video.can_play_type_video_mp4`]] : data.video.can_play_type_video_mp4,
         [this.signalKeys[`video.can_play_type_video_webm`]] : data.video.can_play_type_video_webm
       }),
-      [this.signalKeys[`audio`]] : encode(this.encoders[11+1][2].encoder, {
+      [this.signalKeys[`audio`]] : encode(this.encoders[12][2].encoder, {
         [this.signalKeys[`audio.can_play_type_audio_ogg`]] : data.audio.can_play_type_audio_ogg,
         [this.signalKeys[`audio.can_play_type_audio_mpeg`]] : data.audio.can_play_type_audio_mpeg,
         [this.signalKeys[`audio.can_play_type_audio_wav`]] : data.audio.can_play_type_audio_wav,
@@ -308,7 +340,7 @@ class Reese84 {
       [this.signalKeys[`navigator_vendor`]] : data.navigator_vendor,
       [this.signalKeys[`navigator_product`]] : data.navigator_product,
       [this.signalKeys[`navigator_product_sub`]] : data.navigator_product_sub,
-      [this.signalKeys[`browser`]] : encode(this.encoders[11+1][3].encoder, {
+      [this.signalKeys[`browser`]] : encode(this.encoders[12][3].encoder, {
         [this.signalKeys[`browser.is_internet_explorer`]] : data.browser.is_internet_explorer,
         ///*
         [isChrome ? this.signalKeys[`browser.chrome`] : undefined] : isChrome ? {
@@ -319,7 +351,7 @@ class Reese84 {
         [this.signalKeys[`browser.is_chrome`]] : data.browser.is_chrome,
         [isChrome ? this.signalKeys[`browser.connection_rtt`] : undefined] : isChrome ? data.browser.connection_rtt : undefined
       }),
-      [this.signalKeys[`window`]] : encode(this.encoders[11+1][4].encoder, {
+      [this.signalKeys[`window`]] : encode(this.encoders[12][4].encoder, {
         [this.signalKeys[`window.history_length`]] : data.window.history_length,
         [this.signalKeys[`window.navigator_hardware_concurrency`]] : data.window.navigator_hardware_concurrency,
         [this.signalKeys[`window.is_window_self_not_window_top`]] : data.window.is_window_self_not_window_top,
@@ -343,13 +375,13 @@ class Reese84 {
         [this.signalKeys[`document_children.document_script_element_children`]] : data.document_children.document_script_element_children,
         [this.signalKeys[`document_children.document_head_element_children`]] : data.document_children.document_head_element_children
       },
-      [this.signalKeys[`webgl_rendering_call`]] : encode(this.encoders[11+1][5].encoder, {
+      [this.signalKeys[`webgl_rendering_call`]] : encode(this.encoders[12][5].encoder, {
         [this.signalKeys[`webgl_rendering_call.webgl_rendering_context_prototype_get_parameter_call_a`]] : data.webgl_rendering_call.webgl_rendering_context_prototype_get_parameter_call_a,
         [this.signalKeys[`webgl_rendering_call.webgl_rendering_context_prototype_get_parameter_call_b`]] : data.webgl_rendering_call.webgl_rendering_context_prototype_get_parameter_call_b,
         [this.signalKeys[`webgl_rendering_call.hash`]] : this.ast.webgl_rendering_call_hash(xor),
       }),
-      [this.signalKeys[`window_object_get_own_property_names`]] : encode(this.encoders[11+1][6].encoder, data.window_object_get_own_property_names),
-      [this.signalKeys[`visual_view_port`]] : encode(this.encoders[11+1][7].encoder, {
+      [this.signalKeys[`window_object_get_own_property_names`]] : encode(this.encoders[12][6].encoder, data.window_object_get_own_property_names),
+      [this.signalKeys[`visual_view_port`]] : encode(this.encoders[12][7].encoder, {
         [this.signalKeys[`visual_view_port.visual_view_port_width`]] : data.visual_view_port.visual_view_port_width,
         [this.signalKeys[`visual_view_port.visual_view_port_height`]] : data.visual_view_port.visual_view_port_height,
         [this.signalKeys[`visual_view_port.visual_view_port_scale`]] : data.visual_view_port.visual_view_port_scale
@@ -370,8 +402,56 @@ class Reese84 {
 
     };
 
-    const rawDecodedPayload = decode(this.encoders[12+1][0].decoder, data);
+    const rawDecodedPayload = decode(this.encoders[13][0].decoder, data);
     const decodedPayload = {};
+
+    if (this.signalKeys[`events`] in rawDecodedPayload){
+      decodedPayload[`events`] = {}
+
+      const rawPayload = rawDecodedPayload[this.signalKeys[`events`]];
+
+      decodedPayload[`events`][`mouse`] = rawPayload[this.signalKeys[`events.mouse`]].length > 0
+        ? decode(this.encoders[0][0].decoder, rawPayload[this.signalKeys[`events.mouse`]])
+        : [];
+
+      decodedPayload[`events`][`mouse`].forEach((event, i) => {
+        const newEvent = {};
+
+        newEvent['type'] = event[this.signalKeys[`events.mouse.type`]];
+        newEvent['timestamp'] = event[this.signalKeys[`events.mouse.timestamp`]];
+        newEvent['client_x'] = event[this.signalKeys[`events.mouse.client_x`]];
+        newEvent['client_y'] = event[this.signalKeys[`events.mouse.client_y`]];
+        newEvent['screen_x'] = event[this.signalKeys[`events.mouse.screen_x`]];
+        newEvent['screen_y'] = event[this.signalKeys[`events.mouse.screen_y`]];
+
+        decodedPayload[`events`][`mouse`][i] = newEvent;
+
+      });
+
+      decodedPayload[`events`][`touch`] = rawPayload[this.signalKeys[`events.touch`]].length > 0
+        ? decode(this.encoders[0][1].decoder, rawPayload[this.signalKeys[`events.touch`]])
+        : [];
+
+      decodedPayload[`events`][`touch`].forEach((event, i) => {
+        const newEvent = {};
+
+        newEvent['type'] = event[this.signalKeys[`events.touch.type`]];
+        newEvent['timestamp'] = event[this.signalKeys[`events.touch.timestamp`]];
+        newEvent['identifier'] = event[this.signalKeys[`events.touch.identifier`]];
+        newEvent['client_x'] = event[this.signalKeys[`events.touch.client_x`]];
+        newEvent['client_y'] = event[this.signalKeys[`events.touch.client_y`]];
+        newEvent['screen_x'] = event[this.signalKeys[`events.touch.screen_x`]];
+        newEvent['screen_y'] = event[this.signalKeys[`events.touch.screen_y`]];
+        newEvent['radius_x'] = event[this.signalKeys[`events.touch.screen_x`]];
+        newEvent['radius_y'] = event[this.signalKeys[`events.touch.screen_y`]];
+        newEvent['rotation_angle'] = event[this.signalKeys[`events.touch.rotation_angle`]];
+        newEvent['force'] = event[this.signalKeys[`events.touch.force`]];
+
+        decodedPayload[`events`][`touch`][i] = newEvent;
+
+      });
+
+    }
 
     decodedPayload[`user_agent`] = rawDecodedPayload[this.signalKeys[`user_agent`]];
     decodedPayload[`navigator_language`] = rawDecodedPayload[this.signalKeys[`navigator_language`]];
@@ -388,20 +468,20 @@ class Reese84 {
 
     if(this.signalKeys[`timestamps`] in rawDecodedPayload){
       decodedPayload[`timestamps`] = {};
-      const rawPayload = decode(this.encoders[5+1][0].decoder, rawDecodedPayload[this.signalKeys[`timestamps`]]);
+      const rawPayload = decode(this.encoders[6][0].decoder, rawDecodedPayload[this.signalKeys[`timestamps`]]);
 
-      decodedPayload[`timestamps`][`date_get_time`] = decode(this.encoders[0+1][0].decoder, rawPayload[this.signalKeys[`timestamps.date_get_time`]]);
-      decodedPayload[`timestamps`][`file_last_modified`] = decode(this.encoders[1+1][0].decoder, rawPayload[this.signalKeys[`timestamps.file_last_modified`]]);
-      decodedPayload[`timestamps`][`performance_now`] = decode(this.encoders[2+1][0].decoder, rawPayload[this.signalKeys[`timestamps.performance_now`]]);
-      decodedPayload[`timestamps`][`document_timeline`] = decode(this.encoders[3+1][0].decoder, rawPayload[this.signalKeys[`timestamps.document_timeline`]]);
-      decodedPayload[`timestamps`][`performance_timing`] = decode(this.encoders[4+1][0].decoder, rawPayload[this.signalKeys[`timestamps.performance_timing`]]);
+      decodedPayload[`timestamps`][`date_get_time`] = decode(this.encoders[1][0].decoder, rawPayload[this.signalKeys[`timestamps.date_get_time`]]);
+      decodedPayload[`timestamps`][`file_last_modified`] = decode(this.encoders[2][0].decoder, rawPayload[this.signalKeys[`timestamps.file_last_modified`]]);
+      decodedPayload[`timestamps`][`performance_now`] = decode(this.encoders[3][0].decoder, rawPayload[this.signalKeys[`timestamps.performance_now`]]);
+      decodedPayload[`timestamps`][`document_timeline`] = decode(this.encoders[4][0].decoder, rawPayload[this.signalKeys[`timestamps.document_timeline`]]);
+      decodedPayload[`timestamps`][`performance_timing`] = decode(this.encoders[5][0].decoder, rawPayload[this.signalKeys[`timestamps.performance_timing`]]);
     }
 
     if (this.signalKeys[`window_size`] in rawDecodedPayload) {
 
       decodedPayload[`window_size`] = {};
 
-      const rawPayload = decode(this.encoders[5+1][1].decoder, rawDecodedPayload[this.signalKeys[`window_size`]]);
+      const rawPayload = decode(this.encoders[6][1].decoder, rawDecodedPayload[this.signalKeys[`window_size`]]);
 
       decodedPayload[`window_size`][`window_screen_width`] = rawPayload[this.signalKeys[`window_size.window_screen_width`]];
       decodedPayload[`window_size`][`window_screen_height`] = rawPayload[this.signalKeys[`window_size.window_screen_height`]];
@@ -442,7 +522,7 @@ class Reese84 {
     if (this.signalKeys[`canvas_hash`] in rawDecodedPayload) {
 
       decodedPayload[`canvas_hash`] = {};
-      const rawPayload = decode(this.encoders[6+1][1].decoder, rawDecodedPayload[this.signalKeys[`canvas_hash`]]);
+      const rawPayload = decode(this.encoders[7][1].decoder, rawDecodedPayload[this.signalKeys[`canvas_hash`]]);
 
       decodedPayload[`canvas_hash`][`is_point_in_path`] = rawPayload[this.signalKeys[`canvas_hash.is_point_in_path`]];
       decodedPayload[`canvas_hash`][`to_data_url_image`] = rawPayload[this.signalKeys[`canvas_hash.to_data_url_image`]];
@@ -457,7 +537,7 @@ class Reese84 {
     if (this.signalKeys[`webgl`] in rawDecodedPayload) {
 
       decodedPayload[`webgl`] = {};
-      const rawPayload = decode(this.encoders[10+1][0].decoder, rawDecodedPayload[this.signalKeys[`webgl`]]);
+      const rawPayload = decode(this.encoders[11][0].decoder, rawDecodedPayload[this.signalKeys[`webgl`]]);
       decodedPayload[`webgl`][`canvas_hash`] = decode(this.encoders[10+1][1].decoder, rawPayload[this.signalKeys[`webgl.canvas_hash`]]);
       decodedPayload[`webgl`][`get_supported_extensions`] = rawPayload[this.signalKeys[`webgl.get_supported_extensions`]];
 
@@ -542,7 +622,7 @@ class Reese84 {
     if (this.signalKeys[`touch_event`] in rawDecodedPayload) {
 
       decodedPayload[`touch_event`] = {};
-      const rawPayload = decode(this.encoders[11+1][0].decoder, rawDecodedPayload[this.signalKeys[`touch_event`]]);
+      const rawPayload = decode(this.encoders[12][0].decoder, rawDecodedPayload[this.signalKeys[`touch_event`]]);
 
       decodedPayload[`touch_event`][`max_touch_points`] = rawPayload[this.signalKeys[`touch_event.max_touch_points`]];
       decodedPayload[`touch_event`][`has_touch_event`] = rawPayload[this.signalKeys[`touch_event.has_touch_event`]];
@@ -552,7 +632,7 @@ class Reese84 {
     if (this.signalKeys[`video`] in rawDecodedPayload) {
 
       decodedPayload[`video`] = {};
-      const rawPayload = decode(this.encoders[11+1][1].decoder, rawDecodedPayload[this.signalKeys[`video`]]);
+      const rawPayload = decode(this.encoders[12][1].decoder, rawDecodedPayload[this.signalKeys[`video`]]);
 
       decodedPayload[`video`][`can_play_type_video_ogg`] = rawPayload[this.signalKeys[`video.can_play_type_video_ogg`]];
       decodedPayload[`video`][`can_play_type_video_mp4`] = rawPayload[this.signalKeys[`video.can_play_type_video_mp4`]];
@@ -562,7 +642,7 @@ class Reese84 {
     if (this.signalKeys[`audio`] in rawDecodedPayload) {
 
       decodedPayload[`audio`] = {};
-      const rawPayload = decode(this.encoders[11+1][2].decoder, rawDecodedPayload[this.signalKeys[`audio`]]);
+      const rawPayload = decode(this.encoders[12][2].decoder, rawDecodedPayload[this.signalKeys[`audio`]]);
 
       decodedPayload[`audio`][`can_play_type_audio_ogg`] = rawPayload[this.signalKeys[`audio.can_play_type_audio_ogg`]];
       decodedPayload[`audio`][`can_play_type_audio_mpeg`] = rawPayload[this.signalKeys[`audio.can_play_type_audio_mpeg`]];
@@ -577,7 +657,7 @@ class Reese84 {
     if (this.signalKeys[`browser`] in rawDecodedPayload) {
 
       decodedPayload[`browser`] = {};
-      const rawPayload = decode(this.encoders[11+1][3].decoder, rawDecodedPayload[this.signalKeys[`browser`]]);
+      const rawPayload = decode(this.encoders[12][3].decoder, rawDecodedPayload[this.signalKeys[`browser`]]);
 
       decodedPayload[`browser`][`is_internet_explorer`] = rawPayload[this.signalKeys[`browser.is_internet_explorer`]];
       decodedPayload[`browser`][`is_chrome`] = rawPayload[this.signalKeys[`browser.is_chrome`]];
@@ -597,7 +677,7 @@ class Reese84 {
     if (this.signalKeys[`window`] in rawDecodedPayload) {
 
       decodedPayload[`window`] = {};
-      const rawPayload = decode(this.encoders[11+1][4].decoder, rawDecodedPayload[this.signalKeys[`window`]]);
+      const rawPayload = decode(this.encoders[12][4].decoder, rawDecodedPayload[this.signalKeys[`window`]]);
 
       decodedPayload[`window`][`history_length`] = rawPayload[this.signalKeys[`window.history_length`]];
       decodedPayload[`window`][`navigator_hardware_concurrency`] = rawPayload[this.signalKeys[`window.navigator_hardware_concurrency`]];
@@ -642,19 +722,19 @@ class Reese84 {
     if (this.signalKeys[`webgl_rendering_call`] in rawDecodedPayload) {
 
       decodedPayload[`webgl_rendering_call`] = {};
-      const rawPayload = decode(this.encoders[11+1][5].decoder, rawDecodedPayload[this.signalKeys[`webgl_rendering_call`]]);
+      const rawPayload = decode(this.encoders[12][5].decoder, rawDecodedPayload[this.signalKeys[`webgl_rendering_call`]]);
 
       decodedPayload[`webgl_rendering_call`][`webgl_rendering_context_prototype_get_parameter_call_a`] = rawPayload[this.signalKeys[`webgl_rendering_call.webgl_rendering_context_prototype_get_parameter_call_a`]];
       decodedPayload[`webgl_rendering_call`][`webgl_rendering_context_prototype_get_parameter_call_b`] = rawPayload[this.signalKeys[`webgl_rendering_call.webgl_rendering_context_prototype_get_parameter_call_b`]];
       decodedPayload[`webgl_rendering_call`][`hash`] = rawPayload[this.signalKeys[`webgl_rendering_call.hash`]];
     }
 
-    decodedPayload[`window_object_get_own_property_names`] = decode(this.encoders[11+1][6].decoder, rawDecodedPayload[this.signalKeys[`window_object_get_own_property_names`]]);
+    decodedPayload[`window_object_get_own_property_names`] = decode(this.encoders[12][6].decoder, rawDecodedPayload[this.signalKeys[`window_object_get_own_property_names`]]);
 
     if (this.signalKeys[`visual_view_port`] in rawDecodedPayload) {
 
       decodedPayload[`visual_view_port`] = {};
-      const rawPayload = decode(this.encoders[11+1][7].decoder, rawDecodedPayload[this.signalKeys[`visual_view_port`]]);
+      const rawPayload = decode(this.encoders[12][7].decoder, rawDecodedPayload[this.signalKeys[`visual_view_port`]]);
 
       decodedPayload[`visual_view_port`][`visual_view_port_width`] = rawPayload[this.signalKeys[`visual_view_port.visual_view_port_width`]];
       decodedPayload[`visual_view_port`][`visual_view_port_height`] = rawPayload[this.signalKeys[`visual_view_port.visual_view_port_height`]];

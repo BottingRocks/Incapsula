@@ -4,8 +4,39 @@ const PayloadSchema = {
     "events" : {
       type : `object`,
       properties : {
-        "mouse" : { type : `array`,items : { type : `string`}},
-        "touch" : { type : `array`,items : { type : `string`}}
+        "mouse" : {
+          type : `array`,
+          items : {
+            type : `object`,
+            properties : {
+              "type" : { type : "string" },
+              "timestamp" : { type : "number" },
+              "client_x" : { type : "number" },
+              "client_y" : { type : "number" },
+              "screen_x" : { type : "number" },
+              "screen_y" : { type : "number" }
+            }
+          }
+        },
+        "touch" : {
+          type : `array`,
+          items : {
+            type : `object`,
+            properties : {
+              "type" : { type : "string" },
+              "timestamp" : { type : "number" },
+              "identifier" : { type : "string" },
+              "client_x" : { type : "number" },
+              "client_y" : { type : "number" },
+              "screen_x" : { type : "number" },
+              "screen_y" : { type : "number" },
+              "radius_x" : { type : "number" },
+              "radius_y" : { type : "number" },
+              "rotation_angle" : { type : "number" },
+              "force" : { type : "number" },
+            }
+          }
+        }
       }
     },
     "user_agent" : { type : `string` },

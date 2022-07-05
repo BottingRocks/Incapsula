@@ -715,23 +715,32 @@ function extractXorEncoders(ast){
 
 function extractSignalsKeys(ast) {
 
+
   const paths = getSignalsPaths(ast);
   const getValue = (key) => {
 
     const func = FINDERS[key];
     let foundKey = false;
 
-    paths.forEach((currentPath) => {
+    if(key.startsWith("events.")){
+      const { found, value } = func(paths[0]);
 
-      const { found, value } = func(currentPath);
-
-      if(foundKey){
-        return;
-      }
       if(found){
         foundKey = value;
       }
-    });
+    }else{
+
+      paths.forEach((currentPath) => {
+        const { found, value } = func(currentPath);
+
+        if(foundKey){
+          return;
+        }
+        if(found){
+          foundKey = value;
+        }
+      });
+    }
 
     if(!foundKey){
       throw Error(`Could not find key:${key} in ast`);
@@ -744,7 +753,24 @@ function extractSignalsKeys(ast) {
   return {
     'events' : getValue(`events`),
     'events.mouse' : getValue(`events.mouse`),
-    'events.touch' : getValue(`events.touch`),
+    'events.mouse.type' : getValue(`events.mouse.type`),
+    'events.mouse.timestamp' : getValue(`events.mouse.timestamp`),
+    'events.mouse.client_x' : getValue(`events.mouse.client_x`),
+    'events.mouse.client_y' : getValue(`events.mouse.client_y`),
+    'events.mouse.screen_x' : getValue(`events.mouse.screen_x`),
+    'events.mouse.screen_y' : getValue(`events.mouse.screen_y`),
+    'events.touch.' : getValue(`events.touch`),
+    'events.touch.type' : getValue(`events.touch.type`),
+    'events.touch.timestamp' : getValue(`events.touch.timestamp`),
+    'events.touch.identifier' : getValue(`events.touch.identifier`),
+    'events.touch.client_x' : getValue(`events.touch.client_x`),
+    'events.touch.client_y' : getValue(`events.touch.client_y`),
+    'events.touch.screen_x' : getValue(`events.touch.screen_x`),
+    'events.touch.screen_y' : getValue(`events.touch.screen_y`),
+    'events.touch.radius_x' : getValue(`events.touch.radius_x`),
+    'events.touch.radius_y' : getValue(`events.touch.radius_y`),
+    'events.touch.rotation_angle' : getValue(`events.touch.rotation_angle`),
+    'events.touch.force' : getValue(`events.touch.force`),
     'user_agent' : getValue(`user_agent`),
     'navigator_language' : getValue(`navigator_language`),
     'navigator_languages' : getValue(`navigator_languages`),

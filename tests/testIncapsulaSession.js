@@ -11,8 +11,8 @@ const DefaultReese84Payload2 = require("../incapsula/payloads/reese84-balance.js
   const userAgent = `Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:100.0) Gecko/20100101 Firefox/100.0`;
   const session = new IncapsulaSession({proxyUrl : `http://127.0.0.1:8888`, userAgent});
   //const session = new IncapsulaSession({proxyUrl : `http://127.0.0.1:1080`});
-  const result = await session.go({url : `https://www.pokemoncenter.com`, utmvc : DefaultUtmvcPayload, reese84 : DefaultReese84Payload2});
-  //const result = await session.go({url : `https://balance.vanillagift.com/`, utmvc : DefaultUtmvcPayload, reese84 : DefaultReese84Payload2});
+  //const result = await session.go({url : `https://www.pokemoncenter.com`, utmvc : DefaultUtmvcPayload, reese84 : DefaultReese84Payload2});
+  const result = await session.go({url : `https://balance.vanillagift.com/`, utmvc : DefaultUtmvcPayload, reese84 : DefaultReese84Payload2});
   //const result = await session.go({url : `https://www.corsair.com/us/en/`, utmvc : DefaultUtmvcPayload, reese84 : DefaultReese84Payload});
   //const result = await session.go({url : `https://driverpracticaltest.dvsa.gov.uk/`, utmvc : DefaultUtmvcPayload, reese84 : DefaultReese84Payload});
   console.log(result);
