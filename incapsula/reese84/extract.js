@@ -33,6 +33,7 @@ function createEncoderFromPath({
   type
 }) {
   //Good
+
   const handleWhileAndByOneByte = (path) => {
 
     const rounds = path.node.test.right.value;
@@ -563,45 +564,51 @@ function getXorEncoderFromPath(path) {
 
 }
 
-function buildEncoderAndDecoder(encoders) {
-  return {
-    "encoder" : function (data, xor) {
-      const _encs = [...encoders];
-      const firstEncoder = _encs.shift()[`encoder`];
-      const xored = firstEncoder(xor);
-      const encodeFuncs = [..._encs];
+function buildEncoderAndDecoder(encoders, encoderVar) {
 
-      let mutable = data;
+  const encoder = function (data, xor) {
+    const _encs = [...encoders];
+    const firstEncoder = _encs.shift()['encoder'];
+    const xored = firstEncoder(xor);
+    const encodeFuncs = [..._encs];
 
-      for (let i = 0, maxIterations = encodeFuncs.length; i < maxIterations; i++) {
+    let mutable = data;
 
-        const enc = encodeFuncs[i];
-        mutable = enc[`encoder`](mutable, xored);
+    for (let i = 0, maxIterations = encodeFuncs.length; i < maxIterations; i++) {
 
-      }
-
-      return btoa(mutable.join(``));
-
-    },
-    "decoder" : function (data, xor) {
-
-      const _encs = [...encoders];
-      const xored = _encs.shift()[`decoder`](xor);
-      const decodeFuncs = [..._encs].reverse();
-
-      let mutable = atob(data);
-
-      for (let i = 0, maxIterations = decodeFuncs.length; i < maxIterations; i++) {
-
-        const enc = decodeFuncs[i];
-        mutable = enc[`decoder`](mutable, xored);
-
-      }
-
-      return JSON.parse(mutable.join(``));
+      const enc = encodeFuncs[i];
+      mutable = enc[`encoder`](mutable, xored);
 
     }
+
+    return btoa(mutable.join(``));
+
   };
+
+  encoder.encoderVar = encoderVar;
+
+  const decoder = function (data, xor) {
+
+    const _encs = [...encoders];
+    const xored = _encs.shift()[`decoder`](xor);
+    const decodeFuncs = [..._encs].reverse();
+
+    let mutable = atob(data);
+
+    for (let i = 0, maxIterations = decodeFuncs.length; i < maxIterations; i++) {
+
+      const enc = decodeFuncs[i];
+      mutable = enc[`decoder`](mutable, xored);
+
+    }
+
+    return JSON.parse(mutable.join(``));
+
+  };
+
+  decoder.encoderVar = encoderVar;
+
+  return { encoder, decoder }
 }
 
 function getSignalsPaths(ast) {
@@ -661,7 +668,7 @@ function extractXorEncoders(ast){
 
                  const encoders = getXorEncoderFromPath(statementPath);
                  encoders.forEach((encoder) =>
-                   tryEncoders.push(buildEncoderAndDecoder(encoder[`encoders`]))
+                   tryEncoders.push(buildEncoderAndDecoder(encoder[`encoders`], encoder['var']))
                  );
                }
 
@@ -700,7 +707,7 @@ function extractXorEncoders(ast){
 
           const encoders = getXorEncoderFromPath(statementPath);
           encoders.forEach((encoder) => {
-            currentEncoders.push(buildEncoderAndDecoder(encoder[`encoders`]));
+            currentEncoders.push(buildEncoderAndDecoder(encoder[`encoders`], encoder['var']));
           });
         }
 
@@ -759,7 +766,7 @@ function extractSignalsKeys(ast) {
     'events.mouse.client_y' : getValue(`events.mouse.client_y`),
     'events.mouse.screen_x' : getValue(`events.mouse.screen_x`),
     'events.mouse.screen_y' : getValue(`events.mouse.screen_y`),
-    'events.touch.' : getValue(`events.touch`),
+    'events.touch' : getValue(`events.touch`),
     'events.touch.type' : getValue(`events.touch.type`),
     'events.touch.timestamp' : getValue(`events.touch.timestamp`),
     'events.touch.identifier' : getValue(`events.touch.identifier`),
@@ -776,6 +783,7 @@ function extractSignalsKeys(ast) {
     'navigator_languages' : getValue(`navigator_languages`),
     'navigator_languages.languages_is_not_undefined' : getValue(`navigator_languages.languages_is_not_undefined`),
     'navigator_languages.languages' : getValue(`navigator_languages.languages`),
+    'navigator_build_id' : getValue(`navigator_build_id`),
     'timestamps' : getValue(`timestamps`),
     'timestamps.date_get_time' : getValue(`timestamps.date_get_time`),
     'timestamps.file_last_modified' : getValue(`timestamps.file_last_modified`),

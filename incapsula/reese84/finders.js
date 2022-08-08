@@ -408,27 +408,24 @@ const FINDERS = {
     let value = undefined;
 
     path.traverse({
-      ExpressionStatement(expPath){
+      IfStatement(ifPath){
 
-        const code = generate(expPath.node).code;
+        const { test } = ifPath.node;
 
-        if(!code.endsWith(`window["screen"]["width"];`)){
+        if(!(generate(test).code === `window["navigator"]["buildID"] !== undefined`)){
           return;
         }
 
-        let currentPath = expPath;
-        for(;;){
-          if(generate(currentPath.node).code.indexOf(`xorShift128`) !== -1){
-            break;
-          }
-
-          currentPath = currentPath.getPrevSibling();
+        if(!t.isBlockStatement(ifPath.node.consequent)){
+          return;
         }
 
+        const leftProp = ifPath.getPrevSibling().get("expression.left.property")
+
         found = true;
-        const leftProp = currentPath.getPrevSibling().get(`expression.left.property`);
         value = getPropertyValue(leftProp);
 
+        ifPath.stop();
       }
     });
 
@@ -453,6 +450,35 @@ const FINDERS = {
         const leftProp = ifPath.get(`consequent.body`).slice(-1)[0].get(`expression.left.property`);
         value = getPropertyValue(leftProp);
 
+      }
+    });
+
+    return { found, value };
+  },
+  "navigator_build_id" : function(path){
+    let found = false;
+    let value = undefined;
+
+    path.traverse({
+      IfStatement(ifPath){
+
+        const { test } = ifPath.node;
+
+        if(!(generate(test).code === `window["navigator"]["buildID"] !== undefined`)){
+          return;
+        }
+
+        if(!t.isBlockStatement(ifPath.node.consequent)){
+          return;
+        }
+
+        const bodyLength = ifPath.get("consequent.body").length;
+        const leftProp = ifPath.get(`consequent.body.${bodyLength - 1}.expression.left.property`);
+
+        found = true;
+        value = getPropertyValue(leftProp);
+
+        ifPath.stop();
       }
     });
 

@@ -55,6 +55,8 @@ class Utmvc {
       replaceObtuseBinaryExpressions,
       renameBrowserProperties,
       findUtmcvProperties
+      /*
+      */
     ].map((t) => t(ast));
 
 

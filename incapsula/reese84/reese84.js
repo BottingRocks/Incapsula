@@ -134,6 +134,7 @@ class Reese84 {
     const isChrome = uaparser(data.user_agent).browser.name === `Chrome`;
 
     const encode = (encoder, data) => {
+
       let mutatedData = null;
       //Convert the data into a JSON string, replacing undefined values with nulls.
 
@@ -194,21 +195,25 @@ class Reese84 {
           ? encode(this.encoders[0][1].encoder, data.events.touch.map(e => encodeEvent({event : e, type :"touch"})))
           : []
       },
-      [this.signalKeys[`events.touch`]] : [],
+      [this.signalKeys[`events`]] : {
+        [this.signalKeys[`events.mouse`]] : [],
+        [this.signalKeys[`events.touch`]] : [],
+      },
       [this.signalKeys[`user_agent`]] : data.user_agent,
       [this.signalKeys[`navigator_language`]] : data.navigator_language,
       [this.signalKeys[`navigator_languages`]] : {
         [this.signalKeys[`navigator_languages.languages_is_not_undefined`]] : data.navigator_languages.languages_is_not_undefined,
         [this.signalKeys[`navigator_languages.languages`]] : data.navigator_languages.languages
       },
-      [this.signalKeys[`timestamps`]] : encode(this.encoders[6][0].encoder, {
+      [this.signalKeys[`navigator_build_id`]] : encode(this.encoders[6][0].encoder, data.navigator_build_id),
+      [this.signalKeys[`timestamps`]] : encode(this.encoders[6][1].encoder, {
         [this.signalKeys[`timestamps.date_get_time`]] : encode(this.encoders[1][0].encoder, data.timestamps.date_get_time),
         [this.signalKeys[`timestamps.file_last_modified`]] : encode(this.encoders[2][0].encoder, data.timestamps.file_last_modified),
         [this.signalKeys[`timestamps.performance_now`]] : encode(this.encoders[3][0].encoder, data.timestamps.performance_now),
         [this.signalKeys[`timestamps.document_timeline`]] : encode(this.encoders[4][0].encoder,data.timestamps.document_timeline),
         [this.signalKeys[`timestamps.performance_timing`]] : encode(this.encoders[5][0].encoder, data.timestamps.performance_timing),
       }),
-      [this.signalKeys[`window_size`]] : encode(this.encoders[6][1].encoder, {
+      [this.signalKeys[`window_size`]] : encode(this.encoders[6][2].encoder, {
         [this.signalKeys[`window_size.window_screen_width`]] : data.window_size.window_screen_width,
         [this.signalKeys[`window_size.window_screen_height`]] : data.window_size.window_screen_height,
         [this.signalKeys[`window_size.window_screen_avail_height`]] : data.window_size.window_screen_avail_height,
@@ -393,21 +398,28 @@ class Reese84 {
   }
 
   decodePayload(data, xor, dropUniqueKey = true) {
-
     const decode = (decoder, data) => {
+
+      if(data instanceof Array){
+        return data.map(d => {
+          let mutatedData = null;
+          //Apply the series of encoder loops, and returns the result as a Base64 string
+          mutatedData = decoder(d, Number(xor));
+          return mutatedData;
+        });
+      }
+
       let mutatedData = null;
       //Apply the series of encoder loops, and returns the result as a Base64 string
       mutatedData = decoder(data, Number(xor));
       return mutatedData;
 
     };
-
     const rawDecodedPayload = decode(this.encoders[13][0].decoder, data);
     const decodedPayload = {};
 
     if (this.signalKeys[`events`] in rawDecodedPayload){
       decodedPayload[`events`] = {}
-
       const rawPayload = rawDecodedPayload[this.signalKeys[`events`]];
 
       decodedPayload[`events`][`mouse`] = rawPayload[this.signalKeys[`events.mouse`]].length > 0
@@ -465,10 +477,11 @@ class Reese84 {
       decodedPayload[`navigator_languages`][`languages`] = rawPayload[this.signalKeys[`navigator_languages.languages`]];
     }
 
+    decodedPayload['navigator_build_id'] = decode(this.encoders[6][0].decoder, rawDecodedPayload[this.signalKeys[`navigator_build_id`]]);
 
     if(this.signalKeys[`timestamps`] in rawDecodedPayload){
       decodedPayload[`timestamps`] = {};
-      const rawPayload = decode(this.encoders[6][0].decoder, rawDecodedPayload[this.signalKeys[`timestamps`]]);
+      const rawPayload = decode(this.encoders[6][1].decoder, rawDecodedPayload[this.signalKeys[`timestamps`]]);
 
       decodedPayload[`timestamps`][`date_get_time`] = decode(this.encoders[1][0].decoder, rawPayload[this.signalKeys[`timestamps.date_get_time`]]);
       decodedPayload[`timestamps`][`file_last_modified`] = decode(this.encoders[2][0].decoder, rawPayload[this.signalKeys[`timestamps.file_last_modified`]]);
@@ -481,7 +494,7 @@ class Reese84 {
 
       decodedPayload[`window_size`] = {};
 
-      const rawPayload = decode(this.encoders[6][1].decoder, rawDecodedPayload[this.signalKeys[`window_size`]]);
+      const rawPayload = decode(this.encoders[6][2].decoder, rawDecodedPayload[this.signalKeys[`window_size`]]);
 
       decodedPayload[`window_size`][`window_screen_width`] = rawPayload[this.signalKeys[`window_size.window_screen_width`]];
       decodedPayload[`window_size`][`window_screen_height`] = rawPayload[this.signalKeys[`window_size.window_screen_height`]];
@@ -538,7 +551,7 @@ class Reese84 {
 
       decodedPayload[`webgl`] = {};
       const rawPayload = decode(this.encoders[11][0].decoder, rawDecodedPayload[this.signalKeys[`webgl`]]);
-      decodedPayload[`webgl`][`canvas_hash`] = decode(this.encoders[10+1][1].decoder, rawPayload[this.signalKeys[`webgl.canvas_hash`]]);
+      decodedPayload[`webgl`][`canvas_hash`] = decode(this.encoders[11][1].decoder, rawPayload[this.signalKeys[`webgl.canvas_hash`]]);
       decodedPayload[`webgl`][`get_supported_extensions`] = rawPayload[this.signalKeys[`webgl.get_supported_extensions`]];
 
       if (rawPayload[this.signalKeys[`webgl.canvas_hash_error`]]) {

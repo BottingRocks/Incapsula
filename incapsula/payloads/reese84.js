@@ -212,7 +212,7 @@ module.exports = {
       ]
     },
     "webdriver" : false,
-    "connection_rtt" : 0
+    "connection_rtt" : 55
   },
   "window" : {
     "history_length" : 3,
