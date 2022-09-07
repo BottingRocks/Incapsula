@@ -197,8 +197,8 @@ module.exports = {
   },
   "window_object_get_own_property_names_a": "SVGAnimatedPreserveAspectRatio;;;SVGComponentTransferFunctionElement;;;MediaStreamTrackAudioSourceNode;;;WritableStreamDefaultController;;;MediaStreamAudioDestinationNode;;;AuthenticatorAssertionResponse;;;ReadableStreamDefaultController;;;AuthenticatorAttestationResponse;;;TransformStreamDefaultController;;;2f1acc6c3a606b082e5eef5e54414ffb",
   "window_object_get_own_property_names_b": {
-    "9sZWdyc=": "onclose",
-    "loaGdidW": "oncuechange"
+    "prev": "onclose",
+    "next": "oncuechange"
   },
   "visual_view_port": {
     "visual_view_port_width": 1024,
