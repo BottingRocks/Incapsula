@@ -14,11 +14,11 @@ const options = {
   error : null,
   oldToken : null,
   interrogation : 381,
-  cr : process.env.CR || (Math.random() * 1073741824 | 0),
+  cr : 1,
   version : `stable`,
 };
 
 const encodedPayload = reese84.createPayload(payloadFile, options);
-//process.exit(1)
 console.log(`[${encodedPayload}]`);
+process.exit(1)
 

@@ -386,7 +386,11 @@ class Reese84 {
         [this.signalKeys[`webgl_rendering_call.hash`]] : this.ast.webgl_rendering_call_hash(xor),
       }),
       [this.signalKeys[`window_object_get_own_property_names_a`]] : encode(this.encoders[12][6].encoder, data.window_object_get_own_property_names_a),
-      [this.signalKeys[`window_object_get_own_property_names_b`]] : encode(this.encoders[12][7].encoder, data.window_object_get_own_property_names_b),
+      [this.signalKeys[`window_object_get_own_property_names_b`]] : encode(this.encoders[12][7].encoder, {
+        [this.signalKeys[`window_object_get_own_property_names_b.prev`]] : data.window_object_get_own_property_names_b.prev,
+        [this.signalKeys[`window_object_get_own_property_names_b.next`]] : data.window_object_get_own_property_names_b.next,
+      }),
+
       [this.signalKeys[`visual_view_port`]] : encode(this.encoders[12][8].encoder, {
         [this.signalKeys[`visual_view_port.visual_view_port_width`]] : data.visual_view_port.visual_view_port_width,
         [this.signalKeys[`visual_view_port.visual_view_port_height`]] : data.visual_view_port.visual_view_port_height,
@@ -744,7 +748,15 @@ class Reese84 {
     }
 
     decodedPayload[`window_object_get_own_property_names_a`] = decode(this.encoders[12][6].decoder, rawDecodedPayload[this.signalKeys[`window_object_get_own_property_names_a`]]);
-    decodedPayload[`window_object_get_own_property_names_b`] = decode(this.encoders[12][7].decoder, rawDecodedPayload[this.signalKeys[`window_object_get_own_property_names_b`]]);
+
+    if(this.signalKeys['window_object_get_own_property_names_b'] in rawDecodedPayload){
+      decodedPayload[`window_object_get_own_property_names_b`] = {};
+      const rawPayload = decode(this.encoders[12][7].decoder, rawDecodedPayload[this.signalKeys[`window_object_get_own_property_names_b`]]);
+
+      decodedPayload[`window_object_get_own_property_names_b`][`prev`] = rawPayload[this.signalKeys[`window_object_get_own_property_names_b.prev`]];
+      decodedPayload[`window_object_get_own_property_names_b`][`next`] = rawPayload[this.signalKeys[`window_object_get_own_property_names_b.next`]];
+
+    }
 
     if (this.signalKeys[`visual_view_port`] in rawDecodedPayload) {
 
