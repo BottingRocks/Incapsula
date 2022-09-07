@@ -105,6 +105,14 @@ class IncapsulaSession {
             console.log(`doing captchas`, incapsulaModes);
             await this.doCaptchaMode({url : incapsulaModes.iframe.url});
 
+            await this.fetch(url, {
+              headers : this.getHeaders({
+                pageType : `main`,
+                url,
+              }),
+              agent : this.agent
+            });
+
             break;
           case 23:
             //Banned
@@ -291,9 +299,11 @@ class IncapsulaSession {
 
     const submitCaptchaPageBody = await submitCaptchaPage.text();
 
+    /*
     if(submitCaptchaPage.status !== 200){
       throw new IncapsulaError(`Incapsula did not return a 200 error. It returned:${submitCaptchaPage.status}. Body:${submitCaptchaPageBody}`);
     }
+    */
   }
 
   async doFaviconMode({url, referer}){

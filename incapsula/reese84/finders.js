@@ -44,6 +44,8 @@ function findFirstBtoaForwards(p) {
   }
 };
 
+
+
 const findFirstTryBackwards = (p) => {
   let _p = p;
   while(_p.node !== undefined){
@@ -1573,7 +1575,7 @@ const FINDERS = {
 
     return { found, value };
   },
-  "window_object_get_own_property_names" : function(path) {
+  "window_object_get_own_property_names_a" : function(path) {
     let found = false;
     let value = undefined;
 
@@ -1590,6 +1592,73 @@ const FINDERS = {
         const leftProp = findFirstBtoaForwards(varPath).getNextSibling().get(`expression.left.property`);
         value = getPropertyValue(leftProp);
 
+      }
+    });
+
+    return { found, value };
+  },
+  "window_object_get_own_property_names_b" : function(path) {
+    let found = false;
+    let value = undefined;
+
+    path.traverse({
+      VariableDeclaration(varPath){
+
+        const code = generate(varPath.node).code;
+
+        if(!code.endsWith(`window["Object"]["getOwnPropertyNames"](window);`)){
+          return;
+        }
+
+        found = true;
+        const nextPath = findFirstBtoaForwards(varPath);
+        const leftProp = findFirstBtoaForwards(nextPath.getNextSibling()).getNextSibling().get(`expression.left.property`);
+        value = getPropertyValue(leftProp);
+
+      }
+    });
+
+    return { found, value };
+  },
+  "window_object_get_own_property_names_b.prev" : function(path) {
+
+    let found = false;
+    let value = undefined;
+
+    path.traverse({
+      IfStatement(ifPath){
+
+        const code = generate(ifPath.node.test).code;
+
+        if(!code.endsWith(' === "oncontextmenu"')){
+          return;
+        }
+
+        found = true;
+        const leftProp = ifPath.get("consequent.body.0.consequent.body.0.expression.left.property")
+        value = getPropertyValue(leftProp);
+      }
+    });
+
+    return { found, value };
+  },
+  "window_object_get_own_property_names_b.next" : function(path) {
+
+    let found = false;
+    let value = undefined;
+
+    path.traverse({
+      IfStatement(ifPath){
+
+        const code = generate(ifPath.node.test).code;
+
+        if(!code.endsWith(' === "oncontextmenu"')){
+          return;
+        }
+
+        found = true;
+        const leftProp = ifPath.get("consequent.body.1.consequent.body.0.expression.left.property")
+        value = getPropertyValue(leftProp);
       }
     });
 

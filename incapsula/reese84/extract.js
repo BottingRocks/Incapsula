@@ -565,50 +565,41 @@ function getXorEncoderFromPath(path) {
 }
 
 function buildEncoderAndDecoder(encoders, encoderVar) {
+  return {
+    "encoder" : function (data, xor) {
+      const _encs = [...encoders];
+      const firstEncoder = _encs.shift()['encoder'];
+      const xored = firstEncoder(xor);
+      const encodeFuncs = [..._encs];
 
-  const encoder = function (data, xor) {
-    const _encs = [...encoders];
-    const firstEncoder = _encs.shift()['encoder'];
-    const xored = firstEncoder(xor);
-    const encodeFuncs = [..._encs];
+      let mutable = data;
 
-    let mutable = data;
+      for (let i = 0, maxIterations = encodeFuncs.length; i < maxIterations; i++) {
 
-    for (let i = 0, maxIterations = encodeFuncs.length; i < maxIterations; i++) {
+        const enc = encodeFuncs[i];
+        mutable = enc[`encoder`](mutable, xored);
 
-      const enc = encodeFuncs[i];
-      mutable = enc[`encoder`](mutable, xored);
+      }
 
+      return btoa(mutable.join(``));
+
+    },
+    "decoder" : function (data, xor) {
+      const _encs = [...encoders];
+      const xored = _encs.shift()[`decoder`](xor);
+      const decodeFuncs = [..._encs].reverse();
+
+      let mutable = atob(data);
+
+      for (let i = 0, maxIterations = decodeFuncs.length; i < maxIterations; i++) {
+
+        const enc = decodeFuncs[i];
+        mutable = enc[`decoder`](mutable, xored);
+
+      }
+      return JSON.parse(mutable.join(``));
     }
-
-    return btoa(mutable.join(``));
-
   };
-
-  encoder.encoderVar = encoderVar;
-
-  const decoder = function (data, xor) {
-
-    const _encs = [...encoders];
-    const xored = _encs.shift()[`decoder`](xor);
-    const decodeFuncs = [..._encs].reverse();
-
-    let mutable = atob(data);
-
-    for (let i = 0, maxIterations = decodeFuncs.length; i < maxIterations; i++) {
-
-      const enc = decodeFuncs[i];
-      mutable = enc[`decoder`](mutable, xored);
-
-    }
-
-    return JSON.parse(mutable.join(``));
-
-  };
-
-  decoder.encoderVar = encoderVar;
-
-  return { encoder, decoder }
 }
 
 function getSignalsPaths(ast) {
@@ -940,7 +931,8 @@ function extractSignalsKeys(ast) {
     'webgl_rendering_call.webgl_rendering_context_prototype_get_parameter_call_a' : getValue(`webgl_rendering_call.webgl_rendering_context_prototype_get_parameter_call_a`),
     'webgl_rendering_call.webgl_rendering_context_prototype_get_parameter_call_b' : getValue(`webgl_rendering_call.webgl_rendering_context_prototype_get_parameter_call_b`),
     'webgl_rendering_call.hash' : getValue(`webgl_rendering_call.hash`),
-    'window_object_get_own_property_names' : getValue(`window_object_get_own_property_names`),
+    'window_object_get_own_property_names_a' : getValue(`window_object_get_own_property_names_a`),
+    'window_object_get_own_property_names_b' : getValue(`window_object_get_own_property_names_b`),
     'visual_view_port' : getValue(`visual_view_port`),
     'visual_view_port.visual_view_port_width' : getValue(`visual_view_port.visual_view_port_width`),
     'visual_view_port.visual_view_port_height' : getValue(`visual_view_port.visual_view_port_height`),

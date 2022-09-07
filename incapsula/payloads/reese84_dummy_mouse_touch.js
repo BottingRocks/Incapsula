@@ -1,21 +1,40 @@
 module.exports = {
-  "events": {
-    "mouse": [],
-    "touch": []
+  "events" : {
+    "mouse" : [{
+      "type" : "mouse",
+      "timestamp" : 1651184228981,
+      "client_x" : 100,
+      "client_y" : 100,
+      "screen_x" : 100,
+      "screen_y" : 100,
+    }],
+    "touch" : [{
+      "type" : "mouse",
+      "timestamp" : 1651184228981,
+      "identifier" : "something",
+      "client_x" : 100,
+      "client_y" : 100,
+      "screen_x" : 100,
+      "screen_y" : 100,
+      "radius_x" : 100,
+      "radius_y" : 100,
+      "rotation_angle" : 100,
+      "force" : 100,
+    }]
   },
-  "user_agent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:103.0) Gecko/20100101 Firefox/103.0",
+  "user_agent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:104.0) Gecko/20100101 Firefox/104.0",
   "navigator_language": "en-US",
   "navigator_languages": {
-    "languages_is_not_undefined" : false,
-    "languages" : ["en-US", "en"]
+    "languages_is_not_undefined": false,
+    "languages": ["en-US", "en"]
   },
-  "navigator_build_id": '20181001000000',
+  "navigator_build_id": "20181001000000",
   "timestamps": {
-    "date_get_time": "1659918999308",
-    "file_last_modified": "1659918999309",
-    "performance_now": "11340",
-    "document_timeline": "11285.02",
-    "performance_timing": "1659918987968"
+    "date_get_time": "1662585835998",
+    "file_last_modified": "1662585835998",
+    "performance_now": "3040",
+    "document_timeline": "3034.86",
+    "performance_timing": "1662585832958"
   },
   "window_size": {
     "window_screen_width": 1920,
@@ -25,14 +44,14 @@ module.exports = {
     "window_screen_avail_top": 27,
     "window_screen_avail_width": 1920,
     "window_screen_pixel_depth": 24,
-    "window_inner_width": 1920,
-    "window_inner_height": 928,
-    "window_outer_width": 1920,
-    "window_outer_height": 1053,
+    "window_inner_width": 1024,
+    "window_inner_height": 576,
+    "window_outer_width": 0,
+    "window_outer_height": 0,
     "window_device_pixel_ratio": 1,
     "window_screen_orientation_type": "landscape-primary",
     "window_screenX": 0,
-    "window_screenY": 27
+    "window_screenY": 0
   },
   "date_get_time_zone_off_set": -7,
   "has_indexed_db": true,
@@ -40,7 +59,7 @@ module.exports = {
   "open_database": false,
   "cpu_class": "unknown",
   "platform": "Linux x86_64",
-  "do_not_track": "unspecified",
+  "do_not_track": "1",
   "plugins_or_active_x_object": "Chrome PDF Viewer::Portable Document Format::application/pdf~pdf,text/pdf~pdf;Chromium PDF Viewer::Portable Document Format::application/pdf~pdf,text/pdf~pdf;Microsoft Edge PDF Viewer::Portable Document Format::application/pdf~pdf,text/pdf~pdf;PDF Viewer::Portable Document Format::application/pdf~pdf,text/pdf~pdf;WebKit built-in PDF::Portable Document Format::application/pdf~pdf,text/pdf~pdf",
   "plugins_named_item_item_refresh": {
     "named_item": "namedItem",
@@ -149,7 +168,7 @@ module.exports = {
     "webdriver": false
   },
   "window": {
-    "history_length": 3,
+    "history_length": 1,
     "navigator_hardware_concurrency": 8,
     "is_window_self_not_window_top": false,
     "is_native_navigator_get_battery": false,
@@ -167,24 +186,42 @@ module.exports = {
   },
   "canvas_fonts": ["Batang", "BitstreamVeraSansMono", "MSMincho", "MSUIGothic", "MeiryoUI", "PMingLiU"],
   "document_children": {
-    "document_script_element_children": [{
-      "src": ""
-    }],
+    "document_script_element_children": [],
     "document_head_element_children": [{
-      "src": "https://balance.vanillagift.com/tis-them-Ported-I-amis-and-formany-way-thee-not-"
+      "src": "https://www.googletagmanager.com/gtm.js?id=GTM-NJ928NX&gtm_auth=lqNACcRAFumttoyg28lLuA&gtm_preview=env-2&gtm_cookies_win=x"
     }, {
       "src": ""
+    }, {
+      "src": "https://dd.pokemoncenter.com/tags.js"
+    }, {
+      "src": "https://www.pokemoncenter.com/kie-Yes-him-To-the-To-mocking-and-do-mise-I-prom"
+    }, {
+      "src": ""
+    }, {
+      "src": "https://www.pokemoncenter.com/_next/static/chunks/polyfills-a40ef1678bae11e696dba45124eadd70.js"
+    }, {
+      "src": "https://www.pokemoncenter.com/_next/static/chunks/7267.4a04f31407820157b85c.js"
+    }, {
+      "src": "https://www.pokemoncenter.com/_next/static/chunks/4720-4302e97c73b1d3b80d56.js"
+    }, {
+      "src": "https://www.pokemoncenter.com/_next/static/chunks/2566.acb53d0b024fe0a8af66.js"
+    }, {
+      "src": "https://www.pokemoncenter.com/_next/static/chunks/2185.fc9a8467a73e2f2fd4f6.js"
     }]
   },
   "webgl_rendering_call": {
     "webgl_rendering_context_prototype_get_parameter_call_a": false,
     "webgl_rendering_context_prototype_get_parameter_call_b": false,
-    "hash": "7d\u000f \u000fb?W\u0012\u0012\u001c\rdYv\f )6U1"
+    "hash": "X367\u0011))\nd(\u0003iQ\u000e~\u0018\u001c|_J^"
   },
-  "window_object_get_own_property_names": "SVGAnimatedPreserveAspectRatio;;;SVGComponentTransferFunctionElement;;;MediaStreamTrackAudioSourceNode;;;WritableStreamDefaultController;;;MediaStreamAudioDestinationNode;;;AuthenticatorAssertionResponse;;;ReadableStreamDefaultController;;;AuthenticatorAttestationResponse;;;TransformStreamDefaultController;;;__zone_symbol__ZoneAwarePromise;;;__zone_symbol__requestAnimationFrame;;;__zone_symbol__cancelAnimationFrame;;;__zone_symbol__MutationObserver;;;__zone_symbol__IntersectionObserver;;;__zone_symbol__hashchangefalse",
+  "window_object_get_own_property_names_a": "SVGAnimatedPreserveAspectRatio;;;SVGComponentTransferFunctionElement;;;MediaStreamTrackAudioSourceNode;;;WritableStreamDefaultController;;;MediaStreamAudioDestinationNode;;;AuthenticatorAssertionResponse;;;ReadableStreamDefaultController;;;AuthenticatorAttestationResponse;;;TransformStreamDefaultController;;;2f1acc6c3a606b082e5eef5e54414ffb",
+  "window_object_get_own_property_names_b": {
+    "9sZWdyc=": "onclose",
+    "loaGdidW": "oncuechange"
+  },
   "visual_view_port": {
-    "visual_view_port_width": 1920,
-    "visual_view_port_height": 928,
+    "visual_view_port_width": 1024,
+    "visual_view_port_height": 576,
     "visual_view_port_scale": 1
   }
 };
