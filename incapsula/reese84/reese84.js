@@ -482,7 +482,9 @@ class Reese84 {
       decodedPayload[`navigator_languages`][`languages`] = rawPayload[this.signalKeys[`navigator_languages.languages`]];
     }
 
-    decodedPayload['navigator_build_id'] = decode(this.encoders[6][0].decoder, rawDecodedPayload[this.signalKeys[`navigator_build_id`]]);
+    decodedPayload['navigator_build_id'] = rawDecodedPayload[this.signalKeys[`navigator_build_id`]] !== undefined
+      ? decode(this.encoders[6][0].decoder, rawDecodedPayload[this.signalKeys[`navigator_build_id`]])
+      : null;
 
     if(this.signalKeys[`timestamps`] in rawDecodedPayload){
       decodedPayload[`timestamps`] = {};

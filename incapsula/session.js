@@ -122,7 +122,7 @@ class IncapsulaSession {
 
       }
 
-      const mainPageRefresh = await this.fetch(url, {
+      let mainPageRefresh = await this.fetch(url, {
         headers : this.getHeaders({
           pageType : `refresh`,
           url,
@@ -130,8 +130,20 @@ class IncapsulaSession {
         agent : this.agent
       });
 
-      const mainPageRefreshBody = await mainPageRefresh.text();
+      let mainPageRefreshBody = await mainPageRefresh.text();
       SAVE_ASTS && this.saveFile(`main-refresh.html`, mainPageRefreshBody);
+
+      mainPageRefresh = await this.fetch(url, {
+        headers : this.getHeaders({
+          pageType : `refresh`,
+          url,
+        }),
+        agent : this.agent
+      });
+
+      mainPageRefreshBody = await mainPageRefresh.text();
+      SAVE_ASTS && this.saveFile(`main-refresh.html`, mainPageRefreshBody);
+
 
       if([403, 400, 401].includes(mainPageRefresh.status)){
         return { success : false, error : mainPageRefreshBody, cookies : this.getCookies(url)};
