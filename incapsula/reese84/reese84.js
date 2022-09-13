@@ -391,7 +391,8 @@ class Reese84 {
         [this.signalKeys[`window_object_get_own_property_names_b.next`]] : data.window_object_get_own_property_names_b.next,
       }),
 
-      [this.signalKeys[`visual_view_port`]] : encode(this.encoders[12][8].encoder, {
+      [this.signalKeys[`window_object_get_own_property_names_last_30`]] : encode(this.encoders[12][8].encoder, data.window_object_get_own_property_names_last_30),
+      [this.signalKeys[`visual_view_port`]] : encode(this.encoders[12][9].encoder, {
         [this.signalKeys[`visual_view_port.visual_view_port_width`]] : data.visual_view_port.visual_view_port_width,
         [this.signalKeys[`visual_view_port.visual_view_port_height`]] : data.visual_view_port.visual_view_port_height,
         [this.signalKeys[`visual_view_port.visual_view_port_scale`]] : data.visual_view_port.visual_view_port_scale
@@ -760,10 +761,12 @@ class Reese84 {
 
     }
 
+    decodedPayload['window_object_get_own_property_names_last_30'] = decode(this.encoders[12][8].decoder, rawDecodedPayload[this.signalKeys[`window_object_get_own_property_names_last_30`]])
+
     if (this.signalKeys[`visual_view_port`] in rawDecodedPayload) {
 
       decodedPayload[`visual_view_port`] = {};
-      const rawPayload = decode(this.encoders[12][8].decoder, rawDecodedPayload[this.signalKeys[`visual_view_port`]]);
+      const rawPayload = decode(this.encoders[12][9].decoder, rawDecodedPayload[this.signalKeys[`visual_view_port`]]);
 
       decodedPayload[`visual_view_port`][`visual_view_port_width`] = rawPayload[this.signalKeys[`visual_view_port.visual_view_port_width`]];
       decodedPayload[`visual_view_port`][`visual_view_port_height`] = rawPayload[this.signalKeys[`visual_view_port.visual_view_port_height`]];

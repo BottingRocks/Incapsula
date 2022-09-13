@@ -1495,8 +1495,13 @@ const FINDERS = {
       VariableDeclaration(varPath){
 
         const code = generate(varPath.node).code;
+        const codeNext = generate(varPath.getNextSibling().node).code;
 
         if(!code.endsWith(`window["Object"]["getOwnPropertyNames"](window);`)){
+          return;
+        }
+
+        if(codeNext.endsWith(`\\\\udbff]$");`)){
           return;
         }
 
@@ -1517,8 +1522,13 @@ const FINDERS = {
       VariableDeclaration(varPath){
 
         const code = generate(varPath.node).code;
+        const codeNext = generate(varPath.getNextSibling().node).code;
 
         if(!code.endsWith(`window["Object"]["getOwnPropertyNames"](window);`)){
+          return;
+        }
+
+        if(codeNext.endsWith(`\\\\udbff]$");`)){
           return;
         }
 
@@ -1539,8 +1549,13 @@ const FINDERS = {
       VariableDeclaration(varPath){
 
         const code = generate(varPath.node).code;
+        const codeNext = generate(varPath.getNextSibling().node).code;
 
         if(!code.endsWith(`window["Object"]["getOwnPropertyNames"](window);`)){
+          return;
+        }
+
+        if(codeNext.endsWith(`\\\\udbff]$");`)){
           return;
         }
 
@@ -1561,8 +1576,13 @@ const FINDERS = {
       VariableDeclaration(varPath){
 
         const code = generate(varPath.node).code;
+        const codeNext = generate(varPath.getNextSibling().node).code;
 
         if(!code.endsWith(`window["Object"]["getOwnPropertyNames"](window);`)){
+          return;
+        }
+
+        if(codeNext.endsWith(`\\\\udbff]$");`)){
           return;
         }
 
@@ -1583,8 +1603,13 @@ const FINDERS = {
       VariableDeclaration(varPath){
 
         const code = generate(varPath.node).code;
+        const codeNext = generate(varPath.getNextSibling().node).code;
 
         if(!code.endsWith(`window["Object"]["getOwnPropertyNames"](window);`)){
+          return;
+        }
+
+        if(codeNext.endsWith(`\\\\udbff]$");`)){
           return;
         }
 
@@ -1605,8 +1630,13 @@ const FINDERS = {
       VariableDeclaration(varPath){
 
         const code = generate(varPath.node).code;
+        const codeNext = generate(varPath.getNextSibling().node).code;
 
         if(!code.endsWith(`window["Object"]["getOwnPropertyNames"](window);`)){
+          return;
+        }
+
+        if(codeNext.endsWith(`\\\\udbff]$");`)){
           return;
         }
 
@@ -1659,6 +1689,33 @@ const FINDERS = {
         found = true;
         const leftProp = ifPath.get("consequent.body.1.consequent.body.0.expression.left.property")
         value = getPropertyValue(leftProp);
+      }
+    });
+
+    return { found, value };
+  },
+  "window_object_get_own_property_names_last_30" : function(path) {
+    let found = false;
+    let value = undefined;
+
+    path.traverse({
+      VariableDeclaration(varPath){
+
+        const code = generate(varPath.node).code;
+        const codeNext = generate(varPath.getNextSibling().node).code;
+
+        if(!code.endsWith(`window["Object"]["getOwnPropertyNames"](window);`)){
+          return;
+        }
+
+        if(!codeNext.endsWith(`\\\\udbff]$");`)){
+          return;
+        }
+
+        found = true;
+        const leftProp = findFirstBtoaForwards(varPath).getNextSibling().get(`expression.left.property`);
+        value = getPropertyValue(leftProp);
+
       }
     });
 

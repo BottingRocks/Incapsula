@@ -935,6 +935,7 @@ function extractSignalsKeys(ast) {
     'window_object_get_own_property_names_b' : getValue(`window_object_get_own_property_names_b`),
     'window_object_get_own_property_names_b.prev' : getValue(`window_object_get_own_property_names_b.prev`),
     'window_object_get_own_property_names_b.next' : getValue(`window_object_get_own_property_names_b.next`),
+    'window_object_get_own_property_names_last_30' : getValue(`window_object_get_own_property_names_last_30`),
     'visual_view_port' : getValue(`visual_view_port`),
     'visual_view_port.visual_view_port_width' : getValue(`visual_view_port.visual_view_port_width`),
     'visual_view_port.visual_view_port_height' : getValue(`visual_view_port.visual_view_port_height`),
