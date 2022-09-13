@@ -205,7 +205,7 @@ class Reese84 {
         [this.signalKeys[`navigator_languages.languages_is_not_undefined`]] : data.navigator_languages.languages_is_not_undefined,
         [this.signalKeys[`navigator_languages.languages`]] : data.navigator_languages.languages
       },
-      [this.signalKeys[`navigator_build_id`]] : encode(this.encoders[6][0].encoder, data.navigator_build_id),
+      [this.signalKeys[`navigator_build_id`]] : data.navigator_build_id === null ? null : encode(this.encoders[6][0].encoder, data.navigator_build_id),
       [this.signalKeys[`timestamps`]] : encode(this.encoders[6][1].encoder, {
         [this.signalKeys[`timestamps.date_get_time`]] : encode(this.encoders[1][0].encoder, data.timestamps.date_get_time),
         [this.signalKeys[`timestamps.file_last_modified`]] : encode(this.encoders[2][0].encoder, data.timestamps.file_last_modified),
