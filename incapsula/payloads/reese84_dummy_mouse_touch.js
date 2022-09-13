@@ -219,7 +219,7 @@ module.exports = {
     "prev": "onclose",
     "next": "oncuechange"
   },
-  "window_object_get_own_property_names_last_30" : "XrtQdirdirxmlprofileprofileEndtablekeysvaluesdebugundebugmonitorunmonitorinspectcopyqueryObjects$_$0$1$2$3$4getEventList$getAccessibl$getAccessibl$monitorEvent$unmonitorEve$$$$$x",
+  "window_object_get_own_property_names_last_30" : ['values', 'debug', 'undebug', 'monitor', 'unmonitor', 'inspect', 'copy', 'queryObjects', '$_', '$0', '$1', '$2', '$3', '$4', 'getEventList$', 'getAccessibl$', 'getAccessibl$', 'monitorEvent$', 'unmonitorEve$', '$', '$$', '$x', 'Qq', 'yK', 'Ls', 'eT', 'y_', 'Fg', 'Xr', 'tQ'],
   "visual_view_port": {
     "visual_view_port_width": 1024,
     "visual_view_port_height": 576,

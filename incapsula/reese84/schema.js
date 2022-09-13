@@ -290,7 +290,10 @@ const PayloadSchema = {
         'next' : { type : 'string' }
       },
     },
-    'window_object_get_own_property_names_last_30' : { type : 'string' },
+    'window_object_get_own_property_names_last_30' : {
+      type : 'array',
+      items : { type : 'string'}
+    },
     'visual_view_port' : {
       type : 'object',
       properties : {
