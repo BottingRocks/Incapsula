@@ -174,35 +174,37 @@ function clearConcealedStringsSession(ast){
   const shuffleBys = findShuffleBys(ast, stringArrays.map((s) => s.arrayName));
   const encoders = findEncoders(ast);
   const sandbox = createSandbox({ stringArrays, shuffleBys, encoders});
-
   traverse(ast, {
+    CallExpression: {
+      exit(path){
+        const callee = path.get(`callee`);
 
-    CallExpression(path){
-
-      const callee = path.get(`callee`);
-
-      if(!(callee.type === `Identifier` && encoders.includes(callee.node.name))){
-        return;
-      }
-      try{
-        const evaluatedNode = t.stringLiteral(vm.runInNewContext(generate(path.node).code, sandbox));
-        path.replaceWith(evaluatedNode);
-      }catch(e){
-
-        const topParent = path.getStatementParent().parentPath;
-        const isInsideSwitch = t.isSwitchCase(topParent.node);
-
-        if(isInsideSwitch){
-          //Get all the nodes inside the SwitchCase with the exception of the last two nodes(ContinueStatement and possibly a call to a string concealing func)
-          const caseCtx = {...sandbox};
-          const caseNodes = topParent.node.consequent.slice(0, topParent.node.consequent.length - 2).map((n) => generate(n).code);
-          vm.runInNewContext(caseNodes.join(`\n`), caseCtx);
-
-          const evaluatedNode = t.stringLiteral(vm.runInNewContext(generate(path.node).code, caseCtx));
+        if(!(callee.type === `Identifier` && encoders.includes(callee.node.name))){
+          return;
+        }
+        console.log(`currentPath:${generate(path.node).code}`)
+        try{
+          const evaluatedNode = t.stringLiteral(vm.runInNewContext(generate(path.node).code, sandbox));
           path.replaceWith(evaluatedNode);
+        }catch(e){
+          console.log(`e`, e)
+          const topParent = path.getStatementParent().parentPath;
+          const isInsideSwitch = t.isSwitchCase(topParent.node);
 
-        }else{
-          console.log(`error:${generate(path.node).code}`, e);
+          if(isInsideSwitch){
+            console.log(`inside switch`)
+            //Get all the nodes inside the SwitchCase with the exception of the last two nodes(ContinueStatement and possibly a call to a string concealing func)
+            const caseCtx = {...sandbox};
+            const caseNodes = topParent.node.consequent.slice(0, topParent.node.consequent.length - 2).map((n) => generate(n).code);
+            console.log(caseNodes.join(`\n`))
+            vm.runInNewContext(caseNodes.join(`\n`), caseCtx);
+            //process.exit(1);
+            const evaluatedNode = t.stringLiteral(vm.runInNewContext(generate(path.node).code, caseCtx));
+            path.replaceWith(evaluatedNode);
+
+          }else{
+            console.log(`error:${generate(path.node).code}`, e);
+          }
         }
       }
     }

@@ -1182,13 +1182,85 @@ const FINDERS = {
     return { found, value };
   },
   "video.can_play_type_video_ogg" : function(path) {
-    return findInAssignment({path, valueToFind : /(.*?)\["canPlayType"\]\("video\/ogg; codecs=\\"theora\\""\) \|\| "nope"/, mode : `regex`, siblingKey : 0});
+    let found = false;
+    let value = undefined;
+
+    path.traverse({
+      ExpressionStatement(expPath){
+
+        const code = generate(expPath.node).code;
+
+        if(
+          !hasValueInCode({
+          code,
+          valueToFind : /(.*?)\["canPlayType"\]\("video\/ogg; codecs=\\"theora/,
+          mode : `regex`
+        })){
+          return;
+        }
+        found = true;
+        const topPath = expPath.parentPath.parentPath;
+        const leftProp = topPath.getSibling(topPath.key + 2).get(`expression.left.property`)
+        value = getPropertyValue(leftProp);
+
+      }
+    });
+
+    return { found, value };
   },
   "video.can_play_type_video_mp4" : function(path) {
-    return findInAssignment({path, valueToFind : /(.*?)\["canPlayType"\]\("video\/mp4; codecs=\\"avc1.42E01E\\""\) \|\| "nope"/, mode : `regex`, siblingKey : 0});
+    let found = false;
+    let value = undefined;
+
+    path.traverse({
+      ExpressionStatement(expPath){
+
+        const code = generate(expPath.node).code;
+
+        if(
+          !hasValueInCode({
+          code,
+          valueToFind : /(.*?)\["canPlayType"\]\("video\/mp4; codecs=\\"avc1.42E01E\\""/,
+          mode : `regex`
+        })){
+          return;
+        }
+        found = true;
+        const topPath = expPath.parentPath.parentPath;
+        const leftProp = topPath.getSibling(topPath.key + 2).get(`expression.left.property`)
+        value = getPropertyValue(leftProp);
+
+      }
+    });
+
+    return { found, value };
   },
   "video.can_play_type_video_webm" : function(path) {
-    return findInAssignment({path, valueToFind : /(.*?)\["canPlayType"\]\("video\/webm; codecs=\\"vp8, vorbis\\""\) \|\| "nope"/, mode : `regex`, siblingKey : 0});
+    let found = false;
+    let value = undefined;
+
+    path.traverse({
+      ExpressionStatement(expPath){
+
+        const code = generate(expPath.node).code;
+
+        if(
+          !hasValueInCode({
+          code,
+          valueToFind : /(.*?)\["canPlayType"\]\("video\/webm; codecs=\\"vp8, vorbis\\""/,
+          mode : `regex`
+        })){
+          return;
+        }
+        found = true;
+        const topPath = expPath.parentPath.parentPath;
+        const leftProp = topPath.getSibling(topPath.key + 2).get(`expression.left.property`)
+        value = getPropertyValue(leftProp);
+
+      }
+    });
+
+    return { found, value };
   },
   "audio" : function(path) {
     let found = false;
@@ -1214,16 +1286,167 @@ const FINDERS = {
     return { found, value };
   },
   "audio.can_play_type_audio_ogg" : function(path) {
-    return findInAssignment({path, valueToFind : /(.*?)\["canPlayType"\]\("audio\/ogg; codecs=\\"vorbis\\""\) \|\| "nope"/, mode : `regex`, siblingKey : 0});
+    let found = false;
+    let value = undefined;
+
+    path.traverse({
+      ExpressionStatement(expPath){
+
+        const code = generate(expPath.node).code;
+
+        if(
+          !hasValueInCode({
+          code,
+          valueToFind : /(.*?)\["canPlayType"\]\("audio\/ogg; codecs=\\"vorbis\\""/,
+          mode : `regex`
+        })){
+          return;
+        }
+        found = true;
+        const topPath = expPath.parentPath.parentPath;
+        const leftProp = topPath.getSibling(topPath.key + 2).get(`expression.left.property`)
+        value = getPropertyValue(leftProp);
+
+      }
+    });
+
+    return { found, value };
+
   },
   "audio.can_play_type_audio_mpeg" : function(path) {
-    return findInAssignment({path, valueToFind : /(.*?)\["canPlayType"\]\("audio\/mpeg"\) \|\| "nope"/, mode : `regex`, siblingKey : 0});
+    let found = false;
+    let value = undefined;
+
+    path.traverse({
+      ExpressionStatement(expPath){
+
+        const code = generate(expPath.node).code;
+
+        if(
+          !hasValueInCode({
+          code,
+          valueToFind : /(.*?)\["canPlayType"\]\("audio\/mpeg"/,
+          mode : `regex`
+        })){
+          return;
+        }
+        found = true;
+        const topPath = expPath.parentPath.parentPath;
+        const leftProp = topPath.getSibling(topPath.key + 2).get(`expression.left.property`)
+        value = getPropertyValue(leftProp);
+
+      }
+    });
+
+    return { found, value };
   },
   "audio.can_play_type_audio_wav" : function(path) {
-    return findInAssignment({path, valueToFind : /(.*?)\["canPlayType"\]\("audio\/wav; codecs=\\"1\\""\) \|\| "nope"/, mode : `regex`, siblingKey : 0});
+    let found = false;
+    let value = undefined;
+
+    path.traverse({
+      ExpressionStatement(expPath){
+
+        const code = generate(expPath.node).code;
+
+        if(
+          !hasValueInCode({
+          code,
+          valueToFind : /(.*?)\["canPlayType"\]\("audio\/wav; codecs=\\"1\\""/,
+          mode : `regex`
+        })){
+          return;
+        }
+        found = true;
+        const topPath = expPath.parentPath.parentPath;
+        const leftProp = topPath.getSibling(topPath.key + 2).get(`expression.left.property`)
+        value = getPropertyValue(leftProp);
+
+      }
+    });
+
+    return { found, value };
   },
   "audio.can_play_type_audio_xm4a" : function(path) {
-    return findInAssignment({path, valueToFind : /(.*?)\["canPlayType"\]\("audio\/x-m4a;"\) \|\| (.*?)\["canPlayType"\]\("audio\/aac;"\) \|\| "nope"/, mode : `regex`, siblingKey : 0});
+    let found = false;
+    let value = undefined;
+
+    path.traverse({
+      ExpressionStatement(expPath){
+
+        const code = generate(expPath.node).code;
+
+        if(
+          !hasValueInCode({
+          code,
+          valueToFind : /(.*?)\["canPlayType"\]\("audio\/x-m4a;"\) \|\| (.*?)\["canPlayType"\]\("audio\/aac;"/,
+          mode : `regex`
+        })){
+          return;
+        }
+        found = true;
+        const topPath = expPath.parentPath.parentPath;
+        const leftProp = topPath.getSibling(topPath.key + 2).get(`expression.left.property`)
+        value = getPropertyValue(leftProp);
+
+      }
+    });
+
+    return { found, value };
+  },
+  "audio.can_play_type_audio_empty_array" : function(path) {
+    let found = false;
+    let value = undefined;
+
+    path.traverse({
+      ExpressionStatement(expPath){
+
+        const code = generate(expPath.node).code;
+
+        if(
+          !hasValueInCode({
+          code,
+          valueToFind : /(.*?)\["canPlayType"\]\(\[\]\)/,
+          mode : `regex`
+        })){
+          return;
+        }
+        found = true;
+        const topPath = expPath.parentPath.parentPath;
+        const leftProp = topPath.getSibling(topPath.key + 2).get(`expression.left.property`)
+        value = getPropertyValue(leftProp);
+
+      }
+    });
+
+    return { found, value };
+  },
+  "audio.can_play_type_audio_mp4" : function(path) {
+    let found = false;
+    let value = undefined;
+
+    path.traverse({
+      ExpressionStatement(expPath){
+
+        const code = generate(expPath.node).code;
+
+        if(
+          !hasValueInCode({
+          code,
+          valueToFind : /(.*?)\["canPlayType"\]\("video\/mp4; codecs=\\"avc1\.4D401E\\""/,
+          mode : `regex`
+        })){
+          return;
+        }
+        found = true;
+        const topPath = expPath.parentPath.parentPath;
+        const leftProp = topPath.getSibling(topPath.key + 2).get(`expression.left.property`)
+        value = getPropertyValue(leftProp);
+
+      }
+    });
+
+    return { found, value };
   },
   "navigator_vendor" : function(path){
     return findInVar({path, valueToFind : /(.*?)\["vendor"\]/, mode : `regex`, siblingKey : 1});

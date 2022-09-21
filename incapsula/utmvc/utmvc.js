@@ -50,12 +50,12 @@ class Utmvc {
     [
       replacePropertyHexLiterals,
       clearConcealedStringsUtmvc,
+      /*
       replaceInliningFunctions,
       reverseControlFlowCases,
       replaceObtuseBinaryExpressions,
       renameBrowserProperties,
       findUtmcvProperties
-      /*
       */
     ].map((t) => t(ast));
 

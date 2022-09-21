@@ -207,7 +207,9 @@ const PayloadSchema = {
         'can_play_type_audio_ogg' : { type : 'string' },
         'can_play_type_audio_mpeg' : { type : 'string' },
         'can_play_type_audio_wav' : { type : 'string' },
-        'can_play_type_audio_xm4a' : { type : 'string' }
+        'can_play_type_audio_xm4a' : { type : 'string' },
+        'can_play_type_audio_empty_array' : { type : 'string' },
+        'can_play_type_audio_mp4' : { type : 'string' },
       }
     },
     'navigator_vendor' : { type : 'string' },

@@ -340,7 +340,9 @@ class Reese84 {
         [this.signalKeys[`audio.can_play_type_audio_ogg`]] : data.audio.can_play_type_audio_ogg,
         [this.signalKeys[`audio.can_play_type_audio_mpeg`]] : data.audio.can_play_type_audio_mpeg,
         [this.signalKeys[`audio.can_play_type_audio_wav`]] : data.audio.can_play_type_audio_wav,
-        [this.signalKeys[`audio.can_play_type_audio_xm4a`]] : data.audio.can_play_type_audio_xm4a
+        [this.signalKeys[`audio.can_play_type_audio_xm4a`]] : data.audio.can_play_type_audio_xm4a,
+        [this.signalKeys[`audio.can_play_type_audio_empty_array`]] : data.audio.can_play_type_audio_empty_array,
+        [this.signalKeys[`audio.can_play_type_audio_mp4`]] : data.audio.can_play_type_audio_mp4
       }),
       [this.signalKeys[`navigator_vendor`]] : data.navigator_vendor,
       [this.signalKeys[`navigator_product`]] : data.navigator_product,
@@ -420,7 +422,7 @@ class Reese84 {
       return mutatedData;
 
     };
-    //console.log(this.encoders.length)
+
     const rawDecodedPayload = decode(this.encoders[13][0].decoder, data);
     const decodedPayload = {};
 
@@ -669,6 +671,8 @@ class Reese84 {
       decodedPayload[`audio`][`can_play_type_audio_mpeg`] = rawPayload[this.signalKeys[`audio.can_play_type_audio_mpeg`]];
       decodedPayload[`audio`][`can_play_type_audio_wav`] = rawPayload[this.signalKeys[`audio.can_play_type_audio_wav`]];
       decodedPayload[`audio`][`can_play_type_audio_xm4a`] = rawPayload[this.signalKeys[`audio.can_play_type_audio_xm4a`]];
+      decodedPayload[`audio`][`can_play_type_audio_empty_array`] = rawPayload[this.signalKeys[`audio.can_play_type_audio_empty_array`]];
+      decodedPayload[`audio`][`can_play_type_audio_mp4`] = rawPayload[this.signalKeys[`audio.can_play_type_audio_mp4`]];
     }
 
     decodedPayload[`navigator_vendor`] = rawDecodedPayload[this.signalKeys[`navigator_vendor`]];

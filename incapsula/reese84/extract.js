@@ -896,6 +896,8 @@ function extractSignalsKeys(ast) {
     'audio.can_play_type_audio_mpeg' : getValue(`audio.can_play_type_audio_mpeg`),
     'audio.can_play_type_audio_wav' : getValue(`audio.can_play_type_audio_wav`),
     'audio.can_play_type_audio_xm4a' : getValue(`audio.can_play_type_audio_xm4a`),
+    'audio.can_play_type_audio_empty_array' : getValue(`audio.can_play_type_audio_empty_array`),
+    'audio.can_play_type_audio_mp4' : getValue(`audio.can_play_type_audio_mp4`),
     'navigator_vendor' : getValue(`navigator_vendor`),
     'navigator_product' : getValue(`navigator_product`),
     'navigator_product_sub' : getValue(`navigator_product_sub`),

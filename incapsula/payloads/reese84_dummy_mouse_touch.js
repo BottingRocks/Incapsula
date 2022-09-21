@@ -21,20 +21,20 @@ module.exports = {
       "rotation_angle" : 100,
       "force" : 100,
     }]
-  },
-  "user_agent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:104.0) Gecko/20100101 Firefox/104.0",
+  ,
+  "user_agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.81 Safari/537.36",
   "navigator_language": "en-US",
   "navigator_languages": {
     "languages_is_not_undefined": false,
     "languages": ["en-US", "en"]
   },
-  "navigator_build_id": "20181001000000",
+  "navigator_build_id": null,
   "timestamps": {
-    "date_get_time": "1662585835998",
-    "file_last_modified": "1662585835998",
-    "performance_now": "3040",
-    "document_timeline": "3034.86",
-    "performance_timing": "1662585832958"
+    "date_get_time": "1663712576110",
+    "file_last_modified": "1663712576111",
+    "performance_now": "1358",
+    "document_timeline": "1354.654",
+    "performance_timing": "1663712574753"
   },
   "window_size": {
     "window_screen_width": 1920,
@@ -44,22 +44,22 @@ module.exports = {
     "window_screen_avail_top": 27,
     "window_screen_avail_width": 1920,
     "window_screen_pixel_depth": 24,
-    "window_inner_width": 1024,
-    "window_inner_height": 576,
-    "window_outer_width": 0,
-    "window_outer_height": 0,
+    "window_inner_width": 1920,
+    "window_inner_height": 901,
+    "window_outer_width": 1920,
+    "window_outer_height": 1053,
     "window_device_pixel_ratio": 1,
     "window_screen_orientation_type": "landscape-primary",
     "window_screenX": 0,
-    "window_screenY": 0
+    "window_screenY": 27
   },
   "date_get_time_zone_off_set": -7,
   "has_indexed_db": true,
   "has_body_add_behaviour": false,
-  "open_database": false,
+  "open_database": true,
   "cpu_class": "unknown",
   "platform": "Linux x86_64",
-  "do_not_track": "1",
+  "do_not_track": "unknown",
   "plugins_or_active_x_object": "Chrome PDF Viewer::Portable Document Format::application/pdf~pdf,text/pdf~pdf;Chromium PDF Viewer::Portable Document Format::application/pdf~pdf,text/pdf~pdf;Microsoft Edge PDF Viewer::Portable Document Format::application/pdf~pdf,text/pdf~pdf;PDF Viewer::Portable Document Format::application/pdf~pdf,text/pdf~pdf;WebKit built-in PDF::Portable Document Format::application/pdf~pdf,text/pdf~pdf",
   "plugins_named_item_item_refresh": {
     "named_item": "namedItem",
@@ -70,11 +70,11 @@ module.exports = {
     "is_point_in_path": true,
     "to_data_url_image": true,
     "screen_is_global_composite_operation": true,
-    "hash": "5b09cd3b9711effa4075a557f53bdb591a1e0f89"
+    "hash": "c25cd7412073207e76adffc586d4b6446a26e66d"
   },
   "webgl": {
-    "canvas_hash": "705d04e0851756c52a87d5fb0bb48e223ca88e6c",
-    "get_supported_extensions": "ANGLE_instanced_arrays;EXT_blend_minmax;EXT_color_buffer_half_float;EXT_float_blend;EXT_frag_depth;EXT_shader_texture_lod;EXT_sRGB;EXT_texture_compression_bptc;EXT_texture_compression_rgtc;EXT_texture_filter_anisotropic;OES_element_index_uint;OES_fbo_render_mipmap;OES_standard_derivatives;OES_texture_float;OES_texture_float_linear;OES_texture_half_float;OES_texture_half_float_linear;OES_vertex_array_object;WEBGL_color_buffer_float;WEBGL_compressed_texture_etc;WEBGL_compressed_texture_s3tc;WEBGL_compressed_texture_s3tc_srgb;WEBGL_debug_renderer_info;WEBGL_debug_shaders;WEBGL_depth_texture;WEBGL_draw_buffers;WEBGL_lose_context",
+    "canvas_hash": "b882035ae368bd0086e015e8c3cab6344b5d2eb8",
+    "get_supported_extensions": "ANGLE_instanced_arrays;EXT_blend_minmax;EXT_color_buffer_half_float;EXT_disjoint_timer_query;EXT_float_blend;EXT_frag_depth;EXT_shader_texture_lod;EXT_texture_compression_bptc;EXT_texture_compression_rgtc;EXT_texture_filter_anisotropic;WEBKIT_EXT_texture_filter_anisotropic;EXT_sRGB;KHR_parallel_shader_compile;OES_element_index_uint;OES_fbo_render_mipmap;OES_standard_derivatives;OES_texture_float;OES_texture_float_linear;OES_texture_half_float;OES_texture_half_float_linear;OES_vertex_array_object;WEBGL_color_buffer_float;WEBGL_compressed_texture_s3tc;WEBKIT_WEBGL_compressed_texture_s3tc;WEBGL_compressed_texture_s3tc_srgb;WEBGL_debug_renderer_info;WEBGL_debug_shaders;WEBGL_depth_texture;WEBKIT_WEBGL_depth_texture;WEBGL_draw_buffers;WEBGL_lose_context;WEBKIT_WEBGL_lose_context;WEBGL_multi_draw",
     "aliased_line_width_range": [1, 7.375],
     "aliased_point_size_range": [1, 255],
     "alpha_bits": 8,
@@ -83,23 +83,23 @@ module.exports = {
     "depth_bits": 24,
     "green_bits": 8,
     "all_bits": 16,
-    "max_combined_texture_image_units": 192,
-    "max_cube_map_texture_size": 8192,
-    "max_fragment_uniform_vectors": 4096,
-    "max_renderbuffer_size": 8192,
+    "max_combined_texture_image_units": 64,
+    "max_cube_map_texture_size": 16384,
+    "max_fragment_uniform_vectors": 1024,
+    "max_renderbuffer_size": 16384,
     "max_texture_image_units": 32,
-    "max_texture_size": 8192,
+    "max_texture_size": 16384,
     "max_varying_vectors": 32,
     "max_vertex_attribs": 16,
     "max_vertex_texture_image_units": 32,
-    "max_vertex_uniform_vectors": 4096,
+    "max_vertex_uniform_vectors": 1024,
     "max_viewport_dims": [32768, 32768],
     "red_bits": 8,
-    "renderer": "Intel(R) HD Graphics",
-    "shading_language_version": "WebGL GLSL ES 1.0",
+    "renderer": "WebKit WebGL",
+    "shading_language_version": "WebGL GLSL ES 1.0 (OpenGL ES GLSL ES 1.0 Chromium)",
     "stencil_bits": 0,
-    "vendor": "Mozilla",
-    "version": "WebGL 1.0",
+    "vendor": "WebKit",
+    "version": "WebGL 1.0 (OpenGL ES 2.0 Chromium)",
     "shader_precision_vertex_high_float": 23,
     "shader_precision_vertex_high_float_min": 127,
     "shader_precision_vertex_high_float_max": 127,
@@ -119,25 +119,25 @@ module.exports = {
     "shader_precision_fragment_low_float_min": 127,
     "shader_precision_fragment_low_float_max": 127,
     "shader_precision_vertex_high_int": 0,
-    "shader_precision_vertex_high_int_min": 24,
-    "shader_precision_vertex_high_int_max": 24,
+    "shader_precision_vertex_high_int_min": 31,
+    "shader_precision_vertex_high_int_max": 30,
     "shader_precision_vertex_medium_int": 0,
-    "shader_precision_vertex_medium_int_min": 24,
-    "shader_precision_vertex_medium_int_max": 24,
+    "shader_precision_vertex_medium_int_min": 31,
+    "shader_precision_vertex_medium_int_max": 30,
     "shader_precision_vertex_low_int": 0,
-    "shader_precision_vertex_low_int_min": 24,
-    "shader_precision_vertex_low_int_max": 24,
+    "shader_precision_vertex_low_int_min": 31,
+    "shader_precision_vertex_low_int_max": 30,
     "shader_precision_fragment_high_int": 0,
-    "shader_precision_fragment_high_int_min": 24,
-    "shader_precision_fragment_high_int_max": 24,
+    "shader_precision_fragment_high_int_min": 31,
+    "shader_precision_fragment_high_int_max": 30,
     "shader_precision_fragment_medium_int": 0,
-    "shader_precision_fragment_medium_int_min": 24,
-    "shader_precision_fragment_medium_int_max": 24,
+    "shader_precision_fragment_medium_int_min": 31,
+    "shader_precision_fragment_medium_int_max": 30,
     "shader_precision_fragment_low_int": 0,
-    "shader_precision_fragment_low_int_min": 24,
-    "shader_precision_fragment_low_int_max": 24,
-    "unmasked_vendor_webgl": "Intel Open Source Technology Center",
-    "unmasked_renderer_webgl": "Intel(R) HD Graphics"
+    "shader_precision_fragment_low_int_min": 31,
+    "shader_precision_fragment_low_int_max": 30,
+    "unmasked_vendor_webgl": "Google Inc. (Intel Open Source Technology Center)",
+    "unmasked_renderer_webgl": "ANGLE (Intel Open Source Technology Center, Mesa DRI Intel(R) HD Graphics 4600 (HSW GT2), OpenGL 4.5 (Core Profile) Mesa 20.0.8)"
   },
   "webgl_meta": {
     "webgl_rendering_context_get_parameter": "getParameter",
@@ -155,43 +155,56 @@ module.exports = {
   },
   "audio": {
     "can_play_type_audio_ogg": "probably",
-    "can_play_type_audio_mpeg": "maybe",
+    "can_play_type_audio_mpeg": "probably",
     "can_play_type_audio_wav": "probably",
-    "can_play_type_audio_xm4a": "maybe"
+    "can_play_type_audio_xm4a": "maybe",
+    "can_play_type_audio_empty_array": "nope",
+    "can_play_type_audio_mp4": "probably"
   },
-  "navigator_vendor": "",
+  "navigator_vendor": "Google Inc.",
   "navigator_product": "Gecko",
-  "navigator_product_sub": "20100101",
+  "navigator_product_sub": "20030107",
   "browser": {
     "is_internet_explorer": false,
-    "is_chrome": false,
-    "webdriver": false
+    "is_chrome": true,
+    "chrome": {
+      "load_times": true,
+      "app": [
+        ["isInstalled", "vwec"],
+        ["getDetails", "vwec"],
+        ["getIsInstalled", "vwec"],
+        ["installState", "vwec"],
+        ["runningState", "vwec"],
+        ["InstallState", "vwec"],
+        ["RunningState", "vwec"]
+      ]
+    },
+    "webdriver": false,
+    "connection_rtt": 50
   },
   "window": {
-    "history_length": 1,
+    "history_length": 2,
     "navigator_hardware_concurrency": 8,
     "is_window_self_not_window_top": false,
-    "is_native_navigator_get_battery": false,
+    "is_native_navigator_get_battery": true,
     "console_debug_name": "debug",
     "is_native_console_debug": true,
     "_phantom": false,
     "call_phantom": false,
     "empty": [],
+    "persistent": 1,
+    "temporary": 0,
     "performance_observer": {
-      "supported_entry_types": ["event", "first-input", "mark", "measure", "navigation", "paint", "resource"]
+      "supported_entry_types": ["element", "event", "first-input", "largest-contentful-paint", "layout-shift", "longtask", "mark", "measure", "navigation", "paint", "resource"]
     }
   },
   "document": {
     "document_location_protocol": "https:"
   },
-  "canvas_fonts": ["Batang", "BitstreamVeraSansMono", "MSMincho", "MSUIGothic", "MeiryoUI", "PMingLiU"],
+  "canvas_fonts": ["PMingLiU"],
   "document_children": {
     "document_script_element_children": [],
     "document_head_element_children": [{
-      "src": "https://www.googletagmanager.com/gtm.js?id=GTM-NJ928NX&gtm_auth=lqNACcRAFumttoyg28lLuA&gtm_preview=env-2&gtm_cookies_win=x"
-    }, {
-      "src": ""
-    }, {
       "src": "https://dd.pokemoncenter.com/tags.js"
     }, {
       "src": "https://www.pokemoncenter.com/kie-Yes-him-To-the-To-mocking-and-do-mise-I-prom"
@@ -207,22 +220,26 @@ module.exports = {
       "src": "https://www.pokemoncenter.com/_next/static/chunks/2566.acb53d0b024fe0a8af66.js"
     }, {
       "src": "https://www.pokemoncenter.com/_next/static/chunks/2185.fc9a8467a73e2f2fd4f6.js"
+    }, {
+      "src": "https://www.pokemoncenter.com/_next/static/chunks/4162.415cfc5214f27934a666.js"
+    }, {
+      "src": "https://www.pokemoncenter.com/_next/static/chunks/2669.8dbca9e72462feb877aa.js"
     }]
   },
   "webgl_rendering_call": {
     "webgl_rendering_context_prototype_get_parameter_call_a": false,
     "webgl_rendering_context_prototype_get_parameter_call_b": false,
-    "hash": "X367\u0011))\nd(\u0003iQ\u000e~\u0018\u001c|_J^"
+    "hash": "i_f\u000b\u00015Xk%B9H4E{\u0013\u001a1\\}m"
   },
-  "window_object_get_own_property_names_a": "SVGAnimatedPreserveAspectRatio;;;SVGComponentTransferFunctionElement;;;MediaStreamTrackAudioSourceNode;;;WritableStreamDefaultController;;;MediaStreamAudioDestinationNode;;;AuthenticatorAssertionResponse;;;ReadableStreamDefaultController;;;AuthenticatorAttestationResponse;;;TransformStreamDefaultController;;;2f1acc6c3a606b082e5eef5e54414ffb",
+  "window_object_get_own_property_names_a": "WritableStreamDefaultController;;;SVGComponentTransferFunctionElement;;;SVGAnimatedPreserveAspectRatio;;;ReadableStreamDefaultController;;;RTCPeerConnectionIceErrorEvent;;;OffscreenCanvasRenderingContext2D;;;MediaStreamAudioDestinationNode;;;AuthenticatorAssertionResponse;;;AuthenticatorAttestationResponse;;;PresentationConnectionAvailableEvent;;;PresentationConnectionCloseEvent;;;USBIsochronousInTransferPacket;;;USBIsochronousInTransferResult;;;USBIsochronousOutTransferPacket;;;USBIsochronousOutTransferResult;;;VirtualKeyboardGeometryChangeEvent;;;webkitResolveLocalFileSystemURL",
   "window_object_get_own_property_names_b": {
     "prev": "onclose",
     "next": "oncuechange"
   },
-  "window_object_get_own_property_names_last_30" : ['values', 'debug', 'undebug', 'monitor', 'unmonitor', 'inspect', 'copy', 'queryObjects', '$_', '$0', '$1', '$2', '$3', '$4', 'getEventList$', 'getAccessibl$', 'getAccessibl$', 'monitorEvent$', 'unmonitorEve$', '$', '$$', '$x', 'Qq', 'yK', 'Ls', 'eT', 'y_', 'Fg', 'Xr', 'tQ'],
+  "window_object_get_own_property_names_last_30": ["webkitSpeech$", "openDatabase", "webkitReques$", "webkitResolv$", "NREUM", "newrelic", "__nr_require", "SS", "__sscf", "ddjskey", "ddoptions", "sitespectFla$", "fireFooterMe$", "sendPurchase$", "ss_sendEvent$", "webpackChunk$", "a0_0x1a8b", "a0_0x4839", "reese84", "reese84inter$", "initializePr$", "protectionSu$", "__NEXT_DATA_$", "__SSG_MANIFE$", "__NEXT_P", "next", "_N_E", "ss_dom_var", "Mustache", "jsonLogic"],
   "visual_view_port": {
-    "visual_view_port_width": 1024,
-    "visual_view_port_height": 576,
+    "visual_view_port_width": 1920,
+    "visual_view_port_height": 901,
     "visual_view_port_scale": 1
   }
 };
