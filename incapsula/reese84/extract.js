@@ -7,7 +7,6 @@ const atob = require(`atob`);
 const btoa = require(`btoa`);
 
 const FINDERS = require(`./finders.js`);
-const PayloadSchema = require(`./schema.js`);
 
 const XOR_SHIFT_128 = `xorShift128`;
 const LOOP_TYPES = [`WhileStatement`, `ForInStatement`];
@@ -942,8 +941,10 @@ function extractSignalsKeys(ast) {
     'visual_view_port.visual_view_port_width' : getValue(`visual_view_port.visual_view_port_width`),
     'visual_view_port.visual_view_port_height' : getValue(`visual_view_port.visual_view_port_height`),
     'visual_view_port.visual_view_port_scale' : getValue(`visual_view_port.visual_view_port_scale`),
-    'key' : getValue(`key`),
-    'key_value' : getValue(`key_value`),
+    'vendor_name' : getValue(`vendor_name`),
+    'vendor_value' : getValue(`vendor_value`),
+    'value_vendor_name' : getValue(`value_vendor_name`),
+    'value_vendor_value' : getValue(`value_vendor_value`),
   };
 }
 

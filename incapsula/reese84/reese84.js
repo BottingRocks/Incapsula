@@ -46,8 +46,6 @@ class Reese84 {
 
     this.st = st;
     this.sr = sr;
-    this.key = this.signalKeys.key;
-    this.key_value = this.signalKeys.key_value;
   }
 
   static fromString(str) {
@@ -205,7 +203,7 @@ class Reese84 {
         [this.signalKeys[`navigator_languages.languages_is_not_undefined`]] : data.navigator_languages.languages_is_not_undefined,
         [this.signalKeys[`navigator_languages.languages`]] : data.navigator_languages.languages
       },
-      [this.signalKeys[`navigator_build_id`]] : data.navigator_build_id === null ? null : encode(this.encoders[6][0].encoder, data.navigator_build_id),
+      [this.signalKeys[`navigator_build_id`]] : data.navigator_build_id === null ? "" : encode(this.encoders[6][0].encoder, data.navigator_build_id),
       [this.signalKeys[`timestamps`]] : encode(this.encoders[6][1].encoder, {
         [this.signalKeys[`timestamps.date_get_time`]] : encode(this.encoders[1][0].encoder, data.timestamps.date_get_time),
         [this.signalKeys[`timestamps.file_last_modified`]] : encode(this.encoders[2][0].encoder, data.timestamps.file_last_modified),
@@ -399,13 +397,14 @@ class Reese84 {
         [this.signalKeys[`visual_view_port.visual_view_port_height`]] : data.visual_view_port.visual_view_port_height,
         [this.signalKeys[`visual_view_port.visual_view_port_scale`]] : data.visual_view_port.visual_view_port_scale
       }),
-      [this.key] : this.key_value
+      [this.signalKeys[`vendor_name`]] : encode(this.encoders[12][10].encoder, this.signalKeys.value_vendor_name),
+      [this.signalKeys[`vendor_value`]] : encode(this.encoders[12][11].encoder, this.signalKeys.value_vendor_value)
     });
 
     return encodedPayload;
   }
 
-  decodePayload(data, xor, dropUniqueKey = true) {
+  decodePayload(data, xor) {
     const decode = (decoder, data) => {
       if(data instanceof Array){
         return data.map(d => {
@@ -487,7 +486,7 @@ class Reese84 {
 
     decodedPayload['navigator_build_id'] = rawDecodedPayload[this.signalKeys[`navigator_build_id`]] !== undefined
       ? decode(this.encoders[6][0].decoder, rawDecodedPayload[this.signalKeys[`navigator_build_id`]])
-      : null;
+      : "";
 
     if(this.signalKeys[`timestamps`] in rawDecodedPayload){
       decodedPayload[`timestamps`] = {};
@@ -777,9 +776,8 @@ class Reese84 {
       decodedPayload[`visual_view_port`][`visual_view_port_scale`] = rawPayload[this.signalKeys[`visual_view_port.visual_view_port_scale`]];
     }
 
-    if (!dropUniqueKey) {
-      decodedPayload[this.key] = this.key_value;
-    }
+    decodedPayload[`vendor_name`] = decode(this.encoders[12][10].decoder, rawDecodedPayload[this.signalKeys[`vendor_name`]]);
+    decodedPayload[`vendor_value`] = decode(this.encoders[12][11].decoder, rawDecodedPayload[this.signalKeys[`vendor_value`]]);
 
     return decodedPayload;
   }

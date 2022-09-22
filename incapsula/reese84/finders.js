@@ -11,6 +11,36 @@ function getPropertyValue(p){
 
 }
 
+function findFirstStringifyForwards(p){
+  let _p = p;
+
+  while(_p.node !== undefined){
+
+    const code = generate(_p.node).code;
+
+    if(code.match(/var (.*?) = window\.JSON\.stringify\((.*?)\) {/)){
+      return _p;
+    }
+
+    _p = _p.getNextSibling();
+  }
+}
+
+function findFirstStringifyBackwards(p){
+  let _p = p;
+
+  while(_p.node !== undefined){
+
+    const code = generate(_p.node).code;
+
+    if(code.match(/var (.*?) = window\.JSON\.stringify\((.*?)\) {/)){
+      return _p;
+    }
+
+    _p = _p.getPrevSibling();
+  }
+}
+
 function findFirstBtoaBackwards(p) {
 
   let _p = p;
@@ -1975,60 +2005,102 @@ const FINDERS = {
   "visual_view_port.visual_view_port_scale" : function(path) {
     return findInAssignment({path, valueToFind : `window["visualViewport"]["scale"]`, mode : `endsWith`, siblingKey : 0});
   },
-  "key" : function(path) {
+  "vendor_name" : function(path) {
     let found = false;
     let value = undefined;
 
     path.traverse({
-      VariableDeclaration(varPath){
+      IfStatement(ifPath){
 
-        const code = generate(varPath.node).code;
+        const code = generate(ifPath.node.test).code;
 
-        if(!(code.match(/window\.btoa\((.*?)\.join\((""|'')\)/))){
+        if(!(code === `window["visualViewport"]["scale"] !== undefined`)){
           return;
         }
 
-        const lastPath = varPath.getSibling(varPath.key + 2);
-
-        if(!(
-          lastPath.type === `ExpressionStatement` && lastPath.get(`expression`).type === `AssignmentExpression` &&
-          lastPath.get(`expression.right`).type === `StringLiteral`)
-        ){
-          return;
-        }
+        const topPath = ifPath.parentPath.parentPath;
 
         found = true;
-        const leftProp = varPath.getSibling(varPath.key + 2).get(`expression.left.property`);
+        let nextPath = findFirstBtoaForwards(topPath);
+        const leftProp = findFirstBtoaForwards(nextPath.getNextSibling()).getNextSibling().get(`expression.left.property`);
         value = getPropertyValue(leftProp);
       }
     });
+
     return { found, value };
   },
-  "key_value" : function(path) {
+  "vendor_value" : function(path) {
     let found = false;
     let value = undefined;
 
     path.traverse({
-      VariableDeclaration(varPath){
+      IfStatement(ifPath){
 
-        const code = generate(varPath.node).code;
+        const code = generate(ifPath.node.test).code;
 
-        if(!(code.match(/window\.btoa\((.*?)\.join\((""|'')\)/))){
+        if(!(code === `window["visualViewport"]["scale"] !== undefined`)){
           return;
         }
 
-        const lastPath = varPath.getSibling(varPath.key + 2);
-
-        if(!(
-          lastPath.type === `ExpressionStatement` && lastPath.get(`expression`).type === `AssignmentExpression` &&
-          lastPath.get(`expression.right`).type === `StringLiteral`)
-        ){
-          return;
-        }
+        const topPath = ifPath.parentPath.parentPath;
 
         found = true;
-        const rightProp = varPath.getSibling(varPath.key + 2).get(`expression.right`);
-        value = getPropertyValue(rightProp);
+        let nextPath = findFirstBtoaForwards(topPath);
+        nextPath = findFirstBtoaForwards(nextPath.getNextSibling());
+        const leftProp = findFirstBtoaForwards(nextPath.getNextSibling()).getNextSibling().get(`expression.left.property`);
+        value = getPropertyValue(leftProp);
+
+      }
+    });
+
+    return { found, value };
+  },
+  "value_vendor_name" : function(path) {
+    let found = false;
+    let value = undefined;
+
+    path.traverse({
+      IfStatement(ifPath){
+
+        const code = generate(ifPath.node.test).code;
+
+        if(!(code === `window["visualViewport"]["scale"] !== undefined`)){
+          return;
+        }
+
+        const topPath = ifPath.parentPath.parentPath;
+
+        found = true;
+        let nextPath = findFirstBtoaForwards(topPath);
+        nextPath = findFirstStringifyForwards(nextPath);
+        value = nextPath.get("declarations.0.init.arguments.0").node.value;
+
+      }
+    });
+
+    return { found, value };
+  },
+  "value_vendor_value" : function(path) {
+    let found = false;
+    let value = undefined;
+
+    path.traverse({
+      IfStatement(ifPath){
+
+        const code = generate(ifPath.node.test).code;
+
+        if(!(code === `window["visualViewport"]["scale"] !== undefined`)){
+          return;
+        }
+
+        const topPath = ifPath.parentPath.parentPath;
+
+        found = true;
+        let nextPath = findFirstBtoaForwards(topPath);
+        nextPath = findFirstBtoaForwards(nextPath.getNextSibling());
+        nextPath = findFirstStringifyForwards(nextPath);
+        value = nextPath.get("declarations.0.init.arguments.0").node.value;
+
       }
     });
 

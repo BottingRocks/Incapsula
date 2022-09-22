@@ -303,9 +303,7 @@ const PayloadSchema = {
         'visual_view_port_height' : { type : 'uint16' },
         'visual_view_port_scale' : { type : 'uint16' },
       },
-    },
-    'key' : { type : 'string' },
-    'key_value' : { type : 'string' }
+    }
   },
   '$defs' : {
     'document_children' : {
