@@ -12,6 +12,7 @@
     - [The __reese84__ cookie](#the-reese84-cookie)
       - [Encoding Loops](#encoding-loops)
 - [HOW TO RUN](#how-to-run)
+  - [RUN WITHOUT SAVING ASTS](#run-without-saving-asts)
 - [Reese84 Collector](#reese84-collector)
 - [Reese84 Decode Payloads](#reese84-decode-payloads)
 
@@ -247,6 +248,10 @@ Unlike the first cookie, the `___utmvc`cookie, the `reese84` cookie is not set b
 
 > TODO: Document the different ways to run
 NODE_TLS_REJECT_UNAUTHORIZED='0' SAVE_ASTS=$(pwd)/ node --trace-warnings --insecure-http-parser tests/testIncapsulaSession.js
+
+## RUN WITHOUT SAVING ASTS
+
+NODE_TLS_REJECT_UNAUTHORIZED='0' node --trace-warnings --insecure-http-parser tests/testIncapsulaSession.js
 
 
 

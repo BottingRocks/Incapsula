@@ -597,10 +597,22 @@ function buildEncoderAndDecoder(encoders, encoderVar) {
 
       }
       return JSON.parse(mutable.join(``));
-    }
+    },
+
+    "var" : encoderVar
   };
 }
 
+function findFirstPushIIFE(mainFuncPath){
+  const bodyPaths = mainFuncPath.get(`body.body.0.expression.right.body.body.0.block.body.2.expression.arguments.1.body.body.0.block.body`);
+
+  for(let bodyPath of bodyPaths){
+    if(t.isExpressionStatement(bodyPath.node) && t.isCallExpression(bodyPath.node.expression) && generate(bodyPath.node.expression.callee).code.endsWith(`["push"]`)){
+      return bodyPath
+    }
+  }
+
+}
 function getSignalsPaths(ast) {
 
   const paths = [];
@@ -610,16 +622,15 @@ function getSignalsPaths(ast) {
     Program(path) {
 
       const mainFuncPath = path.get(`body.0.expression.callee.body.body`).slice(-2)[0];
-      let currentPath = mainFuncPath.get(`body.body.0.expression.right.body.body.0.block.body.2.expression.arguments.1.body.body.0.block.body.14`);
+      const bodyPaths = mainFuncPath.get(`body.body.0.expression.right.body.body.0.block.body.2.expression.arguments.1.body.body.0.block.body`);
 
-      for (let i = 1, startingKey = currentPath.key; i < 10; i++) {
-
-        currentPath = currentPath.getSibling(startingKey + i);
-        paths.push(currentPath);
+      for(let bodyPath of bodyPaths){
+        if(t.isExpressionStatement(bodyPath.node) && t.isCallExpression(bodyPath.node.expression) && generate(bodyPath.node.expression.callee).code.endsWith(`["push"]`)){
+          paths.push(bodyPath);
+        }
       }
     }
   });
-
   return paths;
 }
 
@@ -799,6 +810,7 @@ function extractSignalsKeys(ast) {
     'date_get_time_zone_off_set' : getValue(`date_get_time_zone_off_set`),
     'has_indexed_db' : getValue(`has_indexed_db`),
     'has_body_add_behaviour' : getValue(`has_body_add_behaviour`),
+    'iframe_null' : getValue('iframe_null'),
     'open_database' : getValue(`open_database`),
     'cpu_class' : getValue(`cpu_class`),
     'platform' : getValue(`platform`),

@@ -306,10 +306,8 @@ const FINDERS = {
     path.traverse({
       MemberExpression(memberPath){
         const { property } = memberPath.node;
-
         if(t.isStringLiteral(property) && property.value === "abort" && t.isAssignmentExpression(memberPath.parentPath.node)){
           const topPath = memberPath.getStatementParent();
-
           for(let currentSibling = topPath;;){
 
             if(
@@ -647,6 +645,26 @@ const FINDERS = {
   },
   "has_body_add_behaviour" : function(path) {
     return findInVar({path, valueToFind : `["body"]["addBehavior"] ? true : false`, mode : `endsWith`, siblingKey : 1});
+  },
+  "iframe_null" :  function(path) {
+
+    let found = false, value = undefined;
+
+    path.traverse({
+      VariableDeclaration(varPath){
+        const code = generate(varPath.node).code;
+
+        if(code.endsWith(`["openDatabase"] ? true : false;`)){
+          found = true;
+          const leftProp = varPath.getSibling(varPath.key - 1).get(`expression.left.property`);
+          value = getPropertyValue(leftProp);
+
+        }
+
+      }
+    });
+
+    return { found, value };
   },
   "open_database" : function(path) {
     return findInVar({path, valueToFind : `["openDatabase"] ? true : false`, mode : `endsWith`, siblingKey : 1});
