@@ -49,7 +49,9 @@ const PayloadSchema = {
         'languages' : { type : 'array',items : { type : 'string'}}
       }
     },
+    /*
     'navigator_build_id' : {type : 'string'},
+    */
     'timestamps' : {
       type : 'object',
       properties : {

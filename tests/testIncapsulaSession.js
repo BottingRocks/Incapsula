@@ -7,7 +7,7 @@ const DefaultReese84Payload = require("../incapsula/payloads/reese84.js");
 
 (async function(){
   //const session = new IncapsulaSession();
-  const userAgent = `Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/106.0.0.0 Safari/537.36"`;
+  const userAgent = `Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/106.0.0.0 Safari/537.36`;
   const session = new IncapsulaSession({proxyUrl : `http://127.0.0.1:8888`, userAgent});
   //const session = new IncapsulaSession({proxyUrl : `http://127.0.0.1:1080`});
   const result = await session.go({url : `https://www.pokemoncenter.com`, utmvc : DefaultUtmvcPayload, reese84 : DefaultReese84Payload});

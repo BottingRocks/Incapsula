@@ -12,7 +12,6 @@ module.exports = {
       "en"
     ]
   },
-  "navigator_build_id": "",
   "timestamps": {
     "date_get_time": "1666121709557",
     "file_last_modified": "1666121709558",

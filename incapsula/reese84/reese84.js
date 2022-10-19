@@ -34,8 +34,16 @@ class Reese84 {
     this.ast.restorePaths = [];
     this.encoders = extractXorEncoders(ast);
     this.signalKeys = extractSignalsKeys(ast);
-    console.log(`signalKeys`, this.signalKeys)
-    console.log(`encoders`, this.encoders)
+    const s = {};
+
+    for(let keyName of Object.keys(this.signalKeys)){
+      if(!(this.signalKeys[keyName] in s)){
+        s[this.signalKeys[keyName]] = 0;
+      }
+
+      s[this.signalKeys[keyName]]++;
+    }
+
     this.ast.restorePaths.forEach(([path, node]) => {
       path.replaceWith(node);
     });
@@ -133,7 +141,7 @@ class Reese84 {
     const isChrome = uaparser(data.user_agent).browser.name === `Chrome`;
 
     const encode = (encoder, data) => {
-
+      console.log(`data`, JSON.stringify(data))
       let mutatedData = null;
       //Convert the data into a JSON string, replacing undefined values with nulls.
 
@@ -500,9 +508,11 @@ class Reese84 {
     }
 
 
+    /*
     decodedPayload['navigator_build_id'] = rawDecodedPayload[this.signalKeys[`navigator_build_id`]] !== undefined
       ? decode(this.encoders[1][5].decoder, rawDecodedPayload[this.signalKeys[`navigator_build_id`]])
       : "";
+      */
     if(this.signalKeys[`timestamps`] in rawDecodedPayload){
       decodedPayload[`timestamps`] = {};
       const rawPayload = decode(this.encoders[1][6].decoder, rawDecodedPayload[this.signalKeys[`timestamps`]]);
