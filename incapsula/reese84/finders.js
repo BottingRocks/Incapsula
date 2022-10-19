@@ -1584,16 +1584,38 @@ const FINDERS = {
     let value = undefined;
 
     path.traverse({
-      VariableDeclaration(varPath){
+      ExpressionStatement(expPath){
 
-        const code = generate(varPath.node).code;
+        const code = generate(expPath.node).code;
 
-        if(!code.endsWith(`["app"];`)){
+        if(!code.endsWith(`["loadTimes"]);`)){
           return;
         }
 
         found = true;
-        const leftProp = varPath.getSibling(varPath.key+1).get(`consequent.body`).slice(-1)[0].get(`expression.left.property`);
+        const leftProp = expPath.getSibling(expPath.key+1).get(`block.body.1.consequent.body.5.expression.left.property`);
+        value = getPropertyValue(leftProp);
+
+      }
+
+    });
+    return { found, value };
+  },
+  "browser.chrome.chrome" : function(path) {
+    let found = false;
+    let value = undefined;
+
+    path.traverse({
+      ExpressionStatement(expPath){
+
+        const code = generate(expPath.node).code;
+
+        if(!code.endsWith(`["loadTimes"]);`)){
+          return;
+        }
+
+        found = true;
+        const leftProp = expPath.getSibling(expPath.key+1).get(`block.body.1.consequent.body.9.expression.left.property`);
         value = getPropertyValue(leftProp);
 
       }
@@ -2028,20 +2050,22 @@ const FINDERS = {
     let value = undefined;
 
     path.traverse({
-      IfStatement(ifPath){
+      VariableDeclaration(varPath){
 
-        const code = generate(ifPath.node.test).code;
+        const code = generate(varPath.node).code;
 
-        if(!(code === `window["visualViewport"]["scale"] !== undefined`)){
+        if(!code.endsWith(`["dump"];`)){
           return;
         }
 
-        const topPath = ifPath.parentPath.parentPath;
-
         found = true;
-        let nextPath = findFirstBtoaForwards(topPath);
-        const leftProp = findFirstBtoaForwards(nextPath.getNextSibling()).getNextSibling().get(`expression.left.property`);
+
+        let nextPath = findFirstBtoaForwards(varPath);
+        nextPath = findFirstBtoaForwards(nextPath.getNextSibling());
+        nextPath = findFirstBtoaForwards(nextPath);
+        const leftProp = nextPath.getNextSibling().get(`expression.left.property`);
         value = getPropertyValue(leftProp);
+
       }
     });
 
@@ -2052,20 +2076,20 @@ const FINDERS = {
     let value = undefined;
 
     path.traverse({
-      IfStatement(ifPath){
+      VariableDeclaration(varPath){
 
-        const code = generate(ifPath.node.test).code;
+        const code = generate(varPath.node).code;
 
-        if(!(code === `window["visualViewport"]["scale"] !== undefined`)){
+        if(!code.endsWith(`["dump"];`)){
           return;
         }
 
-        const topPath = ifPath.parentPath.parentPath;
-
         found = true;
-        let nextPath = findFirstBtoaForwards(topPath);
+
+        let nextPath = findFirstBtoaForwards(varPath);
         nextPath = findFirstBtoaForwards(nextPath.getNextSibling());
-        const leftProp = findFirstBtoaForwards(nextPath.getNextSibling()).getNextSibling().get(`expression.left.property`);
+        nextPath = findFirstBtoaForwards(nextPath.getNextSibling());
+        const leftProp = nextPath.getNextSibling().get(`expression.left.property`);
         value = getPropertyValue(leftProp);
 
       }
@@ -2078,21 +2102,18 @@ const FINDERS = {
     let value = undefined;
 
     path.traverse({
-      IfStatement(ifPath){
+      VariableDeclaration(varPath){
 
-        const code = generate(ifPath.node.test).code;
+        const code = generate(varPath.node).code;
 
-        if(!(code === `window["visualViewport"]["scale"] !== undefined`)){
+        if(!code.endsWith(`["dump"];`)){
           return;
         }
 
-        const topPath = ifPath.parentPath.parentPath;
-
         found = true;
-        let nextPath = findFirstBtoaForwards(topPath);
-        nextPath = findFirstStringifyForwards(nextPath);
+        let nextPath = findFirstStringifyForwards(varPath);
+        nextPath = findFirstStringifyForwards(nextPath.getNextSibling());
         value = nextPath.get("declarations.0.init.arguments.0").node.value;
-
       }
     });
 
@@ -2103,27 +2124,135 @@ const FINDERS = {
     let value = undefined;
 
     path.traverse({
-      IfStatement(ifPath){
+      VariableDeclaration(varPath){
 
-        const code = generate(ifPath.node.test).code;
+        const code = generate(varPath.node).code;
 
-        if(!(code === `window["visualViewport"]["scale"] !== undefined`)){
+        if(!code.endsWith(`["dump"];`)){
           return;
         }
 
-        const topPath = ifPath.parentPath.parentPath;
-
         found = true;
-        let nextPath = findFirstBtoaForwards(topPath);
-        nextPath = findFirstBtoaForwards(nextPath.getNextSibling());
-        nextPath = findFirstStringifyForwards(nextPath);
+        let nextPath = findFirstStringifyForwards(varPath);
+        nextPath = findFirstStringifyForwards(nextPath.getNextSibling());
+        nextPath = findFirstStringifyForwards(nextPath.getNextSibling());
         value = nextPath.get("declarations.0.init.arguments.0").node.value;
 
       }
     });
 
     return { found, value };
-  }
+  },
+  "performance_difference" : function(path) {
+    let found = false;
+    let value = undefined;
+
+    path.traverse({
+      VariableDeclaration(varPath){
+
+        const code = generate(varPath.node).code;
+
+        if(!code.endsWith(`["dump"];`)){
+          return;
+        }
+
+        found = true;
+        const leftProp = varPath.getSibling(varPath.key + 5).get(`consequent.body`).slice(-1)[0].get(`expression.left.property`);
+        value = getPropertyValue(leftProp);
+
+      }
+    });
+
+    return { found, value };
+  },
+  "performance_difference.dump_a" : function(path) {
+    let found = false;
+    let value = undefined;
+
+    path.traverse({
+      VariableDeclaration(varPath){
+
+        const code = generate(varPath.node).code;
+
+        if(!code.endsWith(`["dump"];`)){
+          return;
+        }
+
+        found = true;
+        const leftProp = varPath.getSibling(varPath.key + 2).get(`block.body.6.consequent.body.1.expression.left.property`);
+        value = getPropertyValue(leftProp);
+
+      }
+    });
+
+    return { found, value };
+  },
+  "performance_difference.dump_b" : function(path) {
+    let found = false;
+    let value = undefined;
+
+    path.traverse({
+      VariableDeclaration(varPath){
+
+        const code = generate(varPath.node).code;
+
+        if(!code.endsWith(`["dump"];`)){
+          return;
+        }
+
+        found = true;
+        const leftProp = varPath.getSibling(varPath.key + 2).get(`block.body.6.consequent.body.2.expression.left.property`);
+        value = getPropertyValue(leftProp);
+
+      }
+    });
+
+    return { found, value };
+  },
+  "performance_difference.btoa_a" : function(path) {
+    let found = false;
+    let value = undefined;
+
+    path.traverse({
+      VariableDeclaration(varPath){
+
+        const code = generate(varPath.node).code;
+
+        if(!code.endsWith(`["dump"];`)){
+          return;
+        }
+
+        found = true;
+        const leftProp = varPath.getSibling(varPath.key + 2).get(`block.body.6.consequent.body.8.consequent.body.0.expression.left.property`);
+        value = getPropertyValue(leftProp);
+
+      }
+    });
+
+    return { found, value };
+  },
+  "performance_difference.btoa_b" : function(path) {
+    let found = false;
+    let value = undefined;
+
+    path.traverse({
+      VariableDeclaration(varPath){
+
+        const code = generate(varPath.node).code;
+
+        if(!code.endsWith(`["dump"];`)){
+          return;
+        }
+
+        found = true;
+        const leftProp = varPath.getSibling(varPath.key + 2).get(`block.body.6.consequent.body.8.consequent.body.1.expression.left.property`);
+        value = getPropertyValue(leftProp);
+
+      }
+    });
+
+    return { found, value };
+  },
 };
 
 module.exports = FINDERS;

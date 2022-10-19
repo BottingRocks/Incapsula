@@ -182,17 +182,17 @@ function clearConcealedStringsSession(ast){
         if(!(callee.type === `Identifier` && encoders.includes(callee.node.name))){
           return;
         }
-        console.log(`currentPath:${generate(path.node).code}`)
+        //console.log(`currentPath:${generate(path.node).code}`)
         try{
           const evaluatedNode = t.stringLiteral(vm.runInNewContext(generate(path.node).code, sandbox));
           path.replaceWith(evaluatedNode);
         }catch(e){
-          console.log(`e`, e)
+          //console.log(`e`, e)
           const topParent = path.getStatementParent().parentPath;
           const isInsideSwitch = t.isSwitchCase(topParent.node);
 
           if(isInsideSwitch){
-            console.log(`inside switch`)
+            //console.log(`inside switch`)
             //Get all the nodes inside the SwitchCase with the exception of the last two nodes(ContinueStatement and possibly a call to a string concealing func)
             const caseCtx = {...sandbox};
             const caseNodes = topParent.node.consequent.slice(0, topParent.node.consequent.length - 2).map((n) => generate(n).code);

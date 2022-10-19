@@ -638,10 +638,11 @@ function extractXorEncoders(ast){
 
   const xorEncoders = [];
   const signalsPaths = getSignalsPaths(ast);
-
   signalsPaths.forEach((currentPath, index) => {
 
-    const currentEncoders = [];
+    xorEncoders[index] = [];
+
+    const currentEncoders = xorEncoders[index];
 
     if(index === 1){
       currentPath.traverse({
@@ -654,7 +655,6 @@ function extractXorEncoders(ast){
            ){
              return;
            }
-           const tryEncoders = [];
            tryPath.get(`block.body.0.consequent.body.0.expression.right.callee.body`).traverse({
              CallExpression(callPath) {
 
@@ -669,7 +669,7 @@ function extractXorEncoders(ast){
 
                  const encoders = getXorEncoderFromPath(statementPath);
                  encoders.forEach((encoder) =>
-                   tryEncoders.push(buildEncoderAndDecoder(encoder[`encoders`], encoder['var']))
+                 currentEncoders.push(buildEncoderAndDecoder(encoder[`encoders`], encoder['var']))
                  );
                }
 
@@ -688,7 +688,6 @@ function extractXorEncoders(ast){
                )
              )
            );
-           xorEncoders.push(tryEncoders);
         }
       });
     }
@@ -714,9 +713,10 @@ function extractXorEncoders(ast){
 
       }
     });
-    xorEncoders.push(currentEncoders);
 
   });
+
+  //console.log(xorEncoders);
   return xorEncoders;
 
 }
@@ -726,7 +726,6 @@ function extractSignalsKeys(ast) {
 
   const paths = getSignalsPaths(ast);
   const getValue = (key) => {
-
     const func = FINDERS[key];
     let foundKey = false;
 
@@ -917,6 +916,7 @@ function extractSignalsKeys(ast) {
     'browser.chrome' : getValue(`browser.chrome`),
     'browser.chrome.load_times' : getValue(`browser.chrome.load_times`),
     'browser.chrome.app' : getValue(`browser.chrome.app`),
+    'browser.chrome.chrome' : getValue(`browser.chrome.chrome`),
     'browser.webdriver' : getValue(`browser.webdriver`),
     'browser.is_chrome' : getValue(`browser.is_chrome`),
     'browser.connection_rtt' : getValue(`browser.connection_rtt`),
@@ -957,6 +957,11 @@ function extractSignalsKeys(ast) {
     'vendor_value' : getValue(`vendor_value`),
     'value_vendor_name' : getValue(`value_vendor_name`),
     'value_vendor_value' : getValue(`value_vendor_value`),
+    'performance_difference' : getValue(`performance_difference`),
+    'performance_difference.btoa_a' : getValue(`performance_difference.btoa_a`),
+    'performance_difference.btoa_b' : getValue(`performance_difference.btoa_b`),
+    'performance_difference.dump_a' : getValue(`performance_difference.dump_a`),
+    'performance_difference.dump_b' : getValue(`performance_difference.dump_b`)
   };
 }
 

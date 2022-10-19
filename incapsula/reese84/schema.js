@@ -230,6 +230,13 @@ const PayloadSchema = {
                 type : 'array',
                 items : {type : 'string'}
               }
+            },
+            'chrome' : {
+              type : 'array',
+              items : {
+                type : 'array',
+                items : {type : 'string'}
+              }
             }
           }
         },
@@ -240,8 +247,8 @@ const PayloadSchema = {
     'window' : {
       type : 'object',
       properties : {
-        'history_length' : { type : 'uint16' },
-        'navigator_hardware_concurrency' : { type : 'uint8' },
+        'history_length' : { type : 'number' },
+        'navigator_hardware_concurrency' : { type : 'number' },
         'is_window_self_not_window_top' : { type : 'boolean' },
         'is_native_navigator_get_battery' : { type : 'boolean' },
         'console_debug_name' : { type : 'string' },
@@ -299,10 +306,18 @@ const PayloadSchema = {
     'visual_view_port' : {
       type : 'object',
       properties : {
-        'visual_view_port_width' : { type : 'uint16' },
-        'visual_view_port_height' : { type : 'uint16' },
-        'visual_view_port_scale' : { type : 'uint16' },
+        'visual_view_port_width' : { type : 'number' },
+        'visual_view_port_height' : { type : 'number' },
+        'visual_view_port_scale' : { type : 'number' },
       },
+    'performance_difference' : {
+      type : 'object',
+      properties : {
+        'dump_a' : { type : 'number' },
+        'dump_b' : { type : 'number' },
+        'btoa_a' : { type : 'number' },
+        'btoa_b' : { type : 'number' }
+      }
     }
   },
   '$defs' : {

@@ -319,6 +319,7 @@ class IncapsulaSession {
   }
 
   async doFaviconMode({url, referer}){
+
     const faviconUrl = `${new URL(url).origin}/favicon.ico`;
 
     await this.fetch(faviconUrl, {
