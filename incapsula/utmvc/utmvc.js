@@ -3,13 +3,14 @@
 const generate = require(`@babel/generator`).default;
 const { fromString, fromFile } = require(`../ast.js`);
 
-const clearConcealedStringsUtmvc = require(`./transformations/clear-concealed-strings-session.js`);
+const clearConcealedStringsSession = require(`./transformations/clear-concealed-strings-session.js`);
 const decodeEval = require(`./transformations/decode-eval.js`);
 const findUtmcvProperties = require(`./transformations/find-utmcv-properties.js`);
 const renameBrowserProperties = require(`./transformations/rename-browser-properties.js`);
 const replaceInliningFunctions = require(`./transformations/replace-inlining-functions.js`);
 const replaceObtuseBinaryExpressions = require(`./transformations/replace-obtuse-binary-expressions.js`);
 const replacePropertyHexLiterals = require(`./transformations/replace-property-hex-literals.js`);
+const replaceStaticValues = require("./transformations/replace-static-values.js");
 const reverseControlFlowCases = require(`./transformations/reverse-control-flow-cases.js`);
 
 
@@ -49,13 +50,14 @@ class Utmvc {
     ast = decodeEval(ast);
     [
       replacePropertyHexLiterals,
-      clearConcealedStringsUtmvc,
-      /*
-      replaceInliningFunctions,
+      clearConcealedStringsSession,
       reverseControlFlowCases,
+      replaceInliningFunctions,
       replaceObtuseBinaryExpressions,
+      replaceStaticValues,
       renameBrowserProperties,
-      findUtmcvProperties
+      findUtmcvProperties,
+      /*
       */
     ].map((t) => t(ast));
 

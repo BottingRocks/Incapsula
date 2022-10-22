@@ -90,8 +90,11 @@ function findStringArrays(ast){
 
     }
   });
+  if(!("stringArrays" in ast)){
+    ast.stringArrays = stringArrays;
+  }
 
-  return stringArrays;
+  return ast.stringArrays;
 
 }
 
@@ -121,8 +124,12 @@ function findShuffleBys(ast, arrayNames){
 
     }
   });
+  if(!("shuffleBys" in ast)){
+    ast.shuffleBys = shuffleBys;
+  }
 
-  return shuffleBys;
+  return ast.shuffleBys;
+
 
 }
 
@@ -146,7 +153,12 @@ function findEncoders(ast){
     }
   });
 
-  return encoders;
+  if(!("encoders" in ast)){
+    ast.encoders = encoders;
+  }
+
+  return ast.encoders;
+
 }
 function createSandbox({stringArrays, shuffleBys, encoders}){
 
@@ -173,7 +185,13 @@ function clearConcealedStringsSession(ast){
   const stringArrays = findStringArrays(ast);
   const shuffleBys = findShuffleBys(ast, stringArrays.map((s) => s.arrayName));
   const encoders = findEncoders(ast);
-  const sandbox = createSandbox({ stringArrays, shuffleBys, encoders});
+
+  if(!("sandbox" in ast)){
+    const sandbox = createSandbox({ stringArrays, shuffleBys, encoders});
+    ast.sandbox = sandbox;
+  }
+
+
   traverse(ast, {
     CallExpression: {
       exit(path){
@@ -182,35 +200,32 @@ function clearConcealedStringsSession(ast){
         if(!(callee.type === `Identifier` && encoders.includes(callee.node.name))){
           return;
         }
-        //console.log(`currentPath:${generate(path.node).code}`)
         try{
-          const evaluatedNode = t.stringLiteral(vm.runInNewContext(generate(path.node).code, sandbox));
+          const evaluatedNode = t.stringLiteral(vm.runInNewContext(generate(path.node).code, ast.sandbox));
+
           path.replaceWith(evaluatedNode);
+
         }catch(e){
           //console.log(`e`, e)
+
           const topParent = path.getStatementParent().parentPath;
           const isInsideSwitch = t.isSwitchCase(topParent.node);
 
           if(isInsideSwitch){
-            //console.log(`inside switch`)
-            //Get all the nodes inside the SwitchCase with the exception of the last two nodes(ContinueStatement and possibly a call to a string concealing func)
-            const caseCtx = {...sandbox};
+            const caseCtx = {...ast.sandbox};
             const caseNodes = topParent.node.consequent.slice(0, topParent.node.consequent.length - 2).map((n) => generate(n).code);
-            console.log(caseNodes.join(`\n`))
             vm.runInNewContext(caseNodes.join(`\n`), caseCtx);
-            //process.exit(1);
-            const evaluatedNode = t.stringLiteral(vm.runInNewContext(generate(path.node).code, caseCtx));
-            path.replaceWith(evaluatedNode);
-
-          }else{
-            console.log(`error:${generate(path.node).code}`, e);
+            try{
+              const evaluatedNode = t.stringLiteral(vm.runInNewContext(generate(path.node).code, caseCtx));
+              path.replaceWith(evaluatedNode);
+            }catch(e){
+            }
           }
         }
       }
     }
   });
 
-  ast.sandbox = sandbox;
 
 }
 

@@ -123,7 +123,6 @@ function setUtmvcEncoderInSandbox(ast){
   cleanUtmvcFuncPath(utmvcFuncPath);
 
   const encoderFuncCode = generate(utmvcFuncPath.node).code;
-
   ast.sandbox[`btoa`] = btoa;
   ast.sandbox[`charCodeAtArray`] = charCodeAtArray;
   vm.runInNewContext(`${encoderFuncCode}`, ast.sandbox);

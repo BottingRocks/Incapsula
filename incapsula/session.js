@@ -2,7 +2,7 @@
 
 const Captcha = require(`2captcha`);
 const cheerio = require(`cheerio`);
-const fetchCookie = require(`fetch-cookie`);
+//const fetchCookie = require(`fetch-cookie`);
 const fs = require(`fs`);
 const HttpsProxyAgent = require(`https-proxy-agent`);
 const inquirer = require(`inquirer`);
@@ -16,6 +16,68 @@ const DEFAULT_UTMVC_PAYLOAD = require(`../incapsula/payloads/utmvc.js`);
 
 const SAVE_ASTS = process.env.SAVE_ASTS || false;
 
+const { promisify } = require('util')
+const tough = require('tough-cookie')
+
+function fetchCookieDecorator (fetch, jar, ignoreError = true) {
+  fetch = fetch || window.fetch
+  jar = jar || new tough.CookieJar()
+
+  const getCookieString = promisify(jar.getCookieString.bind(jar))
+  const setCookie = promisify(jar.setCookie.bind(jar))
+
+  async function fetchCookie (url, opts) {
+    opts = opts || {}
+
+    // Prepare request
+    const cookie = await getCookieString(typeof url === 'string' ? url : url.url)
+
+    if (cookie) {
+      if (url.headers && typeof url.headers.append === 'function') {
+        url.headers.append('Cookie', cookie)
+      } else if (opts.headers && typeof opts.headers.append === 'function') {
+        opts.headers.append('Cookie', cookie)
+      } else {
+        opts.headers = Object.assign(
+          opts.headers || {},
+          cookie ? { Cookie: cookie } : {}
+        )
+      }
+    }
+
+    // Actual request
+    const res = await fetch(url, opts)
+
+    // Get cookie header
+    let cookies = []
+
+    if (res.headers.getAll) {
+      // node-fetch v1
+      cookies = res.headers.getAll('set-cookie')
+      // console.warn("You are using a fetch version that supports 'Headers.getAll' which is deprecated!")
+      // console.warn("In the future 'fetch-cookie-v2' may discontinue supporting that fetch implementation.")
+      // console.warn('Details: https://developer.mozilla.org/en-US/docs/Web/API/Headers/getAll')
+    } else {
+      // node-fetch v2
+      const headers = res.headers.raw()
+      if (headers['set-cookie'] !== undefined) {
+        cookies = headers['set-cookie']
+      }
+    }
+
+    // Store all present cookies
+    await Promise.all(cookies.map((cookie) => setCookie(cookie, res.url, { ignoreError })))
+
+    return res
+  }
+
+  fetchCookie.toughCookie = tough
+
+  return fetchCookie
+}
+
+fetchCookieDecorator.toughCookie = tough;
+
 class IncapsulaError extends Error {}
 class IncapsulaSession {
   //To run this make sure to pass the --insecure-http-parser flag see:https://github.com/nodejs/node/issues/27711
@@ -26,8 +88,8 @@ class IncapsulaSession {
     //this.userAgent = userAgent === undefined ? `Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:95.0) Gecko/20100101 Firefox/95.0` : userAgent;
     this.userAgent = userAgent ;
 
-    this.cookieJar = cookieJar || new fetchCookie.toughCookie.CookieJar();
-    this.fetch = fetchCookie(nodeFetch, this.cookieJar, false);
+    this.cookieJar = cookieJar || new fetchCookieDecorator.toughCookie.CookieJar();
+    this.fetch = fetchCookieDecorator(nodeFetch, this.cookieJar, false);
     this.utmvc = null;
     this.reese84 = null;
     this.reese84Url = null;
