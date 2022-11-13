@@ -21,8 +21,7 @@ const PayloadSchema = {
         'touch' : {
           type : 'array',
           items : {
-            type : 'object',
-         type : 'object',
+          type : 'object',
             properties : {
               'type' : { type : 'string' },
               'timestamp' : { type : 'number' },
@@ -62,6 +61,10 @@ const PayloadSchema = {
         'performance_timing' : { type : 'number' }
       }
     },
+    'mime_types' : {
+      type : 'array',
+      items : 'string',
+    }
     'window_size' : {
       type : 'object',
       properties : {

@@ -14,8 +14,8 @@ const options = {
   error : null,
   oldToken : null,
   interrogation : 381,
-  cr : 1,
-  version : `stable`,
+  cr : 3929,
+  version : `betal`,
 };
 
 const encodedPayload = reese84.createPayload(payloadFile, options);

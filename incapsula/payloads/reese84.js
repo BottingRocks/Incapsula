@@ -367,6 +367,17 @@ module.exports = {
     "visual_view_port_scale": 1
   },
   "performance_difference" : null,
+  "tampering" : {
+    "prototype_of_navigator_vendor" : "no",
+    "prototype_of_navigator_mimetypes" : "no",
+    "prototype_of_navigator_languages" : "no",
+    "webgl2_rendering_context_to_string" : "no",
+    "function_to_string" : "no",
+    "prototype_of_navigator_hardware_concurrency" : "no",
+    "webgl2_rendering_context_get_parameter" : "no",
+    "prototype_of_navigator_device_memory" : "no",
+    "prototype_of_navigator_permissions" : "no",
+  },
   "vendor_name": "beta",
-  "vendor_value": 5
+  "vendor_value": 11
 }

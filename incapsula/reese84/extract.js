@@ -644,7 +644,7 @@ function extractXorEncoders(ast){
 
     const currentEncoders = xorEncoders[index];
 
-    if(index === 1){
+    if(index === 2){
       currentPath.traverse({
         TryStatement(tryPath){
 
@@ -728,7 +728,7 @@ function extractSignalsKeys(ast) {
   const getValue = (key) => {
     const func = FINDERS[key];
     let foundKey = false;
-
+    //console.log(`finding key`, key)
     if(key.startsWith("events.")){
       const { found, value } = func(paths[0]);
 
@@ -778,6 +778,7 @@ function extractSignalsKeys(ast) {
     'events.touch.radius_y' : getValue(`events.touch.radius_y`),
     'events.touch.rotation_angle' : getValue(`events.touch.rotation_angle`),
     'events.touch.force' : getValue(`events.touch.force`),
+    'interrogator_id' : getValue('interrogator_id'),
     'user_agent' : getValue(`user_agent`),
     'navigator_language' : getValue(`navigator_language`),
     'navigator_languages' : getValue(`navigator_languages`),
@@ -790,6 +791,10 @@ function extractSignalsKeys(ast) {
     'timestamps.performance_now' : getValue(`timestamps.performance_now`),
     'timestamps.document_timeline' : getValue(`timestamps.document_timeline`),
     'timestamps.performance_timing' : getValue(`timestamps.performance_timing`),
+    'mime_types' : getValue('mime_types'),
+    'mime_types.suffixes' : getValue('mime_types.suffixes'),
+    'mime_types.type' : getValue('mime_types.type'),
+    'mime_types.file_name' : getValue('mime_types.file_name'),
     'window_size' : getValue(`window_size`),
     'window_size.window_screen_width' : getValue(`window_size.window_screen_width`),
     'window_size.window_screen_height' : getValue(`window_size.window_screen_height`),
@@ -940,6 +945,7 @@ function extractSignalsKeys(ast) {
     'document_children' : getValue(`document_children`),
     'document_children.document_script_element_children' : getValue(`document_children.document_script_element_children`),
     'document_children.document_head_element_children' : getValue(`document_children.document_head_element_children`),
+    'document_children.document_body_element_children' : getValue(`document_children.document_body_element_children`),
     'webgl_rendering_call' : getValue(`webgl_rendering_call`),
     'webgl_rendering_call.webgl_rendering_context_prototype_get_parameter_call_a' : getValue(`webgl_rendering_call.webgl_rendering_context_prototype_get_parameter_call_a`),
     'webgl_rendering_call.webgl_rendering_context_prototype_get_parameter_call_b' : getValue(`webgl_rendering_call.webgl_rendering_context_prototype_get_parameter_call_b`),
@@ -953,15 +959,28 @@ function extractSignalsKeys(ast) {
     'visual_view_port.visual_view_port_width' : getValue(`visual_view_port.visual_view_port_width`),
     'visual_view_port.visual_view_port_height' : getValue(`visual_view_port.visual_view_port_height`),
     'visual_view_port.visual_view_port_scale' : getValue(`visual_view_port.visual_view_port_scale`),
-    'vendor_name' : getValue(`vendor_name`),
-    'vendor_value' : getValue(`vendor_value`),
-    'value_vendor_name' : getValue(`value_vendor_name`),
-    'value_vendor_value' : getValue(`value_vendor_value`),
+    'create_html_document' : getValue(`create_html_document`),
     'performance_difference' : getValue(`performance_difference`),
     'performance_difference.btoa_a' : getValue(`performance_difference.btoa_a`),
     'performance_difference.btoa_b' : getValue(`performance_difference.btoa_b`),
     'performance_difference.dump_a' : getValue(`performance_difference.dump_a`),
-    'performance_difference.dump_b' : getValue(`performance_difference.dump_b`)
+    'performance_difference.dump_b' : getValue(`performance_difference.dump_b`),
+    'tampering' : getValue(`tampering`),
+    'tampering.prototype_of_navigator_vendor' : getValue(`tampering.prototype_of_navigator_vendor`),
+    'tampering.prototype_of_navigator_mimetypes' : getValue(`tampering.prototype_of_navigator_mimetypes`),
+    'tampering.prototype_of_navigator_languages' : getValue(`tampering.prototype_of_navigator_languages`),
+    'tampering.webgl2_rendering_context_to_string' : getValue(`tampering.webgl2_rendering_context_to_string`),
+    'tampering.function_to_string' : getValue(`tampering.function_to_string`),
+    'tampering.prototype_of_navigator_hardware_concurrency' : getValue(`tampering.prototype_of_navigator_hardware_concurrency`),
+    'tampering.webgl2_rendering_context_get_parameter' : getValue(`tampering.webgl2_rendering_context_get_parameter`),
+    'tampering.prototype_of_navigator_device_memory' : getValue(`tampering.prototype_of_navigator_device_memory`),
+    'tampering.prototype_of_navigator_permissions' : getValue(`tampering.prototype_of_navigator_permissions`),
+    'tampering.yes' : getValue(`tampering.yes`),
+    'tampering.no' : getValue(`tampering.no`),
+    'vendor_name' : getValue(`vendor_name`),
+    'vendor_value' : getValue(`vendor_value`),
+    'value_vendor_name' : getValue(`value_vendor_name`),
+    'value_vendor_value' : getValue(`value_vendor_value`),
   };
 }
 

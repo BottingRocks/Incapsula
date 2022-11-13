@@ -30,19 +30,10 @@ class Reese84 {
 
   constructor(ast) {
     this.ast = ast;
-
     this.ast.restorePaths = [];
     this.encoders = extractXorEncoders(ast);
     this.signalKeys = extractSignalsKeys(ast);
-    const s = {};
 
-    for(let keyName of Object.keys(this.signalKeys)){
-      if(!(this.signalKeys[keyName] in s)){
-        s[this.signalKeys[keyName]] = 0;
-      }
-
-      s[this.signalKeys[keyName]]++;
-    }
 
     this.ast.restorePaths.forEach(([path, node]) => {
       path.replaceWith(node);
@@ -193,7 +184,7 @@ class Reese84 {
       }
     }
 
-    const encodedPayload = encode(this.encoders[9][0].encoder, {
+    const encodedPayload = encode(this.encoders[10][0].encoder, {
       [this.signalKeys[`events`]] : {
         [this.signalKeys[`events.mouse`]] : data.events.mouse.length
           ? encode(this.encoders[0][0].encoder, data.events.mouse.map(e => encodeEvent({event : e, type :"mouse"})))
@@ -408,18 +399,27 @@ class Reese84 {
         [this.signalKeys[`visual_view_port.visual_view_port_height`]] : data.visual_view_port.visual_view_port_height,
         [this.signalKeys[`visual_view_port.visual_view_port_scale`]] : data.visual_view_port.visual_view_port_scale
       }),
-      [this.signalKeys[`vendor_name`]] : encode(this.encoders[8][1].encoder, this.signalKeys.value_vendor_name),
-      [this.signalKeys[`vendor_value`]] : encode(this.encoders[8][2].encoder, this.signalKeys.value_vendor_value),
-      /*
       [this.signalKeys[`performance_difference`]] : data.performance_difference !== null ?
-        encode(this.encoders[8][0].encoder, {
+        encode(this.encoders[9][0].encoder, {
           [this.signalKeys[`performance_difference.btoa_a`]] : data.performance_difference.btoa_a,
           [this.signalKeys[`performance_difference.btoa_b`]] : data.performance_difference.btoa_b,
           [this.signalKeys[`performance_difference.dump_a`]] : data.performance_difference.dump_a,
           [this.signalKeys[`performance_difference.dump_b`]] : data.performance_difference.dump_b,
         })
       : null,
-      */
+      [this.signalKeys[`tampering`]] : encode(this.encoders[9][1].encoder, [
+        [this.signalKeys[`tampering.prototype_of_navigator_vendor`], data.tampering.prototype_of_navigator_vendor],
+        [this.signalKeys[`tampering.prototype_of_navigator_mimetypes`], data.tampering.prototype_of_navigator_mimetypes],
+        [this.signalKeys[`tampering.prototype_of_navigator_languages`], data.tampering.prototype_of_navigator_languages],
+        [this.signalKeys[`tampering.webgl2_rendering_context_to_string`], data.tampering.webgl2_rendering_context_to_string],
+        [this.signalKeys[`tampering.function_to_string`], data.tampering.function_to_string],
+        [this.signalKeys[`tampering.prototype_of_navigator_hardware_concurrency`], data.tampering.prototype_of_navigator_hardware_concurrency],
+        [this.signalKeys[`tampering.webgl2_rendering_context_get_parameter`], data.tampering.webgl2_rendering_context_get_parameter],
+        [this.signalKeys[`tampering.prototype_of_navigator_device_memory`], data.tampering.prototype_of_navigator_device_memory],
+        [this.signalKeys[`tampering.prototype_of_navigator_permissions`], data.tampering.prototype_of_navigator_permissions],
+      ]),
+      [this.signalKeys[`vendor_name`]] : encode(this.encoders[9][2].encoder, this.signalKeys.value_vendor_name),
+      [this.signalKeys[`vendor_value`]] : encode(this.encoders[9][3].encoder, this.signalKeys.value_vendor_value),
     });
 
     return encodedPayload;
@@ -443,8 +443,9 @@ class Reese84 {
 
     };
 
-    const rawDecodedPayload = decode(this.encoders[9][0].decoder, data);
-
+    const rawDecodedPayload = decode(this.encoders[10][0].decoder, data);
+    console.log(rawDecodedPayload)
+    //process.exit(1)
     const decodedPayload = {};
 
     if (this.signalKeys[`events`] in rawDecodedPayload){
@@ -494,6 +495,8 @@ class Reese84 {
 
     }
 
+    decodedPayload['interrogator_id'] = rawDecodedPayload[this.signalKeys[`interrogator_id`]];
+
     decodedPayload[`user_agent`] = rawDecodedPayload[this.signalKeys[`user_agent`]];
     decodedPayload[`navigator_language`] = rawDecodedPayload[this.signalKeys[`navigator_language`]];
 
@@ -507,29 +510,44 @@ class Reese84 {
       decodedPayload[`navigator_languages`][`languages`] = rawPayload[this.signalKeys[`navigator_languages.languages`]];
     }
 
-
-    /*
     decodedPayload['navigator_build_id'] = rawDecodedPayload[this.signalKeys[`navigator_build_id`]] !== undefined
-      ? decode(this.encoders[1][5].decoder, rawDecodedPayload[this.signalKeys[`navigator_build_id`]])
+      ? decode(this.encoders[2][5].decoder, rawDecodedPayload[this.signalKeys[`navigator_build_id`]])
       : "";
-      */
     if(this.signalKeys[`timestamps`] in rawDecodedPayload){
       decodedPayload[`timestamps`] = {};
-      const rawPayload = decode(this.encoders[1][6].decoder, rawDecodedPayload[this.signalKeys[`timestamps`]]);
+      const rawPayload = decode(this.encoders[2][6].decoder, rawDecodedPayload[this.signalKeys[`timestamps`]]);
 
-      decodedPayload[`timestamps`][`date_get_time`] = decode(this.encoders[1][0].decoder, rawPayload[this.signalKeys[`timestamps.date_get_time`]]);
-      decodedPayload[`timestamps`][`file_last_modified`] = decode(this.encoders[1][1].decoder, rawPayload[this.signalKeys[`timestamps.file_last_modified`]]);
-      decodedPayload[`timestamps`][`performance_now`] = decode(this.encoders[1][2].decoder, rawPayload[this.signalKeys[`timestamps.performance_now`]]);
-      decodedPayload[`timestamps`][`document_timeline`] = decode(this.encoders[1][3].decoder, rawPayload[this.signalKeys[`timestamps.document_timeline`]]);
-      decodedPayload[`timestamps`][`performance_timing`] = decode(this.encoders[1][4].decoder, rawPayload[this.signalKeys[`timestamps.performance_timing`]]);
+      decodedPayload[`timestamps`][`date_get_time`] = decode(this.encoders[2][0].decoder, rawPayload[this.signalKeys[`timestamps.date_get_time`]]);
+      decodedPayload[`timestamps`][`file_last_modified`] = decode(this.encoders[2][1].decoder, rawPayload[this.signalKeys[`timestamps.file_last_modified`]]);
+      decodedPayload[`timestamps`][`performance_now`] = decode(this.encoders[2][2].decoder, rawPayload[this.signalKeys[`timestamps.performance_now`]]);
+      decodedPayload[`timestamps`][`document_timeline`] = decode(this.encoders[2][3].decoder, rawPayload[this.signalKeys[`timestamps.document_timeline`]]);
+      decodedPayload[`timestamps`][`performance_timing`] = decode(this.encoders[2][4].decoder, rawPayload[this.signalKeys[`timestamps.performance_timing`]]);
+    }
+
+    if(this.signalKeys[`mime_types`] in rawDecodedPayload){
+      decodedPayload[`mime_types`] = [];
+
+      const rawPayload = decode(this.encoders[2][7].decoder, rawDecodedPayload[this.signalKeys[`mime_types`]]);
+      rawPayload.forEach((rp) => {
+        const _p =   decode(this.encoders[2][8].decoder, rp[1]);
+        decodedPayload[`mime_types`].push(
+          [
+            rp[0],
+            {
+              'suffixes' : _p[this.signalKeys[`mime_types.suffixes`]],
+              'type' : _p[this.signalKeys[`mime_types.type`]],
+              'file_name' : _p[this.signalKeys[`mime_types.file_name`]],
+            }
+          ]
+        )
+      });
     }
 
 
     if (this.signalKeys[`window_size`] in rawDecodedPayload) {
 
       decodedPayload[`window_size`] = {};
-
-      const rawPayload = decode(this.encoders[1][7].decoder, rawDecodedPayload[this.signalKeys[`window_size`]]);
+      const rawPayload = decode(this.encoders[2][9].decoder, rawDecodedPayload[this.signalKeys[`window_size`]]);
 
       decodedPayload[`window_size`][`window_screen_width`] = rawPayload[this.signalKeys[`window_size.window_screen_width`]];
       decodedPayload[`window_size`][`window_screen_height`] = rawPayload[this.signalKeys[`window_size.window_screen_height`]];
@@ -574,7 +592,7 @@ class Reese84 {
     if (this.signalKeys[`canvas_hash`] in rawDecodedPayload) {
 
       decodedPayload[`canvas_hash`] = {};
-      const rawPayload = decode(this.encoders[2][1].decoder, rawDecodedPayload[this.signalKeys[`canvas_hash`]]);
+      const rawPayload = decode(this.encoders[3][1].decoder, rawDecodedPayload[this.signalKeys[`canvas_hash`]]);
 
       decodedPayload[`canvas_hash`][`is_point_in_path`] = rawPayload[this.signalKeys[`canvas_hash.is_point_in_path`]];
       decodedPayload[`canvas_hash`][`to_data_url_image`] = rawPayload[this.signalKeys[`canvas_hash.to_data_url_image`]];
@@ -583,7 +601,7 @@ class Reese84 {
       }
 
       decodedPayload[`canvas_hash`][`screen_is_global_composite_operation`] = rawPayload[this.signalKeys[`canvas_hash.screen_is_global_composite_operation`]];
-      decodedPayload[`canvas_hash`][`hash`] = decode(this.encoders[2][0].decoder, rawPayload[this.signalKeys[`canvas_hash.hash`]]);
+      decodedPayload[`canvas_hash`][`hash`] = decode(this.encoders[3][0].decoder, rawPayload[this.signalKeys[`canvas_hash.hash`]]);
 
     }
 
@@ -591,8 +609,8 @@ class Reese84 {
     if (this.signalKeys[`webgl`] in rawDecodedPayload) {
 
       decodedPayload[`webgl`] = {};
-      const rawPayload = decode(this.encoders[6][0].decoder, rawDecodedPayload[this.signalKeys[`webgl`]]);
-      decodedPayload[`webgl`][`canvas_hash`] = decode(this.encoders[6][1].decoder, rawPayload[this.signalKeys[`webgl.canvas_hash`]]);
+      const rawPayload = decode(this.encoders[7][0].decoder, rawDecodedPayload[this.signalKeys[`webgl`]]);
+      decodedPayload[`webgl`][`canvas_hash`] = decode(this.encoders[7][1].decoder, rawPayload[this.signalKeys[`webgl.canvas_hash`]]);
       decodedPayload[`webgl`][`get_supported_extensions`] = rawPayload[this.signalKeys[`webgl.get_supported_extensions`]];
 
       if (rawPayload[this.signalKeys[`webgl.canvas_hash_error`]]) {
@@ -677,7 +695,7 @@ class Reese84 {
     if (this.signalKeys[`touch_event`] in rawDecodedPayload) {
 
       decodedPayload[`touch_event`] = {};
-      const rawPayload = decode(this.encoders[7][0].decoder, rawDecodedPayload[this.signalKeys[`touch_event`]]);
+      const rawPayload = decode(this.encoders[8][0].decoder, rawDecodedPayload[this.signalKeys[`touch_event`]]);
 
       decodedPayload[`touch_event`][`max_touch_points`] = rawPayload[this.signalKeys[`touch_event.max_touch_points`]];
       decodedPayload[`touch_event`][`has_touch_event`] = rawPayload[this.signalKeys[`touch_event.has_touch_event`]];
@@ -688,7 +706,7 @@ class Reese84 {
     if (this.signalKeys[`video`] in rawDecodedPayload) {
 
       decodedPayload[`video`] = {};
-      const rawPayload = decode(this.encoders[7][1].decoder, rawDecodedPayload[this.signalKeys[`video`]]);
+      const rawPayload = decode(this.encoders[8][1].decoder, rawDecodedPayload[this.signalKeys[`video`]]);
 
       decodedPayload[`video`][`can_play_type_video_ogg`] = rawPayload[this.signalKeys[`video.can_play_type_video_ogg`]];
       decodedPayload[`video`][`can_play_type_video_mp4`] = rawPayload[this.signalKeys[`video.can_play_type_video_mp4`]];
@@ -699,7 +717,7 @@ class Reese84 {
     if (this.signalKeys[`audio`] in rawDecodedPayload) {
 
       decodedPayload[`audio`] = {};
-      const rawPayload = decode(this.encoders[7][2].decoder, rawDecodedPayload[this.signalKeys[`audio`]]);
+      const rawPayload = decode(this.encoders[8][2].decoder, rawDecodedPayload[this.signalKeys[`audio`]]);
 
       decodedPayload[`audio`][`can_play_type_audio_ogg`] = rawPayload[this.signalKeys[`audio.can_play_type_audio_ogg`]];
       decodedPayload[`audio`][`can_play_type_audio_mpeg`] = rawPayload[this.signalKeys[`audio.can_play_type_audio_mpeg`]];
@@ -716,7 +734,7 @@ class Reese84 {
     if (this.signalKeys[`browser`] in rawDecodedPayload) {
 
       decodedPayload[`browser`] = {};
-      const rawPayload = decode(this.encoders[7][3].decoder, rawDecodedPayload[this.signalKeys[`browser`]]);
+      const rawPayload = decode(this.encoders[8][3].decoder, rawDecodedPayload[this.signalKeys[`browser`]]);
 
       decodedPayload[`browser`][`is_internet_explorer`] = rawPayload[this.signalKeys[`browser.is_internet_explorer`]];
       decodedPayload[`browser`][`is_chrome`] = rawPayload[this.signalKeys[`browser.is_chrome`]];
@@ -737,7 +755,7 @@ class Reese84 {
     if (this.signalKeys[`window`] in rawDecodedPayload) {
 
       decodedPayload[`window`] = {};
-      const rawPayload = decode(this.encoders[7][4].decoder, rawDecodedPayload[this.signalKeys[`window`]]);
+      const rawPayload = decode(this.encoders[8][4].decoder, rawDecodedPayload[this.signalKeys[`window`]]);
 
       decodedPayload[`window`][`history_length`] = rawPayload[this.signalKeys[`window.history_length`]];
       decodedPayload[`window`][`navigator_hardware_concurrency`] = rawPayload[this.signalKeys[`window.navigator_hardware_concurrency`]];
@@ -777,49 +795,59 @@ class Reese84 {
 
       decodedPayload[`document_children`][`document_script_element_children`] = rawPayload[this.signalKeys[`document_children.document_script_element_children`]];
       decodedPayload[`document_children`][`document_head_element_children`] = rawPayload[this.signalKeys[`document_children.document_head_element_children`]];
+      decodedPayload[`document_children`][`document_body_element_children`] = rawPayload[this.signalKeys[`document_children.document_body_element_children`]];
     }
 
     if (this.signalKeys[`webgl_rendering_call`] in rawDecodedPayload) {
 
       decodedPayload[`webgl_rendering_call`] = {};
-      const rawPayload = decode(this.encoders[7][5].decoder, rawDecodedPayload[this.signalKeys[`webgl_rendering_call`]]);
+      const rawPayload = decode(this.encoders[8][5].decoder, rawDecodedPayload[this.signalKeys[`webgl_rendering_call`]]);
 
       decodedPayload[`webgl_rendering_call`][`webgl_rendering_context_prototype_get_parameter_call_a`] = rawPayload[this.signalKeys[`webgl_rendering_call.webgl_rendering_context_prototype_get_parameter_call_a`]];
       decodedPayload[`webgl_rendering_call`][`webgl_rendering_context_prototype_get_parameter_call_b`] = rawPayload[this.signalKeys[`webgl_rendering_call.webgl_rendering_context_prototype_get_parameter_call_b`]];
       decodedPayload[`webgl_rendering_call`][`hash`] = rawPayload[this.signalKeys[`webgl_rendering_call.hash`]];
     }
 
-    decodedPayload[`window_object_get_own_property_names_a`] = decode(this.encoders[7][6].decoder, rawDecodedPayload[this.signalKeys[`window_object_get_own_property_names_a`]]);
+    decodedPayload[`window_object_get_own_property_names_a`] = decode(this.encoders[8][6].decoder, rawDecodedPayload[this.signalKeys[`window_object_get_own_property_names_a`]]);
 
     if(this.signalKeys['window_object_get_own_property_names_b'] in rawDecodedPayload){
       decodedPayload[`window_object_get_own_property_names_b`] = {};
-      const rawPayload = decode(this.encoders[7][7].decoder, rawDecodedPayload[this.signalKeys[`window_object_get_own_property_names_b`]]);
+      const rawPayload = decode(this.encoders[8][7].decoder, rawDecodedPayload[this.signalKeys[`window_object_get_own_property_names_b`]]);
 
       decodedPayload[`window_object_get_own_property_names_b`][`prev`] = rawPayload[this.signalKeys[`window_object_get_own_property_names_b.prev`]];
       decodedPayload[`window_object_get_own_property_names_b`][`next`] = rawPayload[this.signalKeys[`window_object_get_own_property_names_b.next`]];
     }
 
-    decodedPayload['window_object_get_own_property_names_last_30'] = decode(this.encoders[7][8].decoder, rawDecodedPayload[this.signalKeys[`window_object_get_own_property_names_last_30`]])
+    decodedPayload['window_object_get_own_property_names_last_30'] = decode(this.encoders[8][8].decoder, rawDecodedPayload[this.signalKeys[`window_object_get_own_property_names_last_30`]])
 
     if (this.signalKeys[`visual_view_port`] in rawDecodedPayload) {
 
       decodedPayload[`visual_view_port`] = {};
-      const rawPayload = decode(this.encoders[7][9].decoder, rawDecodedPayload[this.signalKeys[`visual_view_port`]]);
+      const rawPayload = decode(this.encoders[8][9].decoder, rawDecodedPayload[this.signalKeys[`visual_view_port`]]);
 
       decodedPayload[`visual_view_port`][`visual_view_port_width`] = rawPayload[this.signalKeys[`visual_view_port.visual_view_port_width`]];
       decodedPayload[`visual_view_port`][`visual_view_port_height`] = rawPayload[this.signalKeys[`visual_view_port.visual_view_port_height`]];
       decodedPayload[`visual_view_port`][`visual_view_port_scale`] = rawPayload[this.signalKeys[`visual_view_port.visual_view_port_scale`]];
     }
 
+    if (this.signalKeys[`create_html_document`] in rawDecodedPayload){
+      decodedPayload[`create_html_document`] = [];
+      const rawPayload = rawDecodedPayload[this.signalKeys[`create_html_document`]];
 
-    decodedPayload[`vendor_name`] = decode(this.encoders[8][1].decoder, rawDecodedPayload[this.signalKeys[`vendor_name`]]);
-    decodedPayload[`vendor_value`] = decode(this.encoders[8][2].decoder, rawDecodedPayload[this.signalKeys[`vendor_value`]]);
+      rawPayload.forEach((payload) => {
+
+        decodedPayload[`create_html_document`].push(
+          decode(this.encoders[8][10].decoder, payload)
+        )
+      });
+    }
 
     if(rawDecodedPayload[this.signalKeys[`performance_difference`]] === undefined){
       decodedPayload[`performance_difference`] = null;
     }else{
 
-      const rawPayload = decode(this.encoders[8][0].decoder, rawDecodedPayload[this.signalKeys[`performance_difference`]]);
+      decodedPayload['performance_difference'] = {};
+      const rawPayload = decode(this.encoders[9][0].decoder, rawDecodedPayload[this.signalKeys[`performance_difference`]]);
 
       decodedPayload[`performance_difference`][`btoa_a`] = rawPayload[this.signalKeys[`performance_difference.btoa_a`]];
       decodedPayload[`performance_difference`][`btoa_b`] = rawPayload[this.signalKeys[`performance_difference.btoa_b`]];
@@ -827,6 +855,42 @@ class Reese84 {
       decodedPayload[`performance_difference`][`dump_b`] = rawPayload[this.signalKeys[`performance_difference.dump_b`]];
     }
 
+    if(this.signalKeys[`tampering`] in rawDecodedPayload){
+      decodedPayload['tampering'] = {};
+      const rawPayload = decode(this.encoders[9][1].decoder, rawDecodedPayload[this.signalKeys[`tampering`]]);
+
+      const getTamperingValue = ((key) => {
+        const tampered = rawPayload.filter((p) => p[0] === this.signalKeys[key]);
+
+        if(tampered.length === 0){
+          return;
+        }
+
+        if(tampered[0][1] === this.signalKeys['tampering.yes']){
+          return 'yes';
+        }else if(tampered[0][1] === this.signalKeys['tampering.no']){
+          return 'no';
+        }
+
+      });
+
+      decodedPayload[`tampering`][`prototype_of_navigator_vendor`] = getTamperingValue(`tampering.prototype_of_navigator_vendor`);
+      decodedPayload[`tampering`][`prototype_of_navigator_mimetypes`] = getTamperingValue(`tampering.prototype_of_navigator_mimetypes`);
+      decodedPayload[`tampering`][`prototype_of_navigator_languages`] = getTamperingValue(`tampering.prototype_of_navigator_languages`);
+      decodedPayload[`tampering`][`webgl2_rendering_context_to_string`] = getTamperingValue(`tampering.webgl2_rendering_context_to_string`);
+      decodedPayload[`tampering`][`function_to_string`] = getTamperingValue(`tampering.function_to_string`);
+      decodedPayload[`tampering`][`prototype_of_navigator_hardware_concurrency`] = getTamperingValue(`tampering.prototype_of_navigator_hardware_concurrency`);
+      decodedPayload[`tampering`][`webgl2_rendering_context_get_parameter`] = getTamperingValue(`tampering.webgl2_rendering_context_get_parameter`);
+      decodedPayload[`tampering`][`prototype_of_navigator_device_memory`] = getTamperingValue(`tampering.prototype_of_navigator_device_memory`);
+      decodedPayload[`tampering`][`prototype_of_navigator_permissions`] = getTamperingValue(`tampering.prototype_of_navigator_permissions`);
+    }
+
+    decodedPayload[`vendor_name`] = decode(this.encoders[9][2].decoder, rawDecodedPayload[this.signalKeys[`vendor_name`]]);
+    decodedPayload[`vendor_value`] = decode(this.encoders[9][3].decoder, rawDecodedPayload[this.signalKeys[`vendor_value`]]);
+
+    console.log(`current decoded payload`)
+    console.log(JSON.stringify(decodedPayload, null, 2));
+    process.exit(1);
 
     console.log(rawDecodedPayload)
     return decodedPayload;

@@ -11,10 +11,15 @@ function getPropertyValue(p){
 
 }
 
-function findFirstStringifyForwards(p){
+function findFirstStringifyForward(p){
   let _p = p;
 
   while(_p.node !== undefined){
+
+    if(!t.isVariableDeclaration(_p.node)){
+      _p = _p.getNextSibling();
+      continue;
+    }
 
     const code = generate(_p.node).code;
 
@@ -30,6 +35,11 @@ function findFirstStringifyBackwards(p){
   let _p = p;
 
   while(_p.node !== undefined){
+
+    if(!t.isVariableDeclaration(_p.node)){
+      _p = _p.getPrevSibling();
+      continue;
+    }
 
     const code = generate(_p.node).code;
 
@@ -47,6 +57,11 @@ function findFirstBtoaBackwards(p) {
 
   while(_p.node !== undefined){
 
+    if(!t.isVariableDeclaration(_p.node)){
+      _p = _p.getPrevSibling();
+      continue;
+    }
+
     const code = generate(_p.node).code;
 
     if(code.match(/var (.*?) = window\.btoa\((.*?).join\((""|'')\)\);/)){
@@ -58,12 +73,15 @@ function findFirstBtoaBackwards(p) {
 };
 
 
-function findFirstBtoaForwards(p) {
+function findFirstBtoaForward(p) {
 
   let _p = p;
 
   while(_p.node !== undefined){
-
+    if(!t.isVariableDeclaration(_p.node)){
+      _p = _p.getNextSibling();
+      continue;
+    }
     const code = generate(_p.node).code;
 
     if(code.match(/var (.*?) = window\.btoa\((.*?).join\((""|'')\)\);/)){
@@ -84,6 +102,17 @@ const findFirstTryBackwards = (p) => {
       return _p;
     }
     _p = _p.getPrevSibling();
+  }
+};
+
+const findFirstTryForward = (p) => {
+  let _p = p;
+  while(_p.node !== undefined){
+
+    if(_p.type === `TryStatement`){
+      return _p;
+    }
+    _p = _p.getNextSibling();
   }
 };
 
@@ -427,6 +456,29 @@ const FINDERS = {
   "events.touch.force" : function(path){
     return findInAssignment({path, valueToFind : `["force"]`, mode : `endsWith`, siblingKey : 0, instance : 0});
   },
+  "interrogator_id" : function(path){
+    let found = false;
+    let value = undefined;
+
+    path.traverse({
+      VariableDeclaration(varPath){
+
+        const code = generate(varPath.node).code;
+
+        if(!code.endsWith(`["userAgent"];`)){
+          return;
+        }
+
+        found = true;
+        const nextPath = varPath.parentPath.parentPath.parentPath.parentPath.getPrevSibling();
+        const leftProp = nextPath.get(`expression.arguments.0.body.body.0.consequent.body.0.expression.left.property`);
+        value = getPropertyValue(leftProp);
+
+      }
+    });
+
+    return { found, value };
+  },
   "user_agent" : function(path) {
     return findInVar({path, valueToFind : `["userAgent"]`, mode : `endsWith`, siblingKey : 1});
   },
@@ -526,8 +578,9 @@ const FINDERS = {
         }
 
         found = true;
-
-        const leftProp = findFirstBtoaBackwards(expPath).getNextSibling().get(`expression.left.property`);
+        let nextPath = findFirstBtoaBackwards(expPath);
+        nextPath = findFirstBtoaBackwards(nextPath.getPrevSibling())
+        const leftProp = nextPath.getNextSibling().get(`expression.left.property`);
         value = getPropertyValue(leftProp);
 
       }
@@ -550,6 +603,98 @@ const FINDERS = {
   },
   "timestamps.performance_timing" : function(path){
     return findTimestampProperty({path, index : 4});
+  },
+  "mime_types" : function(path){
+    let found = false;
+    let value = undefined;
+
+    path.traverse({
+      VariableDeclaration(varPath){
+
+        const code = generate(varPath.node).code;
+
+        if(!code.endsWith(`["mimeTypes"];`)){
+          return;
+        }
+
+        found = true;
+        const nextPath = varPath.parentPath.parentPath;
+        const leftProp = findFirstBtoaForward(nextPath).getNextSibling().get(`expression.left.property`);
+        value = getPropertyValue(leftProp);
+
+      }
+    });
+
+    return { found, value };
+  },
+  "mime_types.suffixes" : function(path){
+    let found = false;
+    let value = undefined;
+
+    path.traverse({
+      VariableDeclaration(varPath){
+
+        const code = generate(varPath.node).code;
+
+        if(!code.endsWith(`["mimeTypes"];`)){
+          return;
+        }
+
+        found = true;
+        let nextPath = varPath.getNextSibling();
+        const leftProp = nextPath.get(`body.body.1.consequent.body.0.expression.callee.body.body.0.block.body.2.expression.left.property`);
+        value = getPropertyValue(leftProp);
+
+      }
+    });
+
+    return { found, value };
+  },
+  "mime_types.type" : function(path){
+    let found = false;
+    let value = undefined;
+
+    path.traverse({
+      VariableDeclaration(varPath){
+
+        const code = generate(varPath.node).code;
+
+        if(!code.endsWith(`["mimeTypes"];`)){
+          return;
+        }
+
+        found = true;
+        let nextPath = varPath.getNextSibling();
+        const leftProp = nextPath.get(`body.body.1.consequent.body.0.expression.callee.body.body.0.block.body.3.expression.left.property`);
+        value = getPropertyValue(leftProp);
+
+      }
+    });
+
+    return { found, value };
+  },
+  "mime_types.file_name" : function(path){
+    let found = false;
+    let value = undefined;
+
+    path.traverse({
+      VariableDeclaration(varPath){
+
+        const code = generate(varPath.node).code;
+
+        if(!code.endsWith(`["mimeTypes"];`)){
+          return;
+        }
+
+        found = true;
+        let nextPath = varPath.getNextSibling();
+        const leftProp = nextPath.get(`body.body.1.consequent.body.0.expression.callee.body.body.0.block.body.4.expression.left.property`);
+        value = getPropertyValue(leftProp);
+
+      }
+    });
+
+    return { found, value };
   },
   "window_size" : function(path) {
     let found = false;
@@ -1325,7 +1470,7 @@ const FINDERS = {
 
         found = true;
 
-        const leftProp = findFirstBtoaForwards(expPath).getNextSibling().get(`expression.left.property`);
+        const leftProp = findFirstBtoaForward(expPath).getNextSibling().get(`expression.left.property`);
         value = getPropertyValue(leftProp);
 
       }
@@ -1615,7 +1760,7 @@ const FINDERS = {
         }
 
         found = true;
-        const leftProp = expPath.getSibling(expPath.key+1).get(`block.body.1.consequent.body.9.expression.left.property`);
+        const leftProp = expPath.getSibling(expPath.key+2).get(`block.body.3.expression.left.property`);
         value = getPropertyValue(leftProp);
 
       }
@@ -1736,7 +1881,7 @@ const FINDERS = {
     return findInExpression({path, valueToFind : /(.*?)\["stopInternal"\]\("canvas_fonts"\)/, mode : `regex`, siblingKey : 2});
   },
   "document_children" : function(path) {
-    return findInExpression({path, valueToFind : /(.*?)\["stopInternal"\]\("canvas_fonts"\)/, mode : `regex`, siblingKey : 7});
+    return findInExpression({path, valueToFind : /(.*?)\["stopInternal"\]\("canvas_fonts"\)/, mode : `regex`, siblingKey : 10});
   },
   "document_children.document_script_element_children" : function(path) {
     let found = false;
@@ -1752,7 +1897,7 @@ const FINDERS = {
         }
 
         found = true;
-        const leftProp = forPath.getSibling(forPath.key + 2).get(`expression.left.property`);
+        const leftProp = forPath.getSibling(forPath.key + 1).get(`expression.left.property`);
         value = getPropertyValue(leftProp);
       }
     });
@@ -1773,7 +1918,28 @@ const FINDERS = {
         }
 
         found = true;
-        const leftProp = forPath.getSibling(forPath.key + 2).get(`expression.left.property`);
+        const leftProp = forPath.getSibling(forPath.key + 1).get(`expression.left.property`);
+        value = getPropertyValue(leftProp);
+      }
+    });
+
+    return { found, value };
+  },
+  "document_children.document_body_element_children" : function(path) {
+    let found = false;
+    let value = undefined;
+
+    path.traverse({
+      ForInStatement(forPath){
+
+        const code = generate(forPath.get(`right`).node).code;
+
+        if(!(code.endsWith(`window["document"]["body"]["children"]`))){
+          return;
+        }
+
+        found = true;
+        const leftProp = forPath.getSibling(forPath.key + 1).get(`expression.left.property`);
         value = getPropertyValue(leftProp);
       }
     });
@@ -1907,7 +2073,7 @@ const FINDERS = {
         }
 
         found = true;
-        const leftProp = findFirstBtoaForwards(varPath).getNextSibling().get(`expression.left.property`);
+        const leftProp = findFirstBtoaForward(varPath).getNextSibling().get(`expression.left.property`);
         value = getPropertyValue(leftProp);
 
       }
@@ -1934,8 +2100,8 @@ const FINDERS = {
         }
 
         found = true;
-        const nextPath = findFirstBtoaForwards(varPath);
-        const leftProp = findFirstBtoaForwards(nextPath.getNextSibling()).getNextSibling().get(`expression.left.property`);
+        const nextPath = findFirstBtoaForward(varPath);
+        const leftProp = findFirstBtoaForward(nextPath.getNextSibling()).getNextSibling().get(`expression.left.property`);
         value = getPropertyValue(leftProp);
 
       }
@@ -2006,7 +2172,7 @@ const FINDERS = {
         }
 
         found = true;
-        const leftProp = findFirstBtoaForwards(varPath).getNextSibling().get(`expression.left.property`);
+        const leftProp = findFirstBtoaForward(varPath).getNextSibling().get(`expression.left.property`);
         value = getPropertyValue(leftProp);
 
       }
@@ -2028,7 +2194,7 @@ const FINDERS = {
         }
 
         found = true;
-        const leftProp = findFirstBtoaForwards(expPath.parentPath.parentPath.parentPath.parentPath).getNextSibling().get(`expression.left.property`);
+        const leftProp = findFirstBtoaForward(expPath.parentPath.parentPath.parentPath.parentPath).getNextSibling().get(`expression.left.property`);
         value = getPropertyValue(leftProp);
 
       }
@@ -2045,7 +2211,7 @@ const FINDERS = {
   "visual_view_port.visual_view_port_scale" : function(path) {
     return findInAssignment({path, valueToFind : `window["visualViewport"]["scale"]`, mode : `endsWith`, siblingKey : 0});
   },
-  "vendor_name" : function(path) {
+  "create_html_document" : function(path){
     let found = false;
     let value = undefined;
 
@@ -2059,84 +2225,10 @@ const FINDERS = {
         }
 
         found = true;
+        const nextPath = varPath.parentPath.parentPath.parentPath.parentPath.getPrevSibling();
 
-        let nextPath = findFirstBtoaForwards(varPath);
-        nextPath = findFirstBtoaForwards(nextPath.getNextSibling());
-        nextPath = findFirstBtoaForwards(nextPath);
-        const leftProp = nextPath.getNextSibling().get(`expression.left.property`);
+        const leftProp = nextPath.get(`expression.arguments.0.body.body`).slice(-1)[0].get(`consequent.body.0.expression.left.property`);
         value = getPropertyValue(leftProp);
-
-      }
-    });
-
-    return { found, value };
-  },
-  "vendor_value" : function(path) {
-    let found = false;
-    let value = undefined;
-
-    path.traverse({
-      VariableDeclaration(varPath){
-
-        const code = generate(varPath.node).code;
-
-        if(!code.endsWith(`["dump"];`)){
-          return;
-        }
-
-        found = true;
-
-        let nextPath = findFirstBtoaForwards(varPath);
-        nextPath = findFirstBtoaForwards(nextPath.getNextSibling());
-        nextPath = findFirstBtoaForwards(nextPath.getNextSibling());
-        const leftProp = nextPath.getNextSibling().get(`expression.left.property`);
-        value = getPropertyValue(leftProp);
-
-      }
-    });
-
-    return { found, value };
-  },
-  "value_vendor_name" : function(path) {
-    let found = false;
-    let value = undefined;
-
-    path.traverse({
-      VariableDeclaration(varPath){
-
-        const code = generate(varPath.node).code;
-
-        if(!code.endsWith(`["dump"];`)){
-          return;
-        }
-
-        found = true;
-        let nextPath = findFirstStringifyForwards(varPath);
-        nextPath = findFirstStringifyForwards(nextPath.getNextSibling());
-        value = nextPath.get("declarations.0.init.arguments.0").node.value;
-      }
-    });
-
-    return { found, value };
-  },
-  "value_vendor_value" : function(path) {
-    let found = false;
-    let value = undefined;
-
-    path.traverse({
-      VariableDeclaration(varPath){
-
-        const code = generate(varPath.node).code;
-
-        if(!code.endsWith(`["dump"];`)){
-          return;
-        }
-
-        found = true;
-        let nextPath = findFirstStringifyForwards(varPath);
-        nextPath = findFirstStringifyForwards(nextPath.getNextSibling());
-        nextPath = findFirstStringifyForwards(nextPath.getNextSibling());
-        value = nextPath.get("declarations.0.init.arguments.0").node.value;
 
       }
     });
@@ -2247,6 +2339,383 @@ const FINDERS = {
         found = true;
         const leftProp = varPath.getSibling(varPath.key + 2).get(`block.body.6.consequent.body.8.consequent.body.1.expression.left.property`);
         value = getPropertyValue(leftProp);
+
+      }
+    });
+
+    return { found, value };
+  },
+  'tampering' : function(path){
+    let found = false;
+    let value = undefined;
+
+    path.traverse({
+      VariableDeclaration(varPath){
+
+        const code = generate(varPath.node).code;
+
+        if(!code.endsWith(`["String"]["prototype"]["replace"];`)){
+          return;
+        }
+
+        found = true;
+
+        const nextPath = varPath.getNextSibling();
+        const leftProp = findFirstBtoaForward(nextPath).getNextSibling().get(`expression.left.property`);
+        value = getPropertyValue(leftProp);
+
+      }
+    });
+
+    return { found, value };
+  },
+  'tampering.prototype_of_navigator_vendor' : function(path){
+    let found = false;
+    let value = undefined;
+
+    path.traverse({
+      VariableDeclaration(varPath){
+
+        const code = generate(varPath.node).code;
+
+        if(!code.endsWith(`["String"]["prototype"]["replace"];`)){
+          return;
+        }
+
+        const nextSibling = varPath.getNextSibling();
+        found = true;
+        const leftProp = nextSibling.get('block.body.0.right.elements.0.elements.0');
+        value = getPropertyValue(leftProp);
+
+      }
+    });
+
+    return { found, value };
+  },
+  'tampering.prototype_of_navigator_mimetypes' : function(path){
+    let found = false;
+    let value = undefined;
+
+    path.traverse({
+      VariableDeclaration(varPath){
+
+        const code = generate(varPath.node).code;
+
+        if(!code.endsWith(`["String"]["prototype"]["replace"];`)){
+          return;
+        }
+
+        const nextSibling = varPath.getNextSibling();
+        found = true;
+        const leftProp = nextSibling.get('block.body.0.right.elements.1.elements.0');
+        value = getPropertyValue(leftProp);
+
+      }
+    });
+
+    return { found, value };
+  },
+  'tampering.prototype_of_navigator_languages' : function(path){
+    let found = false;
+    let value = undefined;
+
+    path.traverse({
+      VariableDeclaration(varPath){
+
+        const code = generate(varPath.node).code;
+
+        if(!code.endsWith(`["String"]["prototype"]["replace"];`)){
+          return;
+        }
+
+        const nextSibling = varPath.getNextSibling();
+        found = true;
+        const leftProp = nextSibling.get('block.body.0.right.elements.2.elements.0');
+        value = getPropertyValue(leftProp);
+
+      }
+    });
+
+    return { found, value };
+  },
+  'tampering.webgl2_rendering_context_to_string' : function(path){
+    let found = false;
+    let value = undefined;
+
+    path.traverse({
+      VariableDeclaration(varPath){
+
+        const code = generate(varPath.node).code;
+
+        if(!code.endsWith(`["String"]["prototype"]["replace"];`)){
+          return;
+        }
+
+        const nextSibling = varPath.getNextSibling();
+        found = true;
+        const leftProp = nextSibling.get('block.body.0.right.elements.3.elements.0');
+        value = getPropertyValue(leftProp);
+
+      }
+    });
+
+    return { found, value };
+  },
+  'tampering.function_to_string' : function(path){
+    let found = false;
+    let value = undefined;
+
+    path.traverse({
+      VariableDeclaration(varPath){
+
+        const code = generate(varPath.node).code;
+
+        if(!code.endsWith(`["String"]["prototype"]["replace"];`)){
+          return;
+        }
+
+        const nextSibling = varPath.getNextSibling();
+        found = true;
+        const leftProp = nextSibling.get('block.body.0.right.elements.4.elements.0');
+        value = getPropertyValue(leftProp);
+
+      }
+    });
+
+    return { found, value };
+  },
+  'tampering.prototype_of_navigator_hardware_concurrency' : function(path){
+    let found = false;
+    let value = undefined;
+
+    path.traverse({
+      VariableDeclaration(varPath){
+
+        const code = generate(varPath.node).code;
+
+        if(!code.endsWith(`["String"]["prototype"]["replace"];`)){
+          return;
+        }
+
+        const nextSibling = varPath.getNextSibling();
+        found = true;
+        const leftProp = nextSibling.get('block.body.0.right.elements.5.elements.0');
+        value = getPropertyValue(leftProp);
+
+      }
+    });
+
+    return { found, value };
+  },
+  'tampering.webgl2_rendering_context_get_parameter' : function(path){
+    let found = false;
+    let value = undefined;
+
+    path.traverse({
+      VariableDeclaration(varPath){
+
+        const code = generate(varPath.node).code;
+
+        if(!code.endsWith(`["String"]["prototype"]["replace"];`)){
+          return;
+        }
+
+        const nextSibling = varPath.getNextSibling();
+        found = true;
+        const leftProp = nextSibling.get('block.body.0.right.elements.6.elements.0');
+        value = getPropertyValue(leftProp);
+
+      }
+    });
+
+    return { found, value };
+  },
+  'tampering.prototype_of_navigator_device_memory' : function(path){
+    let found = false;
+    let value = undefined;
+
+    path.traverse({
+      VariableDeclaration(varPath){
+
+        const code = generate(varPath.node).code;
+
+        if(!code.endsWith(`["String"]["prototype"]["replace"];`)){
+          return;
+        }
+
+        const nextSibling = varPath.getNextSibling();
+        found = true;
+        const leftProp = nextSibling.get('block.body.0.right.elements.7.elements.0');
+        value = getPropertyValue(leftProp);
+
+      }
+    });
+
+    return { found, value };
+  },
+  'tampering.prototype_of_navigator_permissions' : function(path){
+    let found = false;
+    let value = undefined;
+
+    path.traverse({
+      VariableDeclaration(varPath){
+
+        const code = generate(varPath.node).code;
+
+        if(!code.endsWith(`["String"]["prototype"]["replace"];`)){
+          return;
+        }
+
+        const nextSibling = varPath.getNextSibling();
+        found = true;
+        const leftProp = nextSibling.get('block.body.0.right.elements.8.elements.0');
+        value = getPropertyValue(leftProp);
+
+      }
+    });
+
+    return { found, value };
+  },
+  'tampering.no' : function(path){
+    let found = false;
+    let value = undefined;
+
+    path.traverse({
+      VariableDeclaration(varPath){
+
+        const code = generate(varPath.node).code;
+
+        if(!code.endsWith(`["String"]["prototype"]["replace"];`)){
+          return;
+        }
+
+        const nextSibling = varPath.getNextSibling();
+        found = true;
+
+        const leftProp = nextSibling.get('block.body.0.body.body.1.consequent.body.0.expression.callee.body.body.0.declarations.0.init.elements.1');
+        value = getPropertyValue(leftProp);
+
+      }
+    });
+
+    return { found, value };
+  },
+  'tampering.yes' : function(path){
+    let found = false;
+    let value = undefined;
+
+    path.traverse({
+      VariableDeclaration(varPath){
+
+        const code = generate(varPath.node).code;
+
+        if(!code.endsWith(`["String"]["prototype"]["replace"];`)){
+          return;
+        }
+
+        const nextSibling = varPath.getNextSibling();
+        found = true;
+        const leftProp = nextSibling.get('block.body.0.body.body.1.consequent.body.0.expression.callee.body.body.1.expression.right.body.body.0.expression.right.elements.1');
+        value = getPropertyValue(leftProp);
+
+      }
+    });
+
+    return { found, value };
+
+  },
+  "vendor_name" : function(path) {
+    let found = false;
+    let value = undefined;
+
+    path.traverse({
+      VariableDeclaration(varPath){
+
+        const code = generate(varPath.node).code;
+
+        if(!code.endsWith(`["dump"];`)){
+          return;
+        }
+
+        found = true;
+
+        let nextPath = findFirstBtoaForward(varPath);
+        nextPath = findFirstBtoaForward(nextPath.getNextSibling());
+        nextPath = findFirstBtoaForward(nextPath);
+        const leftProp = nextPath.getNextSibling().get(`expression.left.property`);
+        value = getPropertyValue(leftProp);
+
+      }
+    });
+
+    return { found, value };
+  },
+  "vendor_value" : function(path) {
+    let found = false;
+    let value = undefined;
+
+    path.traverse({
+      VariableDeclaration(varPath){
+
+        const code = generate(varPath.node).code;
+
+        if(!code.endsWith(`["dump"];`)){
+          return;
+        }
+
+        found = true;
+
+        let nextPath = findFirstBtoaForward(varPath);
+        nextPath = findFirstBtoaForward(nextPath.getNextSibling());
+        nextPath = findFirstBtoaForward(nextPath.getNextSibling());
+        const leftProp = nextPath.getNextSibling().get(`expression.left.property`);
+        value = getPropertyValue(leftProp);
+
+      }
+    });
+
+    return { found, value };
+  },
+  "value_vendor_name" : function(path) {
+    let found = false;
+    let value = undefined;
+
+    path.traverse({
+      VariableDeclaration(varPath){
+
+        const code = generate(varPath.node).code;
+
+        if(!code.endsWith(`["dump"];`)){
+          return;
+        }
+
+        found = true;
+        let nextPath = findFirstStringifyForward(varPath);
+        nextPath = findFirstStringifyForward(nextPath.getNextSibling());
+        value = nextPath.get("declarations.0.init.arguments.0").node.value;
+      }
+    });
+
+    return { found, value };
+  },
+  "value_vendor_value" : function(path) {
+    let found = false;
+    let value = undefined;
+
+    path.traverse({
+      VariableDeclaration(varPath){
+
+        const code = generate(varPath.node).code;
+
+        if(!code.endsWith(`["dump"];`)){
+          return;
+        }
+
+        found = true;
+        let nextPath = findFirstStringifyForward(varPath);
+        nextPath = findFirstStringifyForward(nextPath.getNextSibling());
+        nextPath = findFirstStringifyForward(nextPath.getNextSibling());
+        value = nextPath.get("declarations.0.init.arguments.0").node.value;
 
       }
     });
