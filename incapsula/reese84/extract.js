@@ -721,6 +721,24 @@ function extractXorEncoders(ast){
 
 }
 
+function extractInterrogatorId(ast){
+
+  let found = false;
+
+  traverse(ast, {
+    NewExpression(path){
+      const callee = path.node.callee
+
+      if(generate(callee).code !== 'window["reese84interrogator"]'){
+        return;
+      }
+
+      found = path.node.arguments[2].value;
+    }
+  })
+
+  return found;
+}
 function extractSignalsKeys(ast) {
 
 
@@ -757,6 +775,8 @@ function extractSignalsKeys(ast) {
 
   };
 
+  const interrogatorId = extractInterrogatorId(ast);
+
   return {
     'events' : getValue(`events`),
     'events.mouse' : getValue(`events.mouse`),
@@ -778,7 +798,7 @@ function extractSignalsKeys(ast) {
     'events.touch.radius_y' : getValue(`events.touch.radius_y`),
     'events.touch.rotation_angle' : getValue(`events.touch.rotation_angle`),
     'events.touch.force' : getValue(`events.touch.force`),
-    'interrogator_id' : getValue('interrogator_id'),
+    'interrogator_id' : interrogatorId,
     'user_agent' : getValue(`user_agent`),
     'navigator_language' : getValue(`navigator_language`),
     'navigator_languages' : getValue(`navigator_languages`),
@@ -965,6 +985,7 @@ function extractSignalsKeys(ast) {
     'performance_difference.btoa_b' : getValue(`performance_difference.btoa_b`),
     'performance_difference.dump_a' : getValue(`performance_difference.dump_a`),
     'performance_difference.dump_b' : getValue(`performance_difference.dump_b`),
+    /*
     'tampering' : getValue(`tampering`),
     'tampering.prototype_of_navigator_vendor' : getValue(`tampering.prototype_of_navigator_vendor`),
     'tampering.prototype_of_navigator_mimetypes' : getValue(`tampering.prototype_of_navigator_mimetypes`),
@@ -977,6 +998,7 @@ function extractSignalsKeys(ast) {
     'tampering.prototype_of_navigator_permissions' : getValue(`tampering.prototype_of_navigator_permissions`),
     'tampering.yes' : getValue(`tampering.yes`),
     'tampering.no' : getValue(`tampering.no`),
+    */
     'vendor_name' : getValue(`vendor_name`),
     'vendor_value' : getValue(`vendor_value`),
     'value_vendor_name' : getValue(`value_vendor_name`),

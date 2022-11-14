@@ -19,6 +19,7 @@ const removeQueryParamD = require(`./transformations/remove-query-param-d.js`);
 const renameXorShift128 = require(`./transformations/rename-xor-shift-128.js`);
 const replacePostbackUrl = require(`./transformations/replace-postback-url.js`);
 const replaceSubstrStrings = require(`./transformations/replace-substr-strings.js`);
+const { interrogator_id } = require("./finders.js");
 
 function byteIndex(a) {
   return `\\u` + (`0000` + a.charCodeAt(0).toString(16)).substr(-4);
@@ -132,7 +133,6 @@ class Reese84 {
     const isChrome = uaparser(data.user_agent).browser.name === `Chrome`;
 
     const encode = (encoder, data) => {
-      console.log(`data`, JSON.stringify(data))
       let mutatedData = null;
       //Convert the data into a JSON string, replacing undefined values with nulls.
 
@@ -183,7 +183,6 @@ class Reese84 {
           };
       }
     }
-
     const encodedPayload = encode(this.encoders[10][0].encoder, {
       [this.signalKeys[`events`]] : {
         [this.signalKeys[`events.mouse`]] : data.events.mouse.length
@@ -197,21 +196,30 @@ class Reese84 {
         [this.signalKeys[`events.mouse`]] : [],
         [this.signalKeys[`events.touch`]] : [],
       },
+      [this.signalKeys[`interrogator_id`]] : this.signalKeys.interrogator_id,
       [this.signalKeys[`user_agent`]] : data.user_agent,
       [this.signalKeys[`navigator_language`]] : data.navigator_language,
       [this.signalKeys[`navigator_languages`]] : {
         [this.signalKeys[`navigator_languages.languages_is_not_undefined`]] : data.navigator_languages.languages_is_not_undefined,
         [this.signalKeys[`navigator_languages.languages`]] : data.navigator_languages.languages
       },
-      //data.navigator_build_id === null ? [this.signalKeys[`navigator_build_id`]] : data.navigator_build_id === null ? "" : encode(this.encoders[1][5].encoder, data.navigator_build_id),
-      [this.signalKeys[`timestamps`]] : encode(this.encoders[1][6].encoder, {
-        [this.signalKeys[`timestamps.date_get_time`]] : encode(this.encoders[1][0].encoder, data.timestamps.date_get_time),
-        [this.signalKeys[`timestamps.file_last_modified`]] : encode(this.encoders[1][1].encoder, data.timestamps.file_last_modified),
-        [this.signalKeys[`timestamps.performance_now`]] : encode(this.encoders[1][2].encoder, data.timestamps.performance_now),
-        [this.signalKeys[`timestamps.document_timeline`]] : encode(this.encoders[1][3].encoder,data.timestamps.document_timeline),
-        [this.signalKeys[`timestamps.performance_timing`]] : encode(this.encoders[1][4].encoder, data.timestamps.performance_timing),
+      /*
+      [this.signalKeys[`navigator_build_id`]] : data.navigator_build_id === null ? "" : encode(this.encoders[2][5].encoder, data.navigator_build_id),
+      */
+      [this.signalKeys[`timestamps`]] : encode(this.encoders[2][6].encoder, {
+        [this.signalKeys[`timestamps.date_get_time`]] : encode(this.encoders[2][0].encoder, data.timestamps.date_get_time),
+        [this.signalKeys[`timestamps.file_last_modified`]] : encode(this.encoders[2][1].encoder, data.timestamps.file_last_modified),
+        [this.signalKeys[`timestamps.performance_now`]] : encode(this.encoders[2][2].encoder, data.timestamps.performance_now),
+        [this.signalKeys[`timestamps.document_timeline`]] : encode(this.encoders[2][3].encoder,data.timestamps.document_timeline),
+        [this.signalKeys[`timestamps.performance_timing`]] : encode(this.encoders[2][4].encoder, data.timestamps.performance_timing),
       }),
-      [this.signalKeys[`window_size`]] : encode(this.encoders[1][7].encoder, {
+      [this.signalKeys[`mime_types`]] : encode(this.encoders[2][7].encoder,
+        data.mime_types.map((payload) => {
+        const _p = encode(this.encoders[2][8].encoder, payload[1])
+        return [payload[0], _p];
+        })
+      ),
+      [this.signalKeys[`window_size`]] : encode(this.encoders[2][9].encoder, {
         [this.signalKeys[`window_size.window_screen_width`]] : data.window_size.window_screen_width,
         [this.signalKeys[`window_size.window_screen_height`]] : data.window_size.window_screen_height,
         [this.signalKeys[`window_size.window_screen_avail_height`]] : data.window_size.window_screen_avail_height,
@@ -242,14 +250,14 @@ class Reese84 {
         [this.signalKeys[`plugins_named_item_item_refresh.item`]] : data.plugins_named_item_item_refresh.item,
         [this.signalKeys[`plugins_named_item_item_refresh.refresh`]] : data.plugins_named_item_item_refresh.refresh
       },
-      [this.signalKeys[`canvas_hash`]] : encode(this.encoders[2][1].encoder, {
+      [this.signalKeys[`canvas_hash`]] : encode(this.encoders[3][1].encoder, {
         [this.signalKeys[`canvas_hash.is_point_in_path`]] : data.canvas_hash.is_point_in_path,
         [this.signalKeys[`canvas_hash.to_data_url_image`]] : data.canvas_hash.to_data_url_image,
         [this.signalKeys[`canvas_hash.screen_is_global_composite_operation`]] : data.canvas_hash.screen_is_global_composite_operation,
-        [this.signalKeys[`canvas_hash.hash`]] : encode(this.encoders[2][0].encoder, data.canvas_hash.hash),
+        [this.signalKeys[`canvas_hash.hash`]] : encode(this.encoders[3][0].encoder, data.canvas_hash.hash),
       }),
-      [this.signalKeys[`webgl`]] : encode(this.encoders[6][0].encoder, {
-        [this.signalKeys[`webgl.canvas_hash`]] : encode(this.encoders[6][1].encoder, data.webgl.canvas_hash),
+      [this.signalKeys[`webgl`]] : encode(this.encoders[7][0].encoder, {
+        [this.signalKeys[`webgl.canvas_hash`]] : encode(this.encoders[7][1].encoder, data.webgl.canvas_hash),
         [this.signalKeys[`webgl.get_supported_extensions`]] : data.webgl.get_supported_extensions,
         //[this.signalKeys['webgl.canvas_hash_error']] : data.webgl.canvas_hash_error,
         [this.signalKeys[`webgl.aliased_line_width_range`]] : data.webgl.aliased_line_width_range,
@@ -325,17 +333,17 @@ class Reese84 {
         [this.signalKeys[`webgl_meta.webgl_rendering_context_get_parameter`]] : data.webgl_meta.webgl_rendering_context_get_parameter,
         [this.signalKeys[`webgl_meta.is_native_webgl_rendering_context_get_parameter`]] : data.webgl_meta.is_native_webgl_rendering_context_get_parameter
       },
-      [this.signalKeys[`touch_event`]] : encode(this.encoders[7][0].encoder, {
+      [this.signalKeys[`touch_event`]] : encode(this.encoders[8][0].encoder, {
         [this.signalKeys[`touch_event.max_touch_points`]] : data.touch_event.max_touch_points,
         [this.signalKeys[`touch_event.has_touch_event`]] : data.touch_event.has_touch_event,
         [this.signalKeys[`touch_event.on_touch_start_is_undefined`]] : data.touch_event.on_touch_start_is_undefined
       }),
-      [this.signalKeys[`video`]] : encode(this.encoders[7][1].encoder, {
+      [this.signalKeys[`video`]] : encode(this.encoders[8][1].encoder, {
         [this.signalKeys[`video.can_play_type_video_ogg`]] : data.video.can_play_type_video_ogg,
         [this.signalKeys[`video.can_play_type_video_mp4`]] : data.video.can_play_type_video_mp4,
         [this.signalKeys[`video.can_play_type_video_webm`]] : data.video.can_play_type_video_webm
       }),
-      [this.signalKeys[`audio`]] : encode(this.encoders[7][2].encoder, {
+      [this.signalKeys[`audio`]] : encode(this.encoders[8][2].encoder, {
         [this.signalKeys[`audio.can_play_type_audio_ogg`]] : data.audio.can_play_type_audio_ogg,
         [this.signalKeys[`audio.can_play_type_audio_mpeg`]] : data.audio.can_play_type_audio_mpeg,
         [this.signalKeys[`audio.can_play_type_audio_wav`]] : data.audio.can_play_type_audio_wav,
@@ -346,7 +354,7 @@ class Reese84 {
       [this.signalKeys[`navigator_vendor`]] : data.navigator_vendor,
       [this.signalKeys[`navigator_product`]] : data.navigator_product,
       [this.signalKeys[`navigator_product_sub`]] : data.navigator_product_sub,
-      [this.signalKeys[`browser`]] : encode(this.encoders[7][3].encoder, {
+      [this.signalKeys[`browser`]] : encode(this.encoders[8][3].encoder, {
         [this.signalKeys[`browser.is_internet_explorer`]] : data.browser.is_internet_explorer,
         ///*
         [isChrome ? this.signalKeys[`browser.chrome`] : undefined] : isChrome ? {
@@ -358,7 +366,7 @@ class Reese84 {
         [this.signalKeys[`browser.is_chrome`]] : data.browser.is_chrome,
         [isChrome ? this.signalKeys[`browser.connection_rtt`] : undefined] : isChrome ? data.browser.connection_rtt : undefined
       }),
-      [this.signalKeys[`window`]] : encode(this.encoders[7][4].encoder, {
+      [this.signalKeys[`window`]] : encode(this.encoders[8][4].encoder, {
         [this.signalKeys[`window.history_length`]] : data.window.history_length,
         [this.signalKeys[`window.navigator_hardware_concurrency`]] : data.window.navigator_hardware_concurrency,
         [this.signalKeys[`window.is_window_self_not_window_top`]] : data.window.is_window_self_not_window_top,
@@ -380,25 +388,27 @@ class Reese84 {
       [this.signalKeys[`canvas_fonts`]] : data.canvas_fonts,
       [this.signalKeys[`document_children`]] : {
         [this.signalKeys[`document_children.document_script_element_children`]] : data.document_children.document_script_element_children,
-        [this.signalKeys[`document_children.document_head_element_children`]] : data.document_children.document_head_element_children
+        [this.signalKeys[`document_children.document_head_element_children`]] : data.document_children.document_head_element_children,
+        [this.signalKeys[`document_children.document_body_element_children`]] : data.document_children.document_body_element_children
       },
-      [this.signalKeys[`webgl_rendering_call`]] : encode(this.encoders[7][5].encoder, {
+      [this.signalKeys[`webgl_rendering_call`]] : encode(this.encoders[8][5].encoder, {
         [this.signalKeys[`webgl_rendering_call.webgl_rendering_context_prototype_get_parameter_call_a`]] : data.webgl_rendering_call.webgl_rendering_context_prototype_get_parameter_call_a,
         [this.signalKeys[`webgl_rendering_call.webgl_rendering_context_prototype_get_parameter_call_b`]] : data.webgl_rendering_call.webgl_rendering_context_prototype_get_parameter_call_b,
         [this.signalKeys[`webgl_rendering_call.hash`]] : this.ast.webgl_rendering_call_hash(xor),
       }),
-      [this.signalKeys[`window_object_get_own_property_names_a`]] : encode(this.encoders[7][6].encoder, data.window_object_get_own_property_names_a),
-      [this.signalKeys[`window_object_get_own_property_names_b`]] : encode(this.encoders[7][7].encoder, {
+      [this.signalKeys[`window_object_get_own_property_names_a`]] : encode(this.encoders[8][6].encoder, data.window_object_get_own_property_names_a),
+      [this.signalKeys[`window_object_get_own_property_names_b`]] : encode(this.encoders[8][7].encoder, {
         [this.signalKeys[`window_object_get_own_property_names_b.prev`]] : data.window_object_get_own_property_names_b.prev,
         [this.signalKeys[`window_object_get_own_property_names_b.next`]] : data.window_object_get_own_property_names_b.next,
       }),
 
-      [this.signalKeys[`window_object_get_own_property_names_last_30`]] : encode(this.encoders[7][8].encoder, data.window_object_get_own_property_names_last_30),
-      [this.signalKeys[`visual_view_port`]] : encode(this.encoders[7][9].encoder, {
+      [this.signalKeys[`window_object_get_own_property_names_last_30`]] : encode(this.encoders[8][8].encoder, data.window_object_get_own_property_names_last_30),
+      [this.signalKeys[`visual_view_port`]] : encode(this.encoders[8][9].encoder, {
         [this.signalKeys[`visual_view_port.visual_view_port_width`]] : data.visual_view_port.visual_view_port_width,
         [this.signalKeys[`visual_view_port.visual_view_port_height`]] : data.visual_view_port.visual_view_port_height,
         [this.signalKeys[`visual_view_port.visual_view_port_scale`]] : data.visual_view_port.visual_view_port_scale
       }),
+      [this.signalKeys[`create_html_document`]] : data.create_html_document.map((payload) => encode(this.encoders[8][10].encoder, payload)),
       [this.signalKeys[`performance_difference`]] : data.performance_difference !== null ?
         encode(this.encoders[9][0].encoder, {
           [this.signalKeys[`performance_difference.btoa_a`]] : data.performance_difference.btoa_a,
@@ -445,7 +455,7 @@ class Reese84 {
 
     const rawDecodedPayload = decode(this.encoders[10][0].decoder, data);
     console.log(rawDecodedPayload)
-    //process.exit(1)
+    process.exit(1)
     const decodedPayload = {};
 
     if (this.signalKeys[`events`] in rawDecodedPayload){
@@ -888,11 +898,13 @@ class Reese84 {
     decodedPayload[`vendor_name`] = decode(this.encoders[9][2].decoder, rawDecodedPayload[this.signalKeys[`vendor_name`]]);
     decodedPayload[`vendor_value`] = decode(this.encoders[9][3].decoder, rawDecodedPayload[this.signalKeys[`vendor_value`]]);
 
+    /*
     console.log(`current decoded payload`)
     console.log(JSON.stringify(decodedPayload, null, 2));
     process.exit(1);
 
     console.log(rawDecodedPayload)
+    */
     return decodedPayload;
   }
 

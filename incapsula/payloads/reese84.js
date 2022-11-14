@@ -12,13 +12,48 @@ module.exports = {
       "en"
     ]
   },
+  "navigator_build_id": "",
   "timestamps": {
-    "date_get_time": "1666121709557",
-    "file_last_modified": "1666121709558",
-    "performance_now": "3179.899999976158",
-    "document_timeline": "3171.209",
-    "performance_timing": "1666121706379"
+    "date_get_time": "1668299389563",
+    "file_last_modified": "1668299389564",
+    "performance_now": "1257.5",
+    "document_timeline": "1254.377",
+    "performance_timing": "1668299388307"
   },
+  "mime_types": [
+    [
+      "0",
+      {
+        "suffixes": "pdf",
+        "type": "application/pdf",
+        "file_name": "internal-pdf-viewer"
+      }
+    ],
+    [
+      "1",
+      {
+        "suffixes": "pdf",
+        "type": "text/pdf",
+        "file_name": "internal-pdf-viewer"
+      }
+    ],
+    [
+      "application/pdf",
+      {
+        "suffixes": "pdf",
+        "type": "application/pdf",
+        "file_name": "internal-pdf-viewer"
+      }
+    ],
+    [
+      "text/pdf",
+      {
+        "suffixes": "pdf",
+        "type": "text/pdf",
+        "file_name": "internal-pdf-viewer"
+      }
+    ]
+  ],
   "window_size": {
     "window_screen_width": 1920,
     "window_screen_height": 1080,
@@ -28,7 +63,7 @@ module.exports = {
     "window_screen_avail_width": 1920,
     "window_screen_pixel_depth": 24,
     "window_inner_width": 1920,
-    "window_inner_height": 933,
+    "window_inner_height": 151,
     "window_outer_width": 1920,
     "window_outer_height": 1053,
     "window_device_pixel_ratio": 1,
@@ -36,7 +71,7 @@ module.exports = {
     "window_screenX": 0,
     "window_screenY": 27
   },
-  "date_get_time_zone_off_set": -7,
+  "date_get_time_zone_off_set": -8,
   "has_indexed_db": true,
   "has_body_add_behaviour": false,
   "iframe_null": null,
@@ -288,41 +323,70 @@ module.exports = {
     "document_script_element_children": [],
     "document_head_element_children": [
       {
-        "src": "https://siteimproveanalytics.com/js/siteanalyze_6022696.js"
-      },
-      {
-        "src": "https://connect.facebook.net/en_US/fbevents.js"
-      },
-      {
-        "src": "https://cdn.amplitude.com/libs/amplitude-8.21.1-min.gz.js"
-      },
-      {
-        "src": "https://cdns.brsrvr.com/v1/br-trk-6284.js"
-      },
-      {
-        "src": "https://bat.bing.com/bat.js"
-      },
-      {
-        "src": "https://www.google-analytics.com/gtm/optimize.js?id=GTM-MG9NTWX"
-      },
-      {
         "src": "https://www.googletagmanager.com/gtm.js?id=GTM-NJ928NX&gtm_auth=lqNACcRAFumttoyg28lLuA&gtm_preview=env-2&gtm_cookies_win=x"
-      },
-      {
-        "src": ""
       },
       {
         "src": "https://dd.pokemoncenter.com/tags.js"
       },
       {
         "src": "https://www.pokemoncenter.com/kie-Yes-him-To-the-To-mocking-and-do-mise-I-prom"
+      },
+      {
+        "src": "https://www.pokemoncenter.com/_next/static/chunks/polyfills-a40ef1678bae11e696dba45124eadd70.js"
+      },
+      {
+        "src": "https://www.pokemoncenter.com/_next/static/chunks/7267.4a04f31407820157b85c.js"
+      },
+      {
+        "src": "https://www.pokemoncenter.com/_next/static/chunks/4720-4302e97c73b1d3b80d56.js"
+      },
+      {
+        "src": "https://www.pokemoncenter.com/_next/static/chunks/2566.17bee1514bbb9c7c731e.js"
+      },
+      {
+        "src": "https://www.pokemoncenter.com/_next/static/chunks/564.53130b7e4d298d3db6d3.js"
+      },
+      {
+        "src": "https://www.pokemoncenter.com/_next/static/chunks/4162.415cfc5214f27934a666.js"
+      },
+      {
+        "src": "https://www.pokemoncenter.com/_next/static/chunks/2669.188f8d731ef6c6c28331.js"
+      }
+    ],
+    "document_body_element_children": [
+      {
+        "src": "https://cdn.cookielaw.org/scripttemplates/otSDKStub.js"
+      },
+      {
+        "src": "https://www.pokemoncenter.com/_next/static/chunks/2282-15e4d022b4e2ebaccdca.js"
+      },
+      {
+        "src": "https://www.pokemoncenter.com/_next/static/chunks/4624-df169011b9744617004f.js"
+      },
+      {
+        "src": "https://www.pokemoncenter.com/_next/static/chunks/6475-f65de05d8f801f53b98d.js"
+      },
+      {
+        "src": "https://www.pokemoncenter.com/_next/static/chunks/6087-ed893f9fc25a131e554c.js"
+      },
+      {
+        "src": "https://www.pokemoncenter.com/_next/static/chunks/8612-e6f66c2e8d486c9c96c3.js"
+      },
+      {
+        "src": "https://www.pokemoncenter.com/_next/static/chunks/1801-8cc03af365c50cdf5a67.js"
+      },
+      {
+        "src": "https://www.pokemoncenter.com/_next/static/chunks/pages/category/%5Bname%5D-309c51425ba037065366.js"
+      },
+      {
+        "src": "https://www.pokemoncenter.com/_next/static/chunks/pages/%5B...page%5D-55d6948788bf5219f518.js"
       }
     ]
   },
   "webgl_rendering_call": {
     "webgl_rendering_context_prototype_get_parameter_call_a": false,
     "webgl_rendering_context_prototype_get_parameter_call_b": false,
-    "hash": "L$-Y\u0014Wz\u0005II\"\u0004\u0015\"~\u001c,k\u001e[H"
+    "hash": "'*\u0005dYxS3C\u0006\u0016\u0018d#\"K\u0019Q!\u0004#"
   },
   "window_object_get_own_property_names_a": "WritableStreamDefaultController;;;VirtualKeyboardGeometryChangeEvent;;;TransformStreamDefaultController;;;SVGComponentTransferFunctionElement;;;SVGAnimatedPreserveAspectRatio;;;ReadableStreamDefaultController;;;RTCPeerConnectionIceErrorEvent;;;OffscreenCanvasRenderingContext2D;;;MediaStreamAudioDestinationNode;;;WebTransportBidirectionalStream;;;WebTransportDatagramDuplexStream;;;AuthenticatorAssertionResponse;;;AuthenticatorAttestationResponse;;;BrowserCaptureMediaStreamTrack;;;PresentationConnectionAvailableEvent;;;PresentationConnectionCloseEvent;;;USBIsochronousInTransferPacket;;;USBIsochronousInTransferResult;;;USBIsochronousOutTransferPacket;;;USBIsochronousOutTransferResult;;;WindowControlsOverlayGeometryChangeEvent;;;NavigationCurrentEntryChangeEvent;;;webkitResolveLocalFileSystemURL;;;2f1acc6c3a606b082e5eef5e54414ffb",
   "window_object_get_own_property_names_b": {
@@ -330,9 +394,6 @@ module.exports = {
     "next": "oncontextrestored"
   },
   "window_object_get_own_property_names_last_30": [
-    "_0xf25e5b",
-    "_0x344967",
-    "_0xe65346",
     "_0x3f4ddc",
     "_0x461f",
     "_0x349818",
@@ -343,40 +404,69 @@ module.exports = {
     "dataDomeProc$",
     "dataDomeOpti$",
     "DataDomeCapt$",
-    "OneTrustStub",
+    "__NEXT_DATA_$",
+    "__SSG_MANIFE$",
+    "__NEXT_P",
+    "next",
+    "_N_E",
+    "ss_dom_var",
+    "Mustache",
+    "jsonLogic",
+    "regeneratorR$",
+    "__NEXT_PRELO$",
+    "2f1acc6c3a60$",
+    "__NEXT_REDUX$",
+    "showShipping$",
+    "dataLayer",
+    "__BUILD_MANI$",
+    "__SSG_MANIFE$",
+    "OptanonWrapp$",
+    "ssRecsInfo",
     "google_tag_m$",
-    "google_tag_d$",
-    "GoogleAnalyt$",
-    "ga",
-    "br_data",
-    "amplitude",
-    "eventPropert$",
-    "eventName",
-    "instance1",
-    "userProperti$",
-    "storefront",
-    "instance2",
-    "cookie_store$",
-    "storefront_c$",
-    "fbq",
-    "_fbq"
+    "OneTrustStub"
   ],
   "visual_view_port": {
     "visual_view_port_width": 1905,
-    "visual_view_port_height": 933,
+    "visual_view_port_height": 151,
     "visual_view_port_scale": 1
   },
-  "performance_difference" : null,
-  "tampering" : {
-    "prototype_of_navigator_vendor" : "no",
-    "prototype_of_navigator_mimetypes" : "no",
-    "prototype_of_navigator_languages" : "no",
-    "webgl2_rendering_context_to_string" : "no",
-    "function_to_string" : "no",
-    "prototype_of_navigator_hardware_concurrency" : "no",
-    "webgl2_rendering_context_get_parameter" : "no",
-    "prototype_of_navigator_device_memory" : "no",
-    "prototype_of_navigator_permissions" : "no",
+  "create_html_document": [
+    [
+      0,
+      "createAttribute"
+    ],
+    [
+      1,
+      "createElement"
+    ],
+    [
+      2,
+      "createElementNS"
+    ],
+    [
+      3,
+      null
+    ],
+    [
+      4,
+      null
+    ],
+    [
+      5,
+      null
+    ]
+  ],
+  "performance_difference": null,
+  "tampering": {
+    "prototype_of_navigator_vendor": "no",
+    "prototype_of_navigator_mimetypes": "no",
+    "prototype_of_navigator_languages": "no",
+    "webgl2_rendering_context_to_string": "no",
+    "function_to_string": "no",
+    "prototype_of_navigator_hardware_concurrency": "no",
+    "webgl2_rendering_context_get_parameter": "no",
+    "prototype_of_navigator_device_memory": "no",
+    "prototype_of_navigator_permissions": "no"
   },
   "vendor_name": "beta",
   "vendor_value": 11
