@@ -963,6 +963,8 @@ function extractSignalsKeys(ast) {
     'document.document_location_protocol' : getValue(`document.document_location_protocol`),
     'canvas_fonts' : getValue(`canvas_fonts`),
     'document_children' : getValue(`document_children`),
+    'document_children.document_with_src' : getValue('document_children.document_with_src'),
+    'document_children.document_without_src' : getValue('document_children.document_without_src'),
     'document_children.document_script_element_children' : getValue(`document_children.document_script_element_children`),
     'document_children.document_head_element_children' : getValue(`document_children.document_head_element_children`),
     'document_children.document_body_element_children' : getValue(`document_children.document_body_element_children`),
@@ -985,7 +987,6 @@ function extractSignalsKeys(ast) {
     'performance_difference.btoa_b' : getValue(`performance_difference.btoa_b`),
     'performance_difference.dump_a' : getValue(`performance_difference.dump_a`),
     'performance_difference.dump_b' : getValue(`performance_difference.dump_b`),
-    /*
     'tampering' : getValue(`tampering`),
     'tampering.prototype_of_navigator_vendor' : getValue(`tampering.prototype_of_navigator_vendor`),
     'tampering.prototype_of_navigator_mimetypes' : getValue(`tampering.prototype_of_navigator_mimetypes`),
@@ -998,7 +999,6 @@ function extractSignalsKeys(ast) {
     'tampering.prototype_of_navigator_permissions' : getValue(`tampering.prototype_of_navigator_permissions`),
     'tampering.yes' : getValue(`tampering.yes`),
     'tampering.no' : getValue(`tampering.no`),
-    */
     'vendor_name' : getValue(`vendor_name`),
     'vendor_value' : getValue(`vendor_value`),
     'value_vendor_name' : getValue(`value_vendor_name`),

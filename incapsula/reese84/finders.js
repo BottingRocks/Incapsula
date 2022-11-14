@@ -1883,6 +1883,48 @@ const FINDERS = {
   "document_children" : function(path) {
     return findInExpression({path, valueToFind : /(.*?)\["stopInternal"\]\("canvas_fonts"\)/, mode : `regex`, siblingKey : 10});
   },
+  "document_children.document_with_src" : function(path){
+    let found = false;
+    let value = undefined;
+
+    path.traverse({
+      ExpressionStatement(expPath){
+
+        const code = generate(expPath.node).code;
+
+        if(!code.endsWith(`["stopInternal"]("canvas_fonts");`)){
+          return;
+        }
+        found = true;
+        const leftProp = expPath.getSibling(expPath.key + 4).get(`expression.left.property`);
+        value = getPropertyValue(leftProp);
+
+      }
+    });
+
+    return { found, value };
+  },
+  "document_children.document_without_src" : function(path){
+    let found = false;
+    let value = undefined;
+
+    path.traverse({
+      ExpressionStatement(expPath){
+
+        const code = generate(expPath.node).code;
+
+        if(!code.endsWith(`["stopInternal"]("canvas_fonts");`)){
+          return;
+        }
+        found = true;
+        const leftProp = expPath.getSibling(expPath.key + 5).get(`expression.left.property`);
+        value = getPropertyValue(leftProp);
+
+      }
+    });
+
+    return { found, value };
+  },
   "document_children.document_script_element_children" : function(path) {
     let found = false;
     let value = undefined;
