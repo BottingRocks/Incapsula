@@ -6,7 +6,8 @@ const traverse = require(`@babel/traverse`).default;
 const atob = require(`atob`);
 const btoa = require(`btoa`);
 
-const FINDERS = require(`./finders.js`);
+const { extractSignals } = require(`./signals.js`);
+const FINDERS = require('./finders.js');
 
 const XOR_SHIFT_128 = `xorShift128`;
 const LOOP_TYPES = [`WhileStatement`, `ForInStatement`];
@@ -741,6 +742,287 @@ function extractInterrogatorId(ast){
 }
 function extractSignalsKeys(ast) {
 
+  const paths = getSignalsPaths(ast);
+
+  const signalKeys = extractSignals({ signalPaths : paths});
+  //console.log(signalKeys);
+  const getValue = (key) => {
+
+    if(!(key in signalKeys)){
+      throw Error(`Key:${key} is not a signal key`);
+    }
+
+    const currentSignal = signalKeys[key];
+
+    if(!currentSignal){
+      throw Error(`Could not find key:${key} in ast`);
+    }
+
+    return currentSignal;
+
+  };
+
+  const interrogatorId = extractInterrogatorId(ast);
+
+  return {
+    'events' : getValue(`events`),
+    'events.mouse' : getValue(`events.mouse`),
+    'events.mouse.type' : getValue(`events.mouse.type`),
+    'events.mouse.timestamp' : getValue(`events.mouse.timestamp`),
+    'events.mouse.client_x' : getValue(`events.mouse.client_x`),
+    'events.mouse.client_y' : getValue(`events.mouse.client_y`),
+    'events.mouse.screen_x' : getValue(`events.mouse.screen_x`),
+    'events.mouse.screen_y' : getValue(`events.mouse.screen_y`),
+    'events.touch' : getValue(`events.touch`),
+    'events.touch.type' : getValue(`events.touch.type`),
+    'events.touch.timestamp' : getValue(`events.touch.timestamp`),
+    'events.touch.identifier' : getValue(`events.touch.identifier`),
+    'events.touch.client_x' : getValue(`events.touch.client_x`),
+    'events.touch.client_y' : getValue(`events.touch.client_y`),
+    'events.touch.screen_x' : getValue(`events.touch.screen_x`),
+    'events.touch.screen_y' : getValue(`events.touch.screen_y`),
+    'events.touch.radius_x' : getValue(`events.touch.radius_x`),
+    'events.touch.radius_y' : getValue(`events.touch.radius_y`),
+    'events.touch.rotation_angle' : getValue(`events.touch.rotation_angle`),
+    'events.touch.force' : getValue(`events.touch.force`),
+    'interrogator_id' : interrogatorId,
+    'user_agent' : getValue(`user_agent`),
+    'navigator_language' : getValue(`navigator_language`),
+    'navigator_languages' : getValue(`navigator_languages`),
+    'navigator_languages.languages_is_not_undefined' : getValue(`navigator_languages.languages_is_not_undefined`),
+    'navigator_languages.languages' : getValue(`navigator_languages.languages`),
+    'navigator_build_id' : getValue(`navigator_build_id`),
+    'timestamps' : getValue(`timestamps`),
+    'timestamps.date_get_time' : getValue(`timestamps.date_get_time`),
+    'timestamps.file_last_modified' : getValue(`timestamps.file_last_modified`),
+    'timestamps.performance_now' : getValue(`timestamps.performance_now`),
+    'timestamps.document_timeline' : getValue(`timestamps.document_timeline`),
+    'timestamps.performance_timing' : getValue(`timestamps.performance_timing`),
+    'mime_types' : getValue('mime_types'),
+    'mime_types.suffixes' : getValue('mime_types.suffixes'),
+    'mime_types.type' : getValue('mime_types.type'),
+    'mime_types.file_name' : getValue('mime_types.file_name'),
+    'window_size' : getValue(`window_size`),
+    'window_size.window_screen_width' : getValue(`window_size.window_screen_width`),
+    'window_size.window_screen_height' : getValue(`window_size.window_screen_height`),
+    'window_size.window_screen_avail_height' : getValue(`window_size.window_screen_avail_height`),
+    'window_size.window_screen_avail_left' : getValue(`window_size.window_screen_avail_left`),
+    'window_size.window_screen_avail_top' : getValue(`window_size.window_screen_avail_top`),
+    'window_size.window_screen_avail_width' : getValue(`window_size.window_screen_avail_width`),
+    'window_size.window_screen_pixel_depth' : getValue(`window_size.window_screen_pixel_depth`),
+    'window_size.window_inner_width' : getValue(`window_size.window_inner_width`),
+    'window_size.window_inner_height' : getValue(`window_size.window_inner_height`),
+    'window_size.window_outer_width' : getValue(`window_size.window_outer_width`),
+    'window_size.window_outer_height' : getValue(`window_size.window_outer_height`),
+    'window_size.window_device_pixel_ratio' : getValue(`window_size.window_device_pixel_ratio`),
+    'window_size.window_screen_orientation_type' : getValue(`window_size.window_screen_orientation_type`),
+    'window_size.window_screenX' : getValue(`window_size.window_screenX`),
+    'window_size.window_screenY' : getValue(`window_size.window_screenY`),
+    'date_get_time_zone_off_set' : getValue(`date_get_time_zone_off_set`),
+    'has_indexed_db' : getValue(`has_indexed_db`),
+    'has_body_add_behaviour' : getValue(`has_body_add_behaviour`),
+    'iframe_null' : getValue('iframe_null'),
+    'open_database' : getValue(`open_database`),
+    'cpu_class' : getValue(`cpu_class`),
+    'platform' : getValue(`platform`),
+    'do_not_track' : getValue(`do_not_track`),
+    'plugins_or_active_x_object' : getValue(`plugins_or_active_x_object`),
+    'plugins_named_item_item_refresh' : getValue(`plugins_named_item_item_refresh`),
+    'plugins_named_item_item_refresh.named_item' : getValue(`plugins_named_item_item_refresh.named_item`),
+    'plugins_named_item_item_refresh.item' : getValue(`plugins_named_item_item_refresh.item`),
+    'plugins_named_item_item_refresh.refresh' : getValue(`plugins_named_item_item_refresh.refresh`),
+    'canvas_hash' : getValue(`canvas_hash`),
+    'canvas_hash.is_point_in_path' : getValue(`canvas_hash.is_point_in_path`),
+    'canvas_hash.to_data_url_image' : getValue(`canvas_hash.to_data_url_image`),
+    'canvas_hash.screen_is_global_composite_operation' : getValue(`canvas_hash.screen_is_global_composite_operation`),
+    'canvas_hash.hash' : getValue(`canvas_hash.hash`),
+    'webgl' : getValue(`webgl`),
+    'webgl.canvas_hash' : getValue(`webgl.canvas_hash`),
+    'webgl.get_supported_extensions' : getValue(`webgl.get_supported_extensions`),
+    'webgl.aliased_line_width_range' : getValue(`webgl.aliased_line_width_range`),
+    'webgl.aliased_point_size_range' : getValue(`webgl.aliased_point_size_range`),
+    'webgl.alpha_bits' : getValue(`webgl.alpha_bits`),
+    'webgl.antialias' : getValue(`webgl.antialias`),
+    'webgl.blue_bits' : getValue(`webgl.blue_bits`),
+    'webgl.depth_bits' : getValue(`webgl.depth_bits`),
+    'webgl.green_bits' : getValue(`webgl.green_bits`),
+    'webgl.all_bits' : getValue(`webgl.all_bits`),
+    'webgl.max_combined_texture_image_units' : getValue(`webgl.max_combined_texture_image_units`),
+    'webgl.max_cube_map_texture_size' : getValue(`webgl.max_cube_map_texture_size`),
+    'webgl.max_fragment_uniform_vectors' : getValue(`webgl.max_fragment_uniform_vectors`),
+    'webgl.max_renderbuffer_size' : getValue(`webgl.max_renderbuffer_size`),
+    'webgl.max_texture_image_units' : getValue(`webgl.max_texture_image_units`),
+    'webgl.max_texture_size' : getValue(`webgl.max_texture_size`),
+    'webgl.max_varying_vectors' : getValue(`webgl.max_varying_vectors`),
+    'webgl.max_vertex_attribs' : getValue(`webgl.max_vertex_attribs`),
+    'webgl.max_vertex_texture_image_units' : getValue(`webgl.max_vertex_texture_image_units`),
+    'webgl.max_vertex_uniform_vectors' : getValue(`webgl.max_vertex_uniform_vectors`),
+    'webgl.max_viewport_dims' : getValue(`webgl.max_viewport_dims`),
+    'webgl.red_bits' : getValue(`webgl.red_bits`),
+    'webgl.renderer' : getValue(`webgl.renderer`),
+    'webgl.shading_language_version' : getValue(`webgl.shading_language_version`),
+    'webgl.stencil_bits' : getValue(`webgl.stencil_bits`),
+    'webgl.vendor' : getValue(`webgl.vendor`),
+    'webgl.version' : getValue(`webgl.version`),
+    'webgl.shader_precision_vertex_high_float' : getValue(`webgl.shader_precision_vertex_high_float`),
+    'webgl.shader_precision_vertex_high_float_min' : getValue(`webgl.shader_precision_vertex_high_float_min`),
+    'webgl.shader_precision_vertex_high_float_max' : getValue(`webgl.shader_precision_vertex_high_float_max`),
+    'webgl.shader_precision_vertex_medium_float' : getValue(`webgl.shader_precision_vertex_medium_float`),
+    'webgl.shader_precision_vertex_medium_float_min' : getValue(`webgl.shader_precision_vertex_medium_float_min`),
+    'webgl.shader_precision_vertex_medium_float_max' : getValue(`webgl.shader_precision_vertex_medium_float_max`),
+    'webgl.shader_precision_vertex_low_float' : getValue(`webgl.shader_precision_vertex_low_float`),
+    'webgl.shader_precision_vertex_low_float_min' : getValue(`webgl.shader_precision_vertex_low_float_min`),
+    'webgl.shader_precision_vertex_low_float_max' : getValue(`webgl.shader_precision_vertex_low_float_max`),
+    'webgl.shader_precision_fragment_high_float' : getValue(`webgl.shader_precision_fragment_high_float`),
+    'webgl.shader_precision_fragment_high_float_min' : getValue(`webgl.shader_precision_fragment_high_float_min`),
+    'webgl.shader_precision_fragment_high_float_max' : getValue(`webgl.shader_precision_fragment_high_float_max`),
+    'webgl.shader_precision_fragment_medium_float' : getValue(`webgl.shader_precision_fragment_medium_float`),
+    'webgl.shader_precision_fragment_medium_float_min' : getValue(`webgl.shader_precision_fragment_medium_float_min`),
+    'webgl.shader_precision_fragment_medium_float_max' : getValue(`webgl.shader_precision_fragment_medium_float_max`),
+    'webgl.shader_precision_fragment_low_float' : getValue(`webgl.shader_precision_fragment_low_float`),
+    'webgl.shader_precision_fragment_low_float_min' : getValue(`webgl.shader_precision_fragment_low_float_min`),
+    'webgl.shader_precision_fragment_low_float_max' : getValue(`webgl.shader_precision_fragment_low_float_max`),
+    'webgl.shader_precision_vertex_high_int' : getValue(`webgl.shader_precision_vertex_high_int`),
+    'webgl.shader_precision_vertex_high_int_min' : getValue(`webgl.shader_precision_vertex_high_int_min`),
+    'webgl.shader_precision_vertex_high_int_max' : getValue(`webgl.shader_precision_vertex_high_int_max`),
+    'webgl.shader_precision_vertex_medium_int' : getValue(`webgl.shader_precision_vertex_medium_int`),
+    'webgl.shader_precision_vertex_medium_int_min' : getValue(`webgl.shader_precision_vertex_medium_int_min`),
+    'webgl.shader_precision_vertex_medium_int_max' : getValue(`webgl.shader_precision_vertex_medium_int_max`),
+    'webgl.shader_precision_vertex_low_int' : getValue(`webgl.shader_precision_vertex_low_int`),
+    'webgl.shader_precision_vertex_low_int_min' : getValue(`webgl.shader_precision_vertex_low_int_min`),
+    'webgl.shader_precision_vertex_low_int_max' : getValue(`webgl.shader_precision_vertex_low_int_max`),
+    'webgl.shader_precision_fragment_high_int' : getValue(`webgl.shader_precision_fragment_high_int`),
+    'webgl.shader_precision_fragment_high_int_min' : getValue(`webgl.shader_precision_fragment_high_int_min`),
+    'webgl.shader_precision_fragment_high_int_max' : getValue(`webgl.shader_precision_fragment_high_int_max`),
+    'webgl.shader_precision_fragment_medium_int' : getValue(`webgl.shader_precision_fragment_medium_int`),
+    'webgl.shader_precision_fragment_medium_int_min' : getValue(`webgl.shader_precision_fragment_medium_int_min`),
+    'webgl.shader_precision_fragment_medium_int_max' : getValue(`webgl.shader_precision_fragment_medium_int_max`),
+    'webgl.shader_precision_fragment_low_int' : getValue(`webgl.shader_precision_fragment_low_int`),
+    'webgl.shader_precision_fragment_low_int_min' : getValue(`webgl.shader_precision_fragment_low_int_min`),
+    'webgl.shader_precision_fragment_low_int_max' : getValue(`webgl.shader_precision_fragment_low_int_max`),
+    'webgl.unmasked_vendor_webgl' : getValue(`webgl.unmasked_vendor_webgl`),
+    'webgl.unmasked_renderer_webgl' : getValue(`webgl.unmasked_renderer_webgl`),
+    'webgl_meta' : getValue(`webgl_meta`),
+    'webgl_meta.webgl_rendering_context_get_parameter' : getValue(`webgl_meta.webgl_rendering_context_get_parameter`),
+    'webgl_meta.is_native_webgl_rendering_context_get_parameter' : getValue(`webgl_meta.is_native_webgl_rendering_context_get_parameter`),
+    'touch_event' : getValue(`touch_event`),
+    'touch_event.max_touch_points' : getValue(`touch_event.max_touch_points`),
+    'touch_event.has_touch_event' : getValue(`touch_event.has_touch_event`),
+    'touch_event.on_touch_start_is_undefined' : getValue(`touch_event.on_touch_start_is_undefined`),
+    'video' : getValue(`video`),
+    'video.can_play_type_video_ogg' : getValue(`video.can_play_type_video_ogg`),
+    'video.can_play_type_video_mp4' : getValue(`video.can_play_type_video_mp4`),
+    'video.can_play_type_video_webm' : getValue(`video.can_play_type_video_webm`),
+    'audio' : getValue(`audio`),
+    'audio.can_play_type_audio_ogg' : getValue(`audio.can_play_type_audio_ogg`),
+    'audio.can_play_type_audio_mpeg' : getValue(`audio.can_play_type_audio_mpeg`),
+    'audio.can_play_type_audio_wav' : getValue(`audio.can_play_type_audio_wav`),
+    'audio.can_play_type_audio_xm4a' : getValue(`audio.can_play_type_audio_xm4a`),
+    'audio.can_play_type_audio_empty_array' : getValue(`audio.can_play_type_audio_empty_array`),
+    'audio.can_play_type_audio_mp4' : getValue(`audio.can_play_type_audio_mp4`),
+    'navigator_vendor' : getValue(`navigator_vendor`),
+    'navigator_product' : getValue(`navigator_product`),
+    'navigator_product_sub' : getValue(`navigator_product_sub`),
+    'browser' : getValue(`browser`),
+    'browser.is_internet_explorer' : getValue(`browser.is_internet_explorer`),
+    'browser.chrome' : getValue(`browser.chrome`),
+    'browser.chrome.load_times' : getValue(`browser.chrome.load_times`),
+    'browser.chrome.app' : getValue(`browser.chrome.app`),
+    'browser.chrome.chrome' : getValue(`browser.chrome.chrome`),
+    'browser.webdriver' : getValue(`browser.webdriver`),
+    'browser.is_chrome' : getValue(`browser.is_chrome`),
+    'browser.connection_rtt' : getValue(`browser.connection_rtt`),
+    'window' : getValue(`window`),
+    'window.history_length' : getValue(`window.history_length`),
+    'window.navigator_hardware_concurrency' : getValue(`window.navigator_hardware_concurrency`),
+    'window.is_window_self_not_window_top' : getValue(`window.is_window_self_not_window_top`),
+    'window.is_native_navigator_get_battery' : getValue(`window.is_native_navigator_get_battery`),
+    'window.console_debug_name' : getValue(`window.console_debug_name`),
+    'window.is_native_console_debug' : getValue(`window.is_native_console_debug`),
+    'window._phantom' : getValue(`window._phantom`),
+    'window.call_phantom' : getValue(`window.call_phantom`),
+    'window.empty' : getValue(`window.empty`),
+    'window.persistent' : getValue(`window.persistent`),
+    'window.temporary' : getValue(`window.temporary`),
+    'window.performance_observer' : getValue(`window.performance_observer`),
+    'window.performance_observer.supported_entry_types' : getValue(`window.performance_observer.supported_entry_types`),
+    'document' : getValue(`document`),
+    'document.document_location_protocol' : getValue(`document.document_location_protocol`),
+    'canvas_fonts' : getValue(`canvas_fonts`),
+    'document_children' : getValue(`document_children`),
+    'document_children.document_with_src' : getValue('document_children.document_with_src'),
+    'document_children.document_without_src' : getValue('document_children.document_without_src'),
+    'document_children.document_script_element_children' : getValue(`document_children.document_script_element_children`),
+    'document_children.document_head_element_children' : getValue(`document_children.document_head_element_children`),
+    'document_children.document_body_element_children' : getValue(`document_children.document_body_element_children`),
+    'webgl_rendering_call' : getValue(`webgl_rendering_call`),
+    'webgl_rendering_call.webgl_rendering_context_prototype_get_parameter_call_a' : getValue(`webgl_rendering_call.webgl_rendering_context_prototype_get_parameter_call_a`),
+    'webgl_rendering_call.webgl_rendering_context_prototype_get_parameter_call_b' : getValue(`webgl_rendering_call.webgl_rendering_context_prototype_get_parameter_call_b`),
+    'webgl_rendering_call.hash' : getValue(`webgl_rendering_call.hash`),
+    'window_object_get_own_property_names_a' : getValue(`window_object_get_own_property_names_a`),
+    'window_object_get_own_property_names_b' : getValue(`window_object_get_own_property_names_b`),
+    'window_object_get_own_property_names_b.prev' : getValue(`window_object_get_own_property_names_b.prev`),
+    'window_object_get_own_property_names_b.next' : getValue(`window_object_get_own_property_names_b.next`),
+    'window_object_get_own_property_names_last_30' : getValue(`window_object_get_own_property_names_last_30`),
+    'visual_view_port' : getValue(`visual_view_port`),
+    'visual_view_port.visual_view_port_width' : getValue(`visual_view_port.visual_view_port_width`),
+    'visual_view_port.visual_view_port_height' : getValue(`visual_view_port.visual_view_port_height`),
+    'visual_view_port.visual_view_port_scale' : getValue(`visual_view_port.visual_view_port_scale`),
+    'create_html_document' : getValue(`create_html_document`),
+    'performance_difference' : getValue(`performance_difference`),
+    'performance_difference.btoa_a' : getValue(`performance_difference.btoa_a`),
+    'performance_difference.btoa_b' : getValue(`performance_difference.btoa_b`),
+    'performance_difference.dump_a' : getValue(`performance_difference.dump_a`),
+    'performance_difference.dump_b' : getValue(`performance_difference.dump_b`),
+    'tampering' : getValue(`tampering`),
+    'tampering.prototype_of_navigator_vendor' : getValue(`tampering.prototype_of_navigator_vendor`),
+    'tampering.prototype_of_navigator_mimetypes' : getValue(`tampering.prototype_of_navigator_mimetypes`),
+    'tampering.prototype_of_navigator_languages' : getValue(`tampering.prototype_of_navigator_languages`),
+    'tampering.webgl2_rendering_context_to_string' : getValue(`tampering.webgl2_rendering_context_to_string`),
+    'tampering.function_to_string' : getValue(`tampering.function_to_string`),
+    'tampering.prototype_of_navigator_hardware_concurrency' : getValue(`tampering.prototype_of_navigator_hardware_concurrency`),
+    'tampering.webgl2_rendering_context_get_parameter' : getValue(`tampering.webgl2_rendering_context_get_parameter`),
+    'tampering.prototype_of_navigator_device_memory' : getValue(`tampering.prototype_of_navigator_device_memory`),
+    'tampering.prototype_of_navigator_permissions' : getValue(`tampering.prototype_of_navigator_permissions`),
+    'tampering.yes' : getValue(`tampering.yes`),
+    'tampering.no' : getValue(`tampering.no`),
+    'vendor_name' : getValue(`vendor_name`),
+    'vendor_value' : getValue(`vendor_value`),
+    'value_vendor_name' : getValue(`value_vendor_name`),
+    'value_vendor_value' : getValue(`value_vendor_value`),
+  };
+}
+
+function extractStAndSr(ast) {
+  const mainFuncPath = ast.program.body[0].expression.callee.body.body.slice(-2)[0];
+
+  let st = null;
+  let sr = null;
+
+  mainFuncPath.body.body[0].expression.right.body.body[0].handler.body.body.forEach((n) => {
+
+    if (n.type === `ExpressionStatement` && n.expression.type === `CallExpression`) {
+      return;
+    }
+
+    const key = n.expression.left.property.value;
+
+    if (key === `st`) {
+      st = n.expression.right.value;
+    } else if (key === `sr`) {
+      sr = n.expression.right.value;
+    }
+
+  });
+
+  return {
+    st,
+    sr
+  };
+
+}
+function extractSignalsKeys2(ast) {
+
 
   const paths = getSignalsPaths(ast);
   const getValue = (key) => {
@@ -1004,35 +1286,6 @@ function extractSignalsKeys(ast) {
     'value_vendor_name' : getValue(`value_vendor_name`),
     'value_vendor_value' : getValue(`value_vendor_value`),
   };
-}
-
-function extractStAndSr(ast) {
-  const mainFuncPath = ast.program.body[0].expression.callee.body.body.slice(-2)[0];
-
-  let st = null;
-  let sr = null;
-
-  mainFuncPath.body.body[0].expression.right.body.body[0].handler.body.body.forEach((n) => {
-
-    if (n.type === `ExpressionStatement` && n.expression.type === `CallExpression`) {
-      return;
-    }
-
-    const key = n.expression.left.property.value;
-
-    if (key === `st`) {
-      st = n.expression.right.value;
-    } else if (key === `sr`) {
-      sr = n.expression.right.value;
-    }
-
-  });
-
-  return {
-    st,
-    sr
-  };
-
 }
 
 module.exports = {
